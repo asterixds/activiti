@@ -7,7 +7,7 @@
   <packaging>jar</packaging>
 
   <parent>
-    <groupId>org.activiti</groupId>
+    <groupId>com.activiti</groupId>
     <artifactId>activiti-root</artifactId>
     <relativePath>../..</relativePath>
     <version>5.16.4-SNAPSHOT</version>
@@ -104,15 +104,15 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.activiti</groupId>
+      <groupId>com.activiti</groupId>
       <artifactId>activiti-common-rest</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.activiti</groupId>
+      <groupId>com.activiti</groupId>
       <artifactId>activiti-json-converter</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.activiti</groupId>
+      <groupId>com.activiti</groupId>
       <artifactId>activiti-simple-workflow</artifactId>
     </dependency>
 
@@ -121,7 +121,7 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
     </dependency>
-
+    
     <dependency>
       <groupId>org.restlet.jee</groupId>
       <artifactId>org.restlet.ext.fileupload</artifactId>
@@ -136,6 +136,19 @@
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
     </dependency>
+    
+    <!-- Enterprise dependencies -->
+    <dependency>
+      <groupId>org.restlet.jee</groupId>
+      <artifactId>org.restlet.ext.xml</artifactId>
+      <version>${restlet.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.verhas</groupId>
+      <artifactId>license3j</artifactId>
+      <version>1.0.4</version>
+    </dependency>
 
     <!-- Test dependencies -->
     <dependency>
@@ -144,7 +157,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.activiti</groupId>
+      <groupId>com.activiti</groupId>
       <artifactId>activiti-spring</artifactId>
       <scope>test</scope>
     </dependency>

@@ -228,6 +228,10 @@ import org.apache.ibatis.type.JdbcType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.activiti.addon.cluster.ActivitiClusterConfigurator;
+import com.activiti.addon.cluster.ClusterConfigProperties;
+import com.activiti.license.LicenseHolder;
+
 
 /**
  * @author Tom Baeyens
@@ -244,6 +248,9 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   
   public static final String DEFAULT_MYBATIS_MAPPING_FILE = "org/activiti/db/mapping/mappings.xml";
 
+  // ENTERPRISE /////////////////////////////////////////////////////////////////  
+  protected LicenseHolder licenseHolder;
+  
   // SERVICES /////////////////////////////////////////////////////////////////
 
   protected RepositoryService repositoryService = new RepositoryServiceImpl();
@@ -409,9 +416,29 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     return new ProcessEngineImpl(this);
   }
   
+  protected void initLicenseHolder() {
+    licenseHolder = new LicenseHolder();
+    licenseHolder.setClock(clock);;
+  }
+
+  private final void verifyLicense() {
+    if(!licenseHolder.isLicenseValid()) {
+      throw new ActivitiException("Cannot create process engine: invalid license");
+    } else {
+      log.info("License found: " + licenseHolder.getLicenseInformation());
+    }
+  }
+  
   // init /////////////////////////////////////////////////////////////////////
   
   protected void init() {
+    initClock();
+    
+    // Enterprise only (needs clock!)
+    initLicenseHolder();
+    verifyLicense();
+    // End Enterprise only
+    
   	initConfigurators();
   	configuratorsBeforeInit();
     initProcessDiagramGenerator();
@@ -422,7 +449,6 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     initFormEngines();
     initFormTypes();
     initScriptingEngines();
-    initClock();
     initBusinessCalendarManager();
     initCommandContextFactory();
     initTransactionContextFactory();
@@ -868,6 +894,19 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
 	    	
     	}
     	
+    }
+    
+    // Enterprise-only: add cluster config configurator if flag is set
+    if (isEnableClusterConfig()) {
+      log.info("Cluster config enabled. Starting Cluster config.");
+      allConfigurators.add(new ActivitiClusterConfigurator());
+    } else {
+      // Also enable cluster config add on if cluster config properties file is on classpath
+      ClusterConfigProperties clusterConfigProperties = new ClusterConfigProperties();
+      if (clusterConfigProperties.exists()) {
+        log.info("Cluster config enabled due to cluster config properties file on classpath. Starting Cluster config.");
+        allConfigurators.add(new ActivitiClusterConfigurator(clusterConfigProperties));
+      }
     }
   }
   
@@ -2000,6 +2039,10 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
 
 	public void setProcessValidator(ProcessValidator processValidator) {
 		this.processValidator = processValidator;
+	}
+	
+	public LicenseHolder getLicenseHolder() {
+	  return licenseHolder;
 	}
 
 	public boolean isEnableEventDispatcher() {

@@ -193,6 +193,9 @@ public abstract class ProcessEngineConfiguration implements EngineServices {
   
   protected ClassLoader classLoader;
   protected ProcessEngineLifecycleListener processEngineLifecycleListener;
+  
+  /** ENTERPRISE */
+  protected boolean enableClusterConfig;
 
   /** use one of the static createXxxx methods instead */
   protected ProcessEngineConfiguration() {
@@ -665,6 +668,20 @@ public abstract class ProcessEngineConfiguration implements EngineServices {
 
   public ProcessEngineConfiguration setClock(Clock clock) {
     this.clock = clock;
+    return this;
+  }
+  
+  public ProcessEngineConfiguration enableClusterConfig() {
+    setEnableClusterConfig(true);
+    return this;
+  }
+  
+  public boolean isEnableClusterConfig() {
+    return enableClusterConfig;
+  }
+  
+  public ProcessEngineConfiguration setEnableClusterConfig(boolean enableClusterConfig) {
+    this.enableClusterConfig = enableClusterConfig;
     return this;
   }
 

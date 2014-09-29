@@ -4,7 +4,7 @@
 
 
     <parent>
-        <groupId>org.activiti</groupId>
+        <groupId>com.activiti</groupId>
         <artifactId>spring-boot-starters</artifactId>
         <version>5.16.4-SNAPSHOT</version>
     </parent>
@@ -17,11 +17,11 @@
 
         <!-- common -->
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-engine</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-spring</artifactId>
         </dependency>
         <dependency>
@@ -31,7 +31,7 @@
 
         <!-- rest api -->
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-rest</artifactId>
             <version>${project.version}</version>
             <exclusions>
@@ -63,17 +63,17 @@
 
         <!-- actuator-->
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-image-generator</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-bpmn-model</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-bpmn-layout</artifactId>
             <optional>true</optional>
         </dependency>

@@ -18,10 +18,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.ActivitiException;
 import org.activiti.engine.EngineServices;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.delegate.event.ActivitiEventType;
 import org.activiti.engine.delegate.event.impl.ActivitiEventBuilder;
+import org.activiti.engine.impl.ProcessInstanceQueryImpl;
 import org.activiti.engine.impl.bpmn.behavior.MultiInstanceActivityBehavior;
 import org.activiti.engine.impl.bpmn.behavior.UserTaskActivityBehavior;
 import org.activiti.engine.impl.bpmn.parser.BpmnParse;
@@ -57,6 +59,8 @@ import org.activiti.engine.runtime.Job;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.activiti.license.LicenseHolder;
 
 
 /**
@@ -362,6 +366,24 @@ public class ExecutionEntity extends VariableScopeImpl implements ActivityExecut
   }
   
   public void start() {
+    // ENTERPRISE CHECK
+    LicenseHolder licenseHolder = Context.getProcessEngineConfiguration().getLicenseHolder();
+    if (!licenseHolder.isLicenseValid()) {
+      throw new ActivitiException("Invalid license: no new process instances can be started");
+    }
+    
+    // Departmental: extra check needed on number of processes
+    if (licenseHolder.isDepartemental()) {
+      int maxNrOfProcessInstances = licenseHolder.getLicenseFeatureInfo().getNumberOfProcesses();
+      ExecutionEntityManager executionEntityManager = Context.getCommandContext().getExecutionEntityManager();
+      long count = executionEntityManager.findProcessInstanceCountByQueryCriteria(new ProcessInstanceQueryImpl());
+      if ((count+1) > maxNrOfProcessInstances) {
+        throw new ActivitiException("License exception: process instance limit (" + maxNrOfProcessInstances + ") reached");
+      }
+    }
+    
+    // ENTERPRISE CHECK
+    
     if(startingExecution == null && isProcessInstanceType()) {
       startingExecution = new StartingExecution(processDefinition.getInitial());
     }

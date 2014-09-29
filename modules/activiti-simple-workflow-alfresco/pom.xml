@@ -7,7 +7,7 @@
   <artifactId>activiti-simple-workflow-alfresco</artifactId>
 
   <parent>
-    <groupId>org.activiti</groupId>
+    <groupId>com.activiti</groupId>
     <artifactId>activiti-root</artifactId>
     <relativePath>../..</relativePath>
     <version>5.16.4-SNAPSHOT</version>
@@ -16,7 +16,7 @@
   <dependencies>
     <!-- BPMN model conversion -->
     <dependency>
-      <groupId>org.activiti</groupId>
+      <groupId>com.activiti</groupId>
       <artifactId>activiti-simple-workflow</artifactId>
     </dependency>
     <!-- Testing -->
@@ -26,7 +26,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.activiti</groupId>
+      <groupId>com.activiti</groupId>
       <artifactId>activiti-engine</artifactId>
       <scope>test</scope>
     </dependency>

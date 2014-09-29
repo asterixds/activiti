@@ -136,6 +136,11 @@ import org.activiti.rest.service.api.runtime.task.TaskVariableDataResource;
 import org.activiti.rest.service.api.runtime.task.TaskVariableResource;
 import org.restlet.routing.Router;
 
+import com.activiti.rest.service.api.EnterpriseLicenseResource;
+import com.activiti.rest.service.api.disco.CatalogResource;
+import com.activiti.rest.service.api.disco.LogResource;
+import com.activiti.rest.service.api.disco.ManifestResource;
+
 @SuppressWarnings("deprecation")
 public class RestServicesInit {
 
@@ -304,6 +309,12 @@ public class RestServicesInit {
     router.attach("/management/table/{tableName}/data", LegacyTableDataResource.class);
     
     router.attach("/simple-workflow", SimpleWorkflowResource.class);
+    
+    // Enterprise REST
+    router.attach("/management/engine/license", EnterpriseLicenseResource.class);
+    router.attach("/disco/manifest.xml", ManifestResource.class);
+    router.attach("/disco/catalog.xml", CatalogResource.class);
+    router.attach("/disco/log/{processDefinitionId}.dxml", LogResource.class);
   }
   
 }

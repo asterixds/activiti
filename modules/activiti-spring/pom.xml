@@ -6,7 +6,7 @@
     <artifactId>activiti-spring</artifactId>
 
     <parent>
-        <groupId>org.activiti</groupId>
+        <groupId>com.activiti</groupId>
         <artifactId>activiti-root</artifactId>
         <relativePath>../..</relativePath>
         <version>5.16.4-SNAPSHOT</version>
@@ -98,7 +98,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-engine</artifactId>
         </dependency>
         <dependency>
@@ -278,7 +278,7 @@
                             <systemProperties>
                                 <property>
                                     <name>process.engine.initializer</name>
-                                    <value>org.activiti.spring.SpringProcessEngineInitializer</value>
+                                    <value>com.activiti.spring.SpringProcessEngineInitializer</value>
                                 </property>
                             </systemProperties>
                             <excludes>

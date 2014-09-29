@@ -20,7 +20,6 @@
 	   build.modules,
 	   copy.static.resources,
 	   copy.dependencies,
-	   copy.webapps,
 	   copy.docs,
 	   copy.sql">
 		<zip destfile="${target.distro.root}.zip">
@@ -57,9 +56,6 @@
 			<fileset dir="../modules/activiti-spring/target">
 				<include name="activiti-spring-*.jar" />
 			</fileset>
-			<fileset dir="../modules/activiti-spring-boot/target">
-				<include name="activiti-spring-boot-*.jar" />
-			</fileset>
 			<fileset dir="../modules/activiti-bpmn-model/target">
 				<include name="activiti-bpmn-model-*.jar" />
 			</fileset>
@@ -84,14 +80,8 @@
 			<fileset dir="../modules/activiti-ldap/target">
 				<include name="activiti-ldap*.jar" />
 			</fileset>
-			<fileset dir="../modules/activiti-explorer/target">
-				<include name="activiti-explorer-*.jar" />
-			</fileset>
 			<fileset dir="../modules/activiti-common-rest/target">
 				<include name="activiti-common-rest-*.jar" />
-			</fileset>
-			<fileset dir="../modules/activiti-modeler/target">
-				<include name="activiti-modeler-*.jar" />
 			</fileset>
 			<fileset dir="../modules/activiti-diagram-rest/target">
 				<include name="activiti-diagram-rest-*.jar" />
@@ -114,25 +104,8 @@
 			<fileset dir="../modules/activiti-osgi/target">
 				<include name="activiti-osgi-*.jar" />
 			</fileset>
-			<fileset dir="../modules/activiti-crystalball/target">
-				<include name="activiti-crystalball-*.jar" />
-			</fileset>
 		</copy>
 
-	</target>
-
-	<target name="copy.webapps">
-		<mkdir dir="${target.distro.root}/wars" />
-		<copy todir="${target.distro.root}/wars">
-			<fileset dir="../modules/activiti-webapp-explorer2/target">
-				<include name="activiti-webapp-explorer*.war" />
-			</fileset>
-			<fileset dir="../modules/activiti-webapp-rest2/target">
-				<include name="activiti-webapp-rest*.war" />
-			</fileset>
-		</copy>
-		<move file="${target.distro.root}/wars/activiti-webapp-explorer2-${activiti.version}.war" tofile="${target.distro.root}/wars/activiti-explorer.war"/>
-		<move file="${target.distro.root}/wars/activiti-webapp-rest2-${activiti.version}.war" tofile="${target.distro.root}/wars/activiti-rest.war"/>
 	</target>
 
 	<target name="build.docs" unless="nodocs">

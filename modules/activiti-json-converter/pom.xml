@@ -7,7 +7,7 @@
   <artifactId>activiti-json-converter</artifactId>
 
   <parent>
-    <groupId>org.activiti</groupId>
+    <groupId>com.activiti</groupId>
     <artifactId>activiti-root</artifactId>
     <relativePath>../..</relativePath>
     <version>5.16.4-SNAPSHOT</version>
@@ -99,11 +99,11 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.activiti</groupId>
+      <groupId>com.activiti</groupId>
       <artifactId>activiti-bpmn-model</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.activiti</groupId>
+      <groupId>com.activiti</groupId>
       <artifactId>activiti-bpmn-converter</artifactId>
       <scope>test</scope>
     </dependency>

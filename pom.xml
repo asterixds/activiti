@@ -4,15 +4,8 @@
 
   <name>Activiti</name>
   <description>BPM and workflow engine</description>
-  <groupId>org.activiti</groupId>
+  <groupId>com.activiti</groupId>
   <artifactId>activiti-root</artifactId>
-
-  <parent>
-    <groupId>org.sonatype.oss</groupId>
-    <artifactId>oss-parent</artifactId>
-    <version>7</version>
-  </parent>
-
   <packaging>pom</packaging>
   <version>5.16.4-SNAPSHOT</version>
   <properties>
@@ -176,88 +169,78 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.activiti</groupId>
+        <groupId>com.activiti</groupId>
         <artifactId>activiti-engine</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.activiti</groupId>
+        <groupId>com.activiti</groupId>
         <artifactId>activiti-spring</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.activiti</groupId>
+        <groupId>com.activiti</groupId>
         <artifactId>activiti-bpmn-model</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.activiti</groupId>
+        <groupId>com.activiti</groupId>
         <artifactId>activiti-bpmn-converter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.activiti</groupId>
+        <groupId>com.activiti</groupId>
         <artifactId>activiti-json-converter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.activiti</groupId>
+        <groupId>com.activiti</groupId>
         <artifactId>activiti-explorer</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.activiti</groupId>
+        <groupId>com.activiti</groupId>
         <artifactId>activiti-simple-workflow</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.activiti</groupId>
-        <artifactId>activiti-modeler</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.activiti</groupId>
+        <groupId>com.activiti</groupId>
         <artifactId>activiti-common-rest</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.activiti</groupId>
+        <groupId>com.activiti</groupId>
         <artifactId>activiti-diagram-rest</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.activiti</groupId>
+        <groupId>com.activiti</groupId>
         <artifactId>activiti-rest</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.activiti</groupId>
-        <artifactId>activiti-crystalball</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.activiti</groupId>
+        <groupId>com.activiti</groupId>
         <artifactId>activiti-webapp-rest2</artifactId>
         <type>war</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.activiti</groupId>
+        <groupId>com.activiti</groupId>
         <artifactId>activiti-cxf</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.activiti</groupId>
+        <groupId>com.activiti</groupId>
         <artifactId>activiti-bpmn-layout</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.activiti</groupId>
+        <groupId>com.activiti</groupId>
         <artifactId>activiti-process-validation</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.activiti</groupId>
+        <groupId>com.activiti</groupId>
         <artifactId>activiti-image-generator</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -566,6 +549,18 @@
             <version>1.2.0</version>
             <scope>test</scope>
         </dependency>
+        
+      <!-- ENTERPRISE depdencies -->
+	  <dependency>
+	    <groupId>com.hazelcast</groupId>
+		<artifactId>hazelcast</artifactId>
+		<version>3.1.5</version>
+	  </dependency>
+	  <dependency>
+		<groupId>com.verhas</groupId>
+		<artifactId>license3j</artifactId>
+		<version>1.0.4</version>
+	  </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -692,7 +687,7 @@
       </properties>
     </profile>
     <profile>
-      <id>deploy</id>
+      <id>distro</id>
       <modules>
         <module>modules/activiti-bpmn-model</module>
         <module>modules/activiti-process-validation</module>
@@ -703,10 +698,7 @@
         <module>modules/activiti-json-converter</module>
         <module>modules/activiti-simple-workflow</module>
         <module>modules/activiti-common-rest</module>
-        <module>modules/activiti-modeler</module>
         <module>modules/activiti-diagram-rest</module>
-        <module>modules/activiti-explorer</module>
-        <module>modules/activiti-webapp-explorer2</module>
         <module>modules/activiti-rest</module>
         <module>modules/activiti-webapp-rest2</module>
         <module>modules/activiti-spring</module>
@@ -717,7 +709,6 @@
         <module>modules/activiti-cdi</module>
         <module>modules/activiti-osgi</module>
         <module>modules/activiti-ldap</module>
-        <module>modules/activiti-crystalball</module>
       </modules>
       <build>
         <plugins>
@@ -744,19 +735,6 @@
               </execution>
             </executions>
           </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>sign-artifacts</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
         </plugins>
       </build>
     </profile>
@@ -777,78 +755,6 @@
         <module>modules/activiti-webapp-rest2</module>
         <module>modules/activiti-cxf</module>
         <module>modules/activiti-cdi</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>checkmule</id>
-      <modules>
-        <module>modules/activiti-cxf</module>
-        <module>modules/activiti-mule</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>checkspring</id> <!-- [Joram] Is this still used?? -->
-      <modules>
-        <module>modules/activiti-spring</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>checkcdi</id>
-      <modules>
-        <module>modules/activiti-cdi</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>checksimpleworkflow</id>
-      <modules>
-        <module>modules/activiti-simple-workflow</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>checkosgi</id>
-      <modules>
-        <module>modules/activiti-osgi</module>
-      </modules>
-    </profile>
-    <profile>
-      <!-- this profile prevents that tests are executed while running the 
-        qa/build.xml test.demo.setup target -->
-      <id>nodocs</id>
-      <activation>
-        <property>
-          <name>nodocs</name>
-        </property>
-      </activation>
-      <properties>
-        <skipTests>true</skipTests>
-      </properties>
-    </profile>
-    <profile>
-      <id>distro</id>
-      <modules>
-        <module>modules/activiti-spring</module>
-        <module>modules/activiti-spring-boot</module>
-        <module>modules/activiti-bpmn-model</module>
-        <module>modules/activiti-process-validation</module>
-        <module>modules/activiti-image-generator</module>
-        <module>modules/activiti-bpmn-converter</module>
-        <module>modules/activiti-bpmn-layout</module>
-        <module>modules/activiti-json-converter</module>
-        <module>modules/activiti-simple-workflow</module>
-        <module>modules/activiti-common-rest</module>
-        <module>modules/activiti-modeler</module>
-        <module>modules/activiti-diagram-rest</module>
-        <module>modules/activiti-explorer</module>
-        <module>modules/activiti-rest</module>
-        <module>modules/activiti-webapp-rest2</module>
-        <module>modules/activiti-webapp-explorer2</module>
-        <module>modules/activiti-cxf</module>
-        <module>modules/activiti-osgi</module>
-        <module>modules/activiti-camel</module>
-        <module>modules/activiti-mule</module>
-        <module>modules/activiti-cdi</module>
-        <module>modules/activiti-ldap</module>
-        <module>modules/activiti-crystalball</module>
       </modules>
     </profile>
     <profile>
@@ -944,13 +850,7 @@
 
   <!-- Various information, not used by the build -->
 
-  <url>http://activiti.org</url>
-  <licenses>
-    <license>
-      <name>Apache v2</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-    </license>
-  </licenses>
+  <url>http://alfresco.com</url>
   <organization>
     <name>Alfresco</name>
     <url>http://www.alfresco.com</url>
@@ -971,49 +871,6 @@
       <organization>Alfresco</organization>
       <url>http://www.alfresco.com</url>
     </developer>
-    <developer>
-      <name>Erik Winlöf</name>
-      <organization>Alfresco</organization>
-      <url>http://www.alfresco.com</url>
-    </developer>
-    <developer>
-      <name>Josh Long</name>
-      <organization>Pivotal</organization>
-      <url>http://www.pivotal.com</url>
-    </developer>
-    <developer>
-      <name>Etienne Studer</name>
-      <organization>Edorasware</organization>
-      <url>http://www.edorasware.com</url>
-    </developer>
-    <developer>
-      <name>José Antonio Álvarez</name>
-      <organization>Edorasware</organization>
-      <url>http://www.edorasware.com</url>
-    </developer>
-    <developer>
-      <name>Guy Brand</name>
-      <organization>Edorasware</organization>
-      <url>http://www.edorasware.com</url>
-    </developer>
-    <developer>
-      <name>Martin Grofcik</name>
-      <organization>Edorasware</organization>
-      <url>http://www.edorasware.com</url>
-    </developer>
-    <developer>
-      <name>Christian Muelder</name>
-      <organization>Next Level Integration</organization>
-      <url>http://next-level-integration.com/</url>
-    </developer>
-    <developer>
-      <name>Christian Stettler</name>
-    </developer>
-    <developer>
-      <name>Saeid Mirzaei</name>
-      <organization>Atos worldline</organization>
-      <url>http://www.worldline.com/</url>
-    </developer>
   </developers>
   <issueManagement>
     <system>JIRA</system>
@@ -1024,8 +881,8 @@
     <url>http://bamboo.ci.codehaus.org/browse/ACT</url>
   </ciManagement>
   <scm>
-    <url>git@github.com:Activiti/Activiti.git</url>
-    <connection>scm:git:git@github.com:Activiti/Activiti.git</connection>
-    <developerConnection>scm:git:git@github.com:Activiti/Activiti.git</developerConnection>
+    <url>git@github.com:Alfresco/Activiti.git</url>
+    <connection>scm:git:git@github.com:Alfresco/Activiti.git</connection>
+    <developerConnection>scm:git:git@github.com:Alfresco/Activiti.git</developerConnection>
   </scm>
 </project>

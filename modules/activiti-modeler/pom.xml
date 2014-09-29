@@ -8,7 +8,7 @@
   <packaging>jar</packaging>
 
   <parent>
-    <groupId>org.activiti</groupId>
+    <groupId>com.activiti</groupId>
     <artifactId>activiti-root</artifactId>
     <relativePath>../..</relativePath>
     <version>5.16.4-SNAPSHOT</version>
@@ -17,7 +17,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <activiti.artifact>
-      org.activiti.modeler
+      com.activiti.modeler
     </activiti.artifact>
   </properties>
   
@@ -106,11 +106,11 @@
   <dependencies>
     <!-- Activiti -->
     <dependency>
-      <groupId>org.activiti</groupId>
+      <groupId>com.activiti</groupId>
       <artifactId>activiti-common-rest</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.activiti</groupId>
+      <groupId>com.activiti</groupId>
       <artifactId>activiti-json-converter</artifactId>
     </dependency>
     
