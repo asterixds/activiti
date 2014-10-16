@@ -19,7 +19,6 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.activiti.engine.impl.persistence.entity.JobEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,8 @@ public class DefaultJobExecutor extends JobExecutor {
   
   protected int queueSize = 3;
   protected int corePoolSize = 3;
-  private int maxPoolSize = 10;
+  protected int maxPoolSize = 10;
+  protected long keepAliveTime = 0L;
 
   protected BlockingQueue<Runnable> threadPoolQueue;
   protected ThreadPoolExecutor threadPoolExecutor;
@@ -53,7 +53,7 @@ public class DefaultJobExecutor extends JobExecutor {
       threadPoolQueue = new ArrayBlockingQueue<Runnable>(queueSize);
     }
     if (threadPoolExecutor==null) {
-      threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maxPoolSize, 0L, TimeUnit.MILLISECONDS, threadPoolQueue);      
+      threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime, TimeUnit.MILLISECONDS, threadPoolQueue);      
       threadPoolExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
     }
     startJobAcquisitionThread(); 
@@ -78,7 +78,7 @@ public class DefaultJobExecutor extends JobExecutor {
     threadPoolExecutor = null;
   }
   
-  public void executeJobs(List<JobEntity> jobIds) {
+  public void executeJobs(List<String> jobIds) {
     try {
       threadPoolExecutor.execute(new ExecuteJobsRunnable(this, jobIds));
     } catch (RejectedExecutionException e) {
@@ -112,7 +112,15 @@ public class DefaultJobExecutor extends JobExecutor {
     this.maxPoolSize = maxPoolSize;
   }
   
-  public BlockingQueue<Runnable> getThreadPoolQueue() {
+  public long getKeepAliveTime() {
+		return keepAliveTime;
+	}
+
+	public void setKeepAliveTime(long keepAliveTime) {
+		this.keepAliveTime = keepAliveTime;
+	}
+
+	public BlockingQueue<Runnable> getThreadPoolQueue() {
     return threadPoolQueue;
   }
 

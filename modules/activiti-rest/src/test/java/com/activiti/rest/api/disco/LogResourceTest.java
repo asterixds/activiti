@@ -12,12 +12,13 @@ import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.runtime.ProcessInstance;
-import org.activiti.rest.common.api.ActivitiUtil;
-import org.activiti.rest.service.BaseRestTestCase;
+import org.activiti.rest.service.BaseSpringRestTestCase;
 import org.activiti.rest.service.api.RestUrls;
-import org.restlet.data.Status;
-import org.restlet.representation.Representation;
-import org.restlet.resource.ClientResource;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.http.HttpStatus;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -30,14 +31,14 @@ import com.activiti.rest.service.api.EnterpriseRestUrls;
  * 
  * @author Tijs Rademakers
  */
-public class LogResourceTest extends BaseRestTestCase {
+public class LogResourceTest extends BaseSpringRestTestCase {
   
   /**
    * Test getting the log with summary traces.
    * GET disco/log/{processDefinitionId}.dxml
    */
   public void testGetLogSummary() throws Exception {
-    Deployment deployment = ActivitiUtil.getRepositoryService().createDeployment()
+    Deployment deployment = repositoryService.createDeployment()
         .addClasspathResource("com/activiti/rest/api/disco/oneTaskProcess.bpmn20.xml")
         .addClasspathResource("com/activiti/rest/api/disco/anotherOneTaskProcess.bpmn20.xml")
         .addClasspathResource("com/activiti/rest/api/disco/simpleProcess.bpmn20.xml")
@@ -50,24 +51,23 @@ public class LogResourceTest extends BaseRestTestCase {
       if (i == 0) {
         variableMap.put("extraName", "test2");
       }
-      ActivitiUtil.getRuntimeService().startProcessInstanceByKey("simple", variableMap);
+      runtimeService.startProcessInstanceByKey("simple", variableMap);
     }
     
     for (int i = 0; i < 3; i++) {
-      ActivitiUtil.getRuntimeService().startProcessInstanceByKey("oneTaskProcess");
+      runtimeService.startProcessInstanceByKey("oneTaskProcess");
     }
     
-    String simpleId = ActivitiUtil.getRepositoryService().createProcessDefinitionQuery().processDefinitionKey("simple").singleResult().getId();
-    String oneTaskProcessId = ActivitiUtil.getRepositoryService().createProcessDefinitionQuery().processDefinitionKey("oneTaskProcess").singleResult().getId();
-    String anotherOneTaskProcessId = ActivitiUtil.getRepositoryService().createProcessDefinitionQuery().processDefinitionKey("anotherOneTaskProcess").singleResult().getId();
+    String simpleId = repositoryService.createProcessDefinitionQuery().processDefinitionKey("simple").singleResult().getId();
+    String oneTaskProcessId = repositoryService.createProcessDefinitionQuery().processDefinitionKey("oneTaskProcess").singleResult().getId();
+    String anotherOneTaskProcessId = repositoryService.createProcessDefinitionQuery().processDefinitionKey("anotherOneTaskProcess").singleResult().getId();
     
-    ClientResource client = getAuthenticatedClient(RestUrls.createRelativeResourceUrl(EnterpriseRestUrls.URL_DISCO_LOG, simpleId) + "?scope=summary");
-    Representation response = client.get();
-    assertEquals(Status.SUCCESS_OK, client.getResponse().getStatus());
+    HttpResponse response = executeXMLHttpRequest(new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
+        EnterpriseRestUrls.URL_DISCO_LOG, simpleId) + "?scope=summary"), HttpStatus.OK.value());
     
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-    Document doc = dBuilder.parse(response.getStream());
+    Document doc = dBuilder.parse(response.getEntity().getContent());
     Element log = doc.getDocumentElement();
     assertEquals("log", log.getNodeName());
     assertEquals("Simple Process", log.getAttribute("name"));
@@ -111,13 +111,12 @@ public class LogResourceTest extends BaseRestTestCase {
     NodeList traceList = log.getElementsByTagName("trace");
     assertEquals(0, traceList.getLength());
     
-    client = getAuthenticatedClient(RestUrls.createRelativeResourceUrl(EnterpriseRestUrls.URL_DISCO_LOG, oneTaskProcessId));
-    response = client.get();
-    assertEquals(Status.SUCCESS_OK, client.getResponse().getStatus());
+    response = executeXMLHttpRequest(new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
+        EnterpriseRestUrls.URL_DISCO_LOG, oneTaskProcessId)), HttpStatus.OK.value());
     
     dbFactory = DocumentBuilderFactory.newInstance();
     dBuilder = dbFactory.newDocumentBuilder();
-    doc = dBuilder.parse(response.getStream());
+    doc = dBuilder.parse(response.getEntity().getContent());
     log = doc.getDocumentElement();
     assertEquals("log", log.getNodeName());
     assertEquals("The One Task Process", log.getAttribute("name"));
@@ -130,13 +129,12 @@ public class LogResourceTest extends BaseRestTestCase {
     traceAttributeList = globalsElement.getElementsByTagName("traceAttribute");
     assertEquals(0, traceAttributeList.getLength());
     
-    client = getAuthenticatedClient(RestUrls.createRelativeResourceUrl(EnterpriseRestUrls.URL_DISCO_LOG, anotherOneTaskProcessId));
-    response = client.get();
-    assertEquals(Status.SUCCESS_OK, client.getResponse().getStatus());
+    response = executeXMLHttpRequest(new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
+        EnterpriseRestUrls.URL_DISCO_LOG, anotherOneTaskProcessId)), HttpStatus.OK.value());
     
     dbFactory = DocumentBuilderFactory.newInstance();
     dBuilder = dbFactory.newDocumentBuilder();
-    doc = dBuilder.parse(response.getStream());
+    doc = dBuilder.parse(response.getEntity().getContent());
     log = doc.getDocumentElement();
     assertEquals("log", log.getNodeName());
     assertEquals("The One Task Process", log.getAttribute("name"));
@@ -149,7 +147,7 @@ public class LogResourceTest extends BaseRestTestCase {
     traceAttributeList = globalsElement.getElementsByTagName("traceAttribute");
     assertEquals(0, traceAttributeList.getLength());
     
-    ActivitiUtil.getRepositoryService().deleteDeployment(deployment.getId(), true);
+    repositoryService.deleteDeployment(deployment.getId(), true);
   }
   
   /**
@@ -157,7 +155,7 @@ public class LogResourceTest extends BaseRestTestCase {
    * GET disco/log/{processDefinitionId}.dxml?scope=traces
    */
   public void testGetLogTraces() throws Exception {
-    Deployment deployment = ActivitiUtil.getRepositoryService().createDeployment()
+    Deployment deployment = repositoryService.createDeployment()
         .addClasspathResource("com/activiti/rest/api/disco/oneTaskProcess.bpmn20.xml")
         .addClasspathResource("com/activiti/rest/api/disco/anotherOneTaskProcess.bpmn20.xml")
         .addClasspathResource("com/activiti/rest/api/disco/simpleProcess.bpmn20.xml")
@@ -170,22 +168,21 @@ public class LogResourceTest extends BaseRestTestCase {
       if (i == 0) {
         variableMap.put("extraName", "test2");
       }
-      ActivitiUtil.getRuntimeService().startProcessInstanceByKey("simple", variableMap);
+      runtimeService.startProcessInstanceByKey("simple", variableMap);
     }
     
     for (int i = 0; i < 3; i++) {
-      ActivitiUtil.getRuntimeService().startProcessInstanceByKey("oneTaskProcess");
+      runtimeService.startProcessInstanceByKey("oneTaskProcess");
     }
     
-    String simpleId = ActivitiUtil.getRepositoryService().createProcessDefinitionQuery().processDefinitionKey("simple").singleResult().getId();
+    String simpleId = repositoryService.createProcessDefinitionQuery().processDefinitionKey("simple").singleResult().getId();
     
-    ClientResource client = getAuthenticatedClient(RestUrls.createRelativeResourceUrl(EnterpriseRestUrls.URL_DISCO_LOG, simpleId) + "?scope=traces");
-    Representation response = client.get();
-    assertEquals(Status.SUCCESS_OK, client.getResponse().getStatus());
+    HttpResponse response = executeXMLHttpRequest(new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
+        EnterpriseRestUrls.URL_DISCO_LOG, simpleId) + "?scope=traces"), HttpStatus.OK.value());
     
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-    Document doc = dBuilder.parse(response.getStream());
+    Document doc = dBuilder.parse(response.getEntity().getContent());
     Element log = doc.getDocumentElement();
     assertEquals("log", log.getNodeName());
     assertEquals("Simple Process", log.getAttribute("name"));
@@ -213,13 +210,13 @@ public class LogResourceTest extends BaseRestTestCase {
       traceMap.put(traceElement.getAttribute("id"), traceElement);
     }
     
-    List<HistoricProcessInstance> instanceList = ActivitiUtil.getHistoryService().createHistoricProcessInstanceQuery().processDefinitionId(simpleId).list();
+    List<HistoricProcessInstance> instanceList = historyService.createHistoricProcessInstanceQuery().processDefinitionId(simpleId).list();
     assertEquals(5, instanceList.size());
     for (HistoricProcessInstance historicProcessInstance : instanceList) {
       Element traceElement = traceMap.get(historicProcessInstance.getId());
       assertNotNull(traceElement);
       assertEquals(historicProcessInstance.getId(), traceElement.getAttribute("id"));
-      assertEquals("" + ActivitiUtil.getHistoryService().createHistoricActivityInstanceQuery().processInstanceId(historicProcessInstance.getId()).count(), traceElement.getAttribute("size"));
+      assertEquals("" + historyService.createHistoricActivityInstanceQuery().processInstanceId(historicProcessInstance.getId()).count(), traceElement.getAttribute("size"));
       assertNotNull(traceElement.getAttribute("start"));
       assertNotNull(traceElement.getAttribute("end"));
       if (historicProcessInstance.getEndTime() != null) {
@@ -235,7 +232,7 @@ public class LogResourceTest extends BaseRestTestCase {
       assertEquals(0, eventList.getLength());
     }
     
-    ActivitiUtil.getRepositoryService().deleteDeployment(deployment.getId(), true);
+    repositoryService.deleteDeployment(deployment.getId(), true);
   }
   
   /**
@@ -243,7 +240,7 @@ public class LogResourceTest extends BaseRestTestCase {
    * GET disco/log/{processDefinitionId}.dxml?scope=all
    */
   public void testGetLogAll() throws Exception {
-    Deployment deployment = ActivitiUtil.getRepositoryService().createDeployment()
+    Deployment deployment = repositoryService.createDeployment()
         .addClasspathResource("com/activiti/rest/api/disco/oneTaskProcess.bpmn20.xml")
         .addClasspathResource("com/activiti/rest/api/disco/anotherOneTaskProcess.bpmn20.xml")
         .addClasspathResource("com/activiti/rest/api/disco/simpleProcess.bpmn20.xml")
@@ -257,23 +254,22 @@ public class LogResourceTest extends BaseRestTestCase {
       if (i == 0) {
         variableMap.put("extraName", "test2" + i);
       }
-      ProcessInstance processInstance = ActivitiUtil.getRuntimeService().startProcessInstanceByKey("simple", variableMap);
+      ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("simple", variableMap);
       startVariableMap.put(processInstance.getId(),variableMap);
     }
     
     for (int i = 0; i < 3; i++) {
-      ActivitiUtil.getRuntimeService().startProcessInstanceByKey("oneTaskProcess");
+      runtimeService.startProcessInstanceByKey("oneTaskProcess");
     }
     
-    String simpleId = ActivitiUtil.getRepositoryService().createProcessDefinitionQuery().processDefinitionKey("simple").singleResult().getId();
+    String simpleId = repositoryService.createProcessDefinitionQuery().processDefinitionKey("simple").singleResult().getId();
     
-    ClientResource client = getAuthenticatedClient(RestUrls.createRelativeResourceUrl(EnterpriseRestUrls.URL_DISCO_LOG, simpleId) + "?scope=all");
-    Representation response = client.get();
-    assertEquals(Status.SUCCESS_OK, client.getResponse().getStatus());
+    HttpResponse response = executeXMLHttpRequest(new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
+        EnterpriseRestUrls.URL_DISCO_LOG, simpleId) + "?scope=all"), HttpStatus.OK.value());
     
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-    Document doc = dBuilder.parse(response.getStream());
+    Document doc = dBuilder.parse(response.getEntity().getContent());
     Element log = doc.getDocumentElement();
     assertEquals("log", log.getNodeName());
     assertEquals("Simple Process", log.getAttribute("name"));
@@ -321,14 +317,14 @@ public class LogResourceTest extends BaseRestTestCase {
       traceMap.put(traceElement.getAttribute("id"), traceElement);
     }
     
-    List<HistoricProcessInstance> instanceList = ActivitiUtil.getHistoryService().createHistoricProcessInstanceQuery().processDefinitionId(simpleId).list();
+    List<HistoricProcessInstance> instanceList = historyService.createHistoricProcessInstanceQuery().processDefinitionId(simpleId).list();
     assertEquals(5, instanceList.size());
     for (int i = 0; i < instanceList.size(); i++) {
       HistoricProcessInstance historicProcessInstance = instanceList.get(i);
       Element traceElement = traceMap.get(historicProcessInstance.getId());
       assertNotNull(traceElement);
       assertEquals(historicProcessInstance.getId(), traceElement.getAttribute("id"));
-      List<HistoricActivityInstance> activityInstanceList = ActivitiUtil.getHistoryService().createHistoricActivityInstanceQuery().processInstanceId(historicProcessInstance.getId()).list();
+      List<HistoricActivityInstance> activityInstanceList = historyService.createHistoricActivityInstanceQuery().processInstanceId(historicProcessInstance.getId()).list();
       assertEquals("" + activityInstanceList.size(), traceElement.getAttribute("size"));
       assertNotNull(traceElement.getAttribute("start"));
       assertNotNull(traceElement.getAttribute("end"));
@@ -406,25 +402,22 @@ public class LogResourceTest extends BaseRestTestCase {
       
     }
     
-    ActivitiUtil.getRepositoryService().deleteDeployment(deployment.getId(), true);
+    repositoryService.deleteDeployment(deployment.getId(), true);
   }
   
   public void testGetLogUnauthenticated() throws Exception {
-    Deployment deployment = ActivitiUtil.getRepositoryService().createDeployment()
+    Deployment deployment = repositoryService.createDeployment()
         .addClasspathResource("com/activiti/rest/api/disco/oneTaskProcess.bpmn20.xml")
         .addClasspathResource("com/activiti/rest/api/disco/simpleProcess.bpmn20.xml")
         .deploy();
     
-    String simpleId = ActivitiUtil.getRepositoryService().createProcessDefinitionQuery().processDefinitionKey("simple").singleResult().getId();
+    String simpleId = repositoryService.createProcessDefinitionQuery().processDefinitionKey("simple").singleResult().getId();
     
-    ClientResource client = new ClientResource("http://localhost:8182/" + RestUrls.createRelativeResourceUrl(EnterpriseRestUrls.URL_DISCO_LOG, simpleId));
-    try {
-      client.get();
-      fail("Expected authentication exception");
-    } catch (Exception e) {
-      assertEquals(Status.CLIENT_ERROR_UNAUTHORIZED.getCode(), client.getStatus().getCode());
-    }
+    HttpClient client = HttpClientBuilder.create().build();
+    HttpResponse response = client.execute(new HttpGet("http://localhost:" + HTTP_SERVER_PORT + 
+        "/service/" + RestUrls.createRelativeResourceUrl(EnterpriseRestUrls.URL_DISCO_LOG, simpleId)));
+    assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getStatusLine().getStatusCode());
     
-    ActivitiUtil.getRepositoryService().deleteDeployment(deployment.getId(), true);
+    repositoryService.deleteDeployment(deployment.getId(), true);
   }
 }

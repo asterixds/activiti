@@ -12,27 +12,31 @@ import java.util.TimeZone;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.activiti.engine.ActivitiException;
 import org.activiti.engine.ActivitiIllegalArgumentException;
 import org.activiti.engine.ActivitiObjectNotFoundException;
+import org.activiti.engine.HistoryService;
+import org.activiti.engine.RepositoryService;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricVariableInstance;
 import org.activiti.engine.repository.ProcessDefinition;
-import org.activiti.rest.common.api.ActivitiUtil;
-import org.activiti.rest.common.api.SecuredResource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.restlet.data.MediaType;
-import org.restlet.data.Status;
-import org.restlet.ext.xml.DomRepresentation;
-import org.restlet.resource.Get;
-import org.restlet.resource.ResourceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.activiti.rest.service.api.ServerProperties;
 
-public class LogResource extends SecuredResource {
+@RestController
+public class LogResource extends AbstractDiscoResource {
 
   private static final Logger log = Logger.getLogger(LogResource.class);
   
@@ -40,27 +44,29 @@ public class LogResource extends SecuredResource {
   private static final String SCOPE_TRACES = "traces";
   private static final String SCOPE_ALL = "all";
   
-	@Get
-  public DomRepresentation getLog() {
-	  if (authenticate() == false)
-	    throw new ResourceException(Status.CLIENT_ERROR_UNAUTHORIZED);
-	  
-    ProcessDefinition processDefinition = getProcessDefinition();
-    String scope = getQuery().getFirstValue("scope", SCOPE_ALL);
+  @Autowired
+  protected RepositoryService repositoryService;
+  
+  @Autowired
+  protected HistoryService historyService;
+  
+  @RequestMapping(value="/disco/log/{processDefinitionId}.dxml", method = RequestMethod.GET, produces="application/xml")
+  public @ResponseBody String getLog(@PathVariable String processDefinitionId, 
+      @RequestParam(value="scope", defaultValue=SCOPE_ALL) String scope) {
+    
+	  ProcessDefinition processDefinition = getProcessDefinition(processDefinitionId);
     
     if (scope.equals(SCOPE_SUMMARY) == false && scope.equals(SCOPE_TRACES) == false && scope.equals(SCOPE_ALL) == false) {
       throw new ActivitiIllegalArgumentException("scope parameter value '" + scope + "' is not valid, only all, traces and summary are accepted");
     }
     
-    List<HistoricProcessInstance> instanceList = ActivitiUtil.getHistoryService()
-        .createHistoricProcessInstanceQuery()
+    List<HistoricProcessInstance> instanceList = historyService.createHistoricProcessInstanceQuery()
         .processDefinitionId(processDefinition.getId())
         .orderByProcessInstanceStartTime()
         .asc()
         .list();
     
-    List<HistoricActivityInstance> activityList = ActivitiUtil.getHistoryService()
-        .createHistoricActivityInstanceQuery()
+    List<HistoricActivityInstance> activityList = historyService.createHistoricActivityInstanceQuery()
         .processDefinitionId(processDefinition.getId())
         .orderByHistoricActivityInstanceStartTime()
         .asc()
@@ -129,7 +135,7 @@ public class LogResource extends SecuredResource {
           Map<String, List<HistoricVariableInstance>> instanceVariableMap = null;
           
           if (scope.equals(SCOPE_ALL)) {
-            List<HistoricVariableInstance> variableList = ActivitiUtil.getHistoryService()
+            List<HistoricVariableInstance> variableList = historyService
                 .createHistoricVariableInstanceQuery()
                 .list();
             instanceVariableMap = sortVariableInstances(variableList);
@@ -198,13 +204,16 @@ public class LogResource extends SecuredResource {
         }
       }
 	    
-	    DomRepresentation result = new DomRepresentation(MediaType.APPLICATION_XML, doc);
-	    return result;
-	    
-	  } catch (Exception e) {
-	    log.error("Error building log", e);
-	    throw new ResourceException(Status.SERVER_ERROR_INTERNAL, e);
-	  }
+	    return transformDocumentToString(doc);
+	   
+	  } catch (ActivitiException e) {
+      log.error("Error building log", e);
+      throw e;
+      
+    } catch (Exception e) {
+      log.error("Error building log", e);
+      throw new ActivitiException("Error building log", e);
+    }
   }
 	
 	protected void createTraceAttributeElement(String key, String type, Element globalsElement, Document doc) {
@@ -250,7 +259,7 @@ public class LogResource extends SecuredResource {
 	}
 	
 	protected void addVariables(String instanceId, Map<String, HistoricVariableInstance> variableMap) {
-	  List<HistoricVariableInstance> variables = ActivitiUtil.getHistoryService().createHistoricVariableInstanceQuery()
+	  List<HistoricVariableInstance> variables = historyService.createHistoricVariableInstanceQuery()
 	      .processInstanceId(instanceId)
 	      .list();
 	  
@@ -350,13 +359,8 @@ public class LogResource extends SecuredResource {
     return description;
   }
 	
-	protected ProcessDefinition getProcessDefinition() {
-	  String processDefinitionId = getAttribute("processDefinitionId");
-    if (processDefinitionId == null) {
-      throw new ActivitiIllegalArgumentException("The processDefinitionId cannot be null");
-    }
-    
-    ProcessDefinition processDefinition = ActivitiUtil.getRepositoryService().createProcessDefinitionQuery()
+	protected ProcessDefinition getProcessDefinition(String processDefinitionId) {
+	  ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery()
         .processDefinitionId(processDefinitionId).singleResult();
 
     if (processDefinition == null) {

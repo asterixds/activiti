@@ -7,12 +7,13 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.activiti.engine.repository.Deployment;
-import org.activiti.rest.common.api.ActivitiUtil;
-import org.activiti.rest.service.BaseRestTestCase;
+import org.activiti.rest.service.BaseSpringRestTestCase;
 import org.activiti.rest.service.api.RestUrls;
-import org.restlet.data.Status;
-import org.restlet.representation.Representation;
-import org.restlet.resource.ClientResource;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.http.HttpStatus;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -25,33 +26,32 @@ import com.activiti.rest.service.api.EnterpriseRestUrls;
  * 
  * @author Tijs Rademakers
  */
-public class CatalogResourceTest extends BaseRestTestCase {
+public class CatalogResourceTest extends BaseSpringRestTestCase {
   
   /**
    * Test getting the catalog.
    * GET disco/catalog
    */
   public void testGetCatalog() throws Exception {
-    Deployment deployment = ActivitiUtil.getRepositoryService().createDeployment()
+    Deployment deployment = repositoryService.createDeployment()
         .addClasspathResource("com/activiti/rest/api/disco/oneTaskProcess.bpmn20.xml")
         .addClasspathResource("com/activiti/rest/api/disco/simpleProcess.bpmn20.xml")
         .deploy();
     
     for (int i = 0; i < 5; i++) {
-      ActivitiUtil.getRuntimeService().startProcessInstanceByKey("simple");
+      runtimeService.startProcessInstanceByKey("simple");
     }
     
     for (int i = 0; i < 3; i++) {
-      ActivitiUtil.getRuntimeService().startProcessInstanceByKey("oneTaskProcess");
+      runtimeService.startProcessInstanceByKey("oneTaskProcess");
     }
     
-    ClientResource client = getAuthenticatedClient(RestUrls.createRelativeResourceUrl(EnterpriseRestUrls.URL_DISCO_CATALOG));
-    Representation response = client.get();
-    assertEquals(Status.SUCCESS_OK, client.getResponse().getStatus());
+    HttpResponse response = executeXMLHttpRequest(new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
+        EnterpriseRestUrls.URL_DISCO_CATALOG)), HttpStatus.OK.value());
     
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-    Document doc = dBuilder.parse(response.getStream());
+    Document doc = dBuilder.parse(response.getEntity().getContent());
     Element catalog = doc.getDocumentElement();
     assertEquals("catalog", catalog.getNodeName());
     assertEquals("2", catalog.getAttribute("size"));
@@ -66,8 +66,8 @@ public class CatalogResourceTest extends BaseRestTestCase {
       logMap.put(log.getAttribute("id"), log);
     }
     
-    String simpleId = ActivitiUtil.getRepositoryService().createProcessDefinitionQuery().processDefinitionKey("simple").singleResult().getId();
-    String oneTaskProcessId = ActivitiUtil.getRepositoryService().createProcessDefinitionQuery().processDefinitionKey("oneTaskProcess").singleResult().getId();
+    String simpleId = repositoryService.createProcessDefinitionQuery().processDefinitionKey("simple").singleResult().getId();
+    String oneTaskProcessId = repositoryService.createProcessDefinitionQuery().processDefinitionKey("oneTaskProcess").singleResult().getId();
     
     assertTrue(logMap.containsKey(simpleId));
     Element log = logMap.get(simpleId);
@@ -98,17 +98,13 @@ public class CatalogResourceTest extends BaseRestTestCase {
     assertNotNull(timeElement.getAttribute("end"));
     assertNotNull(timeElement.getAttribute("timezone"));
     
-    ActivitiUtil.getRepositoryService().deleteDeployment(deployment.getId(), true);
+    repositoryService.deleteDeployment(deployment.getId(), true);
   }
   
   public void testGetCatalogUnauthenticated() throws Exception {
-    
-    ClientResource client = new ClientResource("http://localhost:8182/" + RestUrls.createRelativeResourceUrl(EnterpriseRestUrls.URL_DISCO_CATALOG));
-    try {
-      client.get();
-      fail("Expected authentication exception");
-    } catch (Exception e) {
-      assertEquals(Status.CLIENT_ERROR_UNAUTHORIZED.getCode(), client.getStatus().getCode());
-    }
+    HttpClient client = HttpClientBuilder.create().build();
+    HttpResponse response = client.execute(new HttpGet("http://localhost:" + HTTP_SERVER_PORT + 
+        "/service/" + RestUrls.createRelativeResourceUrl(EnterpriseRestUrls.URL_DISCO_CATALOG)));
+    assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getStatusLine().getStatusCode());
   }
 }

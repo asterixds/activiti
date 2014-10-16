@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.activiti.engine.impl.persistence.entity.JobEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +57,7 @@ public class WrappedJobExecutor extends JobExecutor {
 	}
 
 	@Override
-	protected void executeJobs(List<JobEntity> jobs) {
+	public void executeJobs(List<String> jobs) {
 		originalJobExecutor.executeJobs(jobs);
 	}
 

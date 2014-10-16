@@ -6,11 +6,11 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.activiti.rest.service.BaseRestTestCase;
+import org.activiti.rest.service.BaseSpringRestTestCase;
 import org.activiti.rest.service.api.RestUrls;
-import org.restlet.data.Status;
-import org.restlet.representation.Representation;
-import org.restlet.resource.ClientResource;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.springframework.http.HttpStatus;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -23,7 +23,7 @@ import com.activiti.rest.service.api.EnterpriseRestUrls;
  * 
  * @author Tijs Rademakers
  */
-public class ManifestResourceTest extends BaseRestTestCase {
+public class ManifestResourceTest extends BaseSpringRestTestCase {
   
   /**
    * Test getting the manifest.
@@ -31,13 +31,12 @@ public class ManifestResourceTest extends BaseRestTestCase {
    */
   public void testGetManifest() throws Exception {
     
-    ClientResource client = new ClientResource("http://localhost:8182/" + RestUrls.createRelativeResourceUrl(EnterpriseRestUrls.URL_DISCO_MANIFEST));
-    Representation response = client.get();
-    assertEquals(Status.SUCCESS_OK, client.getResponse().getStatus());
+    HttpResponse response = executeXMLHttpRequest(new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
+        EnterpriseRestUrls.URL_DISCO_MANIFEST)), HttpStatus.OK.value());
     
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-    Document doc = dBuilder.parse(response.getStream());
+    Document doc = dBuilder.parse(response.getEntity().getContent());
     Element manifest = doc.getDocumentElement();
     assertEquals("manifest", manifest.getNodeName());
     NodeList vendorList = manifest.getElementsByTagName("vendor");

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.activiti.engine.impl.jobexecutor.JobExecutor;
 import org.activiti.engine.impl.jobexecutor.RejectedJobsHandler;
-import org.activiti.engine.impl.persistence.entity.JobEntity;
 
 import com.activiti.addon.cluster.metrics.codahale.Meter;
 
@@ -21,7 +20,7 @@ public class GatherMetricsRejectedJobsHandler implements RejectedJobsHandler {
 		this.wrappedRejectedJobsHandler = rejectedJobsHandler;
 	}
 
-	public void jobsRejected(JobExecutor jobExecutor, List<JobEntity> jobs) {
+	public void jobsRejected(JobExecutor jobExecutor, List<String> jobs) {
 
 		// Delegate
 		if (wrappedRejectedJobsHandler != null) {

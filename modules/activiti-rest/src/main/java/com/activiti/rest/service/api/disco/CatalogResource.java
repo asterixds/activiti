@@ -8,35 +8,39 @@ import java.util.TimeZone;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.activiti.engine.ActivitiException;
+import org.activiti.engine.HistoryService;
+import org.activiti.engine.RepositoryService;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.repository.ProcessDefinition;
-import org.activiti.rest.common.api.ActivitiUtil;
-import org.activiti.rest.common.api.SecuredResource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.restlet.data.MediaType;
-import org.restlet.data.Status;
-import org.restlet.ext.xml.DomRepresentation;
-import org.restlet.resource.Get;
-import org.restlet.resource.ResourceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.activiti.rest.service.api.ServerProperties;
 
-public class CatalogResource extends SecuredResource {
+@RestController
+public class CatalogResource extends AbstractDiscoResource{
 
   private static final Logger log = Logger.getLogger(CatalogResource.class);
   
-	@Get
-  public DomRepresentation getCatalog() {
-	  if (authenticate() == false)
-	    throw new ResourceException(Status.CLIENT_ERROR_UNAUTHORIZED);
-	  
+  @Autowired
+  protected RepositoryService repositoryService;
+  
+  @Autowired
+  protected HistoryService historyService;
+  
+  @RequestMapping(value="/disco/catalog.xml", method = RequestMethod.GET, produces="application/xml")
+  public @ResponseBody String getCatalog() {
 	  try {
 	    
-	    List<ProcessDefinition> definitions = ActivitiUtil.getRepositoryService()
-	        .createProcessDefinitionQuery()
+	    List<ProcessDefinition> definitions = repositoryService.createProcessDefinitionQuery()
 	        .latestVersion()
 	        .list();
 	    
@@ -53,19 +57,22 @@ public class CatalogResource extends SecuredResource {
 	    
 	    addLogs(definitions, rootElement, doc);
 	    
-	    DomRepresentation result = new DomRepresentation(MediaType.APPLICATION_XML, doc);
-	    return result;
+	    return transformDocumentToString(doc);
+	    
+	  } catch (ActivitiException e) {
+	    log.error("Error building catalog", e);
+	    throw e;
 	    
 	  } catch (Exception e) {
 	    log.error("Error building catalog", e);
-	    throw new ResourceException(Status.SERVER_ERROR_INTERNAL, e);
+	    throw new ActivitiException("Error building catalog", e);
 	  }
   }
 	
 	protected void addLogs(List<ProcessDefinition> definitions, Element catalog, Document doc) {
 	  for (ProcessDefinition processDefinition : definitions) {
-	    long instanceCount = ActivitiUtil.getHistoryService().createHistoricProcessInstanceQuery().processDefinitionId(processDefinition.getId()).count();
-	    List<HistoricActivityInstance> activityList = ActivitiUtil.getHistoryService().createHistoricActivityInstanceQuery().processDefinitionId(processDefinition.getId()).orderByHistoricActivityInstanceStartTime().asc().list();
+	    long instanceCount = historyService.createHistoricProcessInstanceQuery().processDefinitionId(processDefinition.getId()).count();
+	    List<HistoricActivityInstance> activityList = historyService.createHistoricActivityInstanceQuery().processDefinitionId(processDefinition.getId()).orderByHistoricActivityInstanceStartTime().asc().list();
 	    
       String name = getDefinitionName(processDefinition);
       String description = getDefinitionDescription(processDefinition);

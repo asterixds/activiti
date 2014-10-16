@@ -3,24 +3,24 @@ package com.activiti.rest.service.api.disco;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.activiti.engine.ActivitiException;
 import org.apache.log4j.Logger;
-import org.restlet.data.MediaType;
-import org.restlet.data.Status;
-import org.restlet.ext.xml.DomRepresentation;
-import org.restlet.resource.Get;
-import org.restlet.resource.ResourceException;
-import org.restlet.resource.ServerResource;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.activiti.rest.service.api.ServerProperties;
 
-public class ManifestResource extends ServerResource {
+@RestController
+public class ManifestResource extends AbstractDiscoResource {
 
   private static final Logger log = Logger.getLogger(ManifestResource.class);
   
-	@Get
-  public DomRepresentation getManifest() {
+  @RequestMapping(value="/disco/manifest.xml", method = RequestMethod.GET, produces="application/xml")
+  public @ResponseBody String getManifest() {
 	  try {
 	    
 	    DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -57,13 +57,16 @@ public class ManifestResource extends ServerResource {
       addFilter("completed", catalog, doc);
       addFilter("pagination", catalog, doc);
 	    
-	    DomRepresentation result = new DomRepresentation(MediaType.APPLICATION_XML, doc);
-	    return result;
+	    return transformDocumentToString(doc);
 	    
-	  } catch (Exception e) {
-	    log.error("Error building manifest", e);
-	    throw new ResourceException(Status.SERVER_ERROR_INTERNAL, e);
-	  }
+	  } catch (ActivitiException e) {
+      log.error("Error building manifest", e);
+      throw e;
+      
+    } catch (Exception e) {
+      log.error("Error building manifest", e);
+      throw new ActivitiException("Error building manifest", e);
+    }
   }
 	
 	protected void addFilter(String type, Element catalog, Document doc) {
