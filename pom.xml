@@ -877,8 +877,13 @@
     </profile>
   </profiles>
 
-  <!-- Enterprise SNAPSHOT deployment -->
+  <!-- Enterprise deployment -->
   <distributionManagement>
+  	  <repository>
+  	      <id>alfresco.release.repo</id>
+  	      <name>Alfresco INTERNAL release</name>
+  	  	  <url>https://artifacts.alfresco.com/nexus/content/repositories/activiti-enterprise-releases/</url>
+  	  </repository>
       <snapshotRepository>
 	      <id>alfresco-internal-snapshots</id>
 	      <name>Alfresco INTERNAL snapshot</name>
