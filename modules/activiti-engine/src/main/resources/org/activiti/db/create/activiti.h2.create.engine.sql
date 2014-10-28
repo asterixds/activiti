@@ -6,10 +6,10 @@ create table ACT_GE_PROPERTY (
 );
 
 insert into ACT_GE_PROPERTY
-values ('schema.version', '5.16.4.0', 1);
+values ('schema.version', '5.17.0.0', 1);
 
 insert into ACT_GE_PROPERTY
-values ('schema.history', 'create(5.16.4.0)', 1);
+values ('schema.history', 'create(5.17.0.0)', 1);
 
 insert into ACT_GE_PROPERTY
 values ('next.dbid', '1', 1);
@@ -103,6 +103,7 @@ create table ACT_RE_PROCDEF (
     DGRM_RESOURCE_NAME_ varchar(4000),
     DESCRIPTION_ varchar(4000),
     HAS_START_FORM_KEY_ bit,
+    HAS_GRAPHICAL_NOTATION_ bit,
     SUSPENSION_STATE_ integer,
     TENANT_ID_ varchar(255) default '',
     primary key (ID_)

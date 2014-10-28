@@ -8,8 +8,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.activiti.rest.service.BaseSpringRestTestCase;
 import org.activiti.rest.service.api.RestUrls;
-import org.apache.http.HttpResponse;
+import org.apache.http.HttpHeaders;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.message.BasicHeader;
 import org.springframework.http.HttpStatus;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -31,12 +33,16 @@ public class ManifestResourceTest extends BaseSpringRestTestCase {
    */
   public void testGetManifest() throws Exception {
     
-    HttpResponse response = executeXMLHttpRequest(new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
-        EnterpriseRestUrls.URL_DISCO_MANIFEST)), HttpStatus.OK.value());
+    HttpGet request = new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
+        EnterpriseRestUrls.URL_DISCO_MANIFEST));
+    request.addHeader(new BasicHeader(HttpHeaders.ACCEPT, "application/xml"));
+    CloseableHttpResponse response = executeBinaryRequest(request, HttpStatus.OK.value());
     
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
     Document doc = dBuilder.parse(response.getEntity().getContent());
+    closeResponse(response);
+    
     Element manifest = doc.getDocumentElement();
     assertEquals("manifest", manifest.getNodeName());
     NodeList vendorList = manifest.getElementsByTagName("vendor");

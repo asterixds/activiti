@@ -14,10 +14,13 @@ import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.rest.service.BaseSpringRestTestCase;
 import org.activiti.rest.service.api.RestUrls;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicHeader;
 import org.springframework.http.HttpStatus;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -62,12 +65,16 @@ public class LogResourceTest extends BaseSpringRestTestCase {
     String oneTaskProcessId = repositoryService.createProcessDefinitionQuery().processDefinitionKey("oneTaskProcess").singleResult().getId();
     String anotherOneTaskProcessId = repositoryService.createProcessDefinitionQuery().processDefinitionKey("anotherOneTaskProcess").singleResult().getId();
     
-    HttpResponse response = executeXMLHttpRequest(new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
-        EnterpriseRestUrls.URL_DISCO_LOG, simpleId) + "?scope=summary"), HttpStatus.OK.value());
+    HttpGet request = new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
+        EnterpriseRestUrls.URL_DISCO_LOG, simpleId) + "?scope=summary");
+    request.addHeader(new BasicHeader(HttpHeaders.ACCEPT, "application/xml"));
+    CloseableHttpResponse response = executeBinaryRequest(request, HttpStatus.OK.value());
     
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
     Document doc = dBuilder.parse(response.getEntity().getContent());
+    closeResponse(response);
+    
     Element log = doc.getDocumentElement();
     assertEquals("log", log.getNodeName());
     assertEquals("Simple Process", log.getAttribute("name"));
@@ -111,12 +118,16 @@ public class LogResourceTest extends BaseSpringRestTestCase {
     NodeList traceList = log.getElementsByTagName("trace");
     assertEquals(0, traceList.getLength());
     
-    response = executeXMLHttpRequest(new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
-        EnterpriseRestUrls.URL_DISCO_LOG, oneTaskProcessId)), HttpStatus.OK.value());
+    request = new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
+        EnterpriseRestUrls.URL_DISCO_LOG, oneTaskProcessId));
+    request.addHeader(new BasicHeader(HttpHeaders.ACCEPT, "application/xml"));
+    response = executeBinaryRequest(request, HttpStatus.OK.value());
     
     dbFactory = DocumentBuilderFactory.newInstance();
     dBuilder = dbFactory.newDocumentBuilder();
     doc = dBuilder.parse(response.getEntity().getContent());
+    closeResponse(response);
+    
     log = doc.getDocumentElement();
     assertEquals("log", log.getNodeName());
     assertEquals("The One Task Process", log.getAttribute("name"));
@@ -129,12 +140,16 @@ public class LogResourceTest extends BaseSpringRestTestCase {
     traceAttributeList = globalsElement.getElementsByTagName("traceAttribute");
     assertEquals(0, traceAttributeList.getLength());
     
-    response = executeXMLHttpRequest(new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
-        EnterpriseRestUrls.URL_DISCO_LOG, anotherOneTaskProcessId)), HttpStatus.OK.value());
+    request = new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
+        EnterpriseRestUrls.URL_DISCO_LOG, anotherOneTaskProcessId));
+    request.addHeader(new BasicHeader(HttpHeaders.ACCEPT, "application/xml"));
+    response = executeBinaryRequest(request, HttpStatus.OK.value());
     
     dbFactory = DocumentBuilderFactory.newInstance();
     dBuilder = dbFactory.newDocumentBuilder();
     doc = dBuilder.parse(response.getEntity().getContent());
+    closeResponse(response);
+    
     log = doc.getDocumentElement();
     assertEquals("log", log.getNodeName());
     assertEquals("The One Task Process", log.getAttribute("name"));
@@ -177,12 +192,16 @@ public class LogResourceTest extends BaseSpringRestTestCase {
     
     String simpleId = repositoryService.createProcessDefinitionQuery().processDefinitionKey("simple").singleResult().getId();
     
-    HttpResponse response = executeXMLHttpRequest(new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
-        EnterpriseRestUrls.URL_DISCO_LOG, simpleId) + "?scope=traces"), HttpStatus.OK.value());
+    HttpGet request = new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
+        EnterpriseRestUrls.URL_DISCO_LOG, simpleId) + "?scope=traces");
+    request.addHeader(new BasicHeader(HttpHeaders.ACCEPT, "application/xml"));
+    CloseableHttpResponse response = executeBinaryRequest(request, HttpStatus.OK.value());
     
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
     Document doc = dBuilder.parse(response.getEntity().getContent());
+    closeResponse(response);
+    
     Element log = doc.getDocumentElement();
     assertEquals("log", log.getNodeName());
     assertEquals("Simple Process", log.getAttribute("name"));
@@ -264,12 +283,16 @@ public class LogResourceTest extends BaseSpringRestTestCase {
     
     String simpleId = repositoryService.createProcessDefinitionQuery().processDefinitionKey("simple").singleResult().getId();
     
-    HttpResponse response = executeXMLHttpRequest(new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
-        EnterpriseRestUrls.URL_DISCO_LOG, simpleId) + "?scope=all"), HttpStatus.OK.value());
+    HttpGet request = new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
+        EnterpriseRestUrls.URL_DISCO_LOG, simpleId) + "?scope=all");
+    request.addHeader(new BasicHeader(HttpHeaders.ACCEPT, "application/xml"));
+    CloseableHttpResponse response = executeBinaryRequest(request, HttpStatus.OK.value());
     
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
     Document doc = dBuilder.parse(response.getEntity().getContent());
+    closeResponse(response);
+    
     Element log = doc.getDocumentElement();
     assertEquals("log", log.getNodeName());
     assertEquals("Simple Process", log.getAttribute("name"));

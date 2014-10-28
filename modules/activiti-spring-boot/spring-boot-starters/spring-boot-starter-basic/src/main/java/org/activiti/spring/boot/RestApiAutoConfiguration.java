@@ -17,10 +17,18 @@ package org.activiti.spring.boot;
 
 import org.activiti.rest.common.application.ContentTypeResolver;
 import org.activiti.rest.common.application.DefaultContentTypeResolver;
+import org.activiti.rest.security.BasicAuthenticationProvider;
 import org.activiti.rest.service.api.RestResponseFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -31,8 +39,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author Josh Long
  */
 @Configuration
-@ComponentScan({"org.activiti.rest.exception", "org.activiti.rest.service.api"})
-//@ConditionalOnClass(name = {"javax.servlet.http.HttpServlet"})
+@AutoConfigureAfter(SecurityAutoConfiguration.class)
+@ConditionalOnClass(name = {"org.springframework.web.servlet.DispatcherServlet"})
 public class RestApiAutoConfiguration {
 
   @Bean()
@@ -53,4 +61,38 @@ public class RestApiAutoConfiguration {
     ObjectMapper mapper = new ObjectMapper();
     return mapper;
   }
+  
+  @Configuration
+  @ComponentScan({"org.activiti.rest.exception", "org.activiti.rest.service.api"}) 
+  public static class ComponentScanRestResourcesConfiguration {
+  	
+  	// The component scan cannot be on the root configuration, it would trigger
+  	// always even if the condition is evaluating to false.
+  	// Hence, this 'dummy' configuration
+  	
+  }
+
+  @Configuration
+  @EnableWebSecurity
+  @EnableWebMvcSecurity
+  public static class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+    
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+      return new BasicAuthenticationProvider();
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+      http
+        .authenticationProvider(authenticationProvider())
+        .csrf().disable()
+        .authorizeRequests()
+          .anyRequest().authenticated()
+          .and()
+        .httpBasic();
+    }
+  }
+
+  
 }

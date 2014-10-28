@@ -9,10 +9,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.rest.service.BaseSpringRestTestCase;
 import org.activiti.rest.service.api.RestUrls;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.http.HttpHeaders;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicHeader;
 import org.springframework.http.HttpStatus;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -46,12 +48,16 @@ public class CatalogResourceTest extends BaseSpringRestTestCase {
       runtimeService.startProcessInstanceByKey("oneTaskProcess");
     }
     
-    HttpResponse response = executeXMLHttpRequest(new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
-        EnterpriseRestUrls.URL_DISCO_CATALOG)), HttpStatus.OK.value());
+    HttpGet request = new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(
+        EnterpriseRestUrls.URL_DISCO_CATALOG));
+    request.addHeader(new BasicHeader(HttpHeaders.ACCEPT, "application/xml"));
+    CloseableHttpResponse response = executeBinaryRequest(request, HttpStatus.OK.value());
     
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
     Document doc = dBuilder.parse(response.getEntity().getContent());
+    closeResponse(response);
+    
     Element catalog = doc.getDocumentElement();
     assertEquals("catalog", catalog.getNodeName());
     assertEquals("2", catalog.getAttribute("size"));
@@ -102,9 +108,14 @@ public class CatalogResourceTest extends BaseSpringRestTestCase {
   }
   
   public void testGetCatalogUnauthenticated() throws Exception {
-    HttpClient client = HttpClientBuilder.create().build();
-    HttpResponse response = client.execute(new HttpGet("http://localhost:" + HTTP_SERVER_PORT + 
+    CloseableHttpClient client = HttpClientBuilder.create().build();
+    CloseableHttpResponse response = null;
+    try {
+      response = client.execute(new HttpGet("http://localhost:" + HTTP_SERVER_PORT + 
         "/service/" + RestUrls.createRelativeResourceUrl(EnterpriseRestUrls.URL_DISCO_CATALOG)));
-    assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getStatusLine().getStatusCode());
+      assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getStatusLine().getStatusCode());
+    } finally {
+      closeResponse(response);
+    }
   }
 }
