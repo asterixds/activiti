@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.ActivitiException;
-import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.impl.test.PluggableActivitiTestCase;
 import org.activiti.engine.impl.util.CollectionUtil;
 import org.activiti.engine.runtime.Execution;
@@ -434,8 +433,25 @@ public class InclusiveGatewayTest extends PluggableActivitiTestCase {
   @Deployment
   public void testAsyncBehavior() {
     ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("async");
-    waitForJobExecutorToProcessAllJobs(3000, 500);
+    waitForJobExecutorToProcessAllJobs(10000, 500);
     assertEquals(0, runtimeService.createProcessInstanceQuery().processInstanceId(processInstance.getId()).count());
+  }
+  
+  @Deployment
+  public void testDirectSequenceFlow() {
+    Map<String, Object> varMap = new HashMap<String, Object>();
+    varMap.put("input", 1);
+    ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("inclusiveGwDirectSequenceFlow", varMap);
+    Task task = taskService.createTaskQuery().singleResult();
+    assertNotNull(task);
+    assertEquals("theTask1", task.getTaskDefinitionKey());
+    taskService.complete(task.getId());
+    assertEquals(0, runtimeService.createProcessInstanceQuery().processInstanceId(processInstance.getId()).count());
+    
+    varMap = new HashMap<String, Object>();
+    varMap.put("input", 3);
+    processInstance = runtimeService.startProcessInstanceByKey("inclusiveGwDirectSequenceFlow", varMap);
+    assertTrue(processInstance.isEnded());
   }
   
   /*@Deployment

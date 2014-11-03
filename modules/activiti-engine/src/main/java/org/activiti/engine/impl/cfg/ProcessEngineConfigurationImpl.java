@@ -59,6 +59,7 @@ import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.activiti.engine.impl.RuntimeServiceImpl;
 import org.activiti.engine.impl.ServiceImpl;
 import org.activiti.engine.impl.TaskServiceImpl;
+import org.activiti.engine.impl.asyncexecutor.DefaultAsyncJobExecutor;
 import org.activiti.engine.impl.bpmn.data.ItemInstance;
 import org.activiti.engine.impl.bpmn.deployer.BpmnDeployer;
 import org.activiti.engine.impl.bpmn.parser.BpmnParseHandlers;
@@ -456,7 +457,9 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     initServices();
     initIdGenerator();
     initDeployers();
+    initJobHandlers();
     initJobExecutor();
+    initAsyncExecutor();
     initDataSource();
     initTransactionFactory();
     initSqlSessionFactory();
@@ -1111,16 +1114,8 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
       processDiagramGenerator = new DefaultProcessDiagramGenerator();
     }
   }
-
-  // job executor /////////////////////////////////////////////////////////////
   
-  protected void initJobExecutor() {
-    if (jobExecutor==null) {
-      jobExecutor = new DefaultJobExecutor();
-    }
-
-    jobExecutor.setClockReader(this.clock);
-
+  protected void initJobHandlers() {
     jobHandlers = new HashMap<String, JobHandler>();
     TimerExecuteNestedActivityJobHandler timerExecuteNestedActivityJobHandler = new TimerExecuteNestedActivityJobHandler();
     jobHandlers.put(timerExecuteNestedActivityJobHandler.getType(), timerExecuteNestedActivityJobHandler);
@@ -1149,18 +1144,42 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
         jobHandlers.put(customJobHandler.getType(), customJobHandler);      
       }
     }
+  }
 
-    jobExecutor.setCommandExecutor(commandExecutor);
-    jobExecutor.setAutoActivate(jobExecutorActivate);
-    
-    if(jobExecutor.getRejectedJobsHandler() == null) {
-      if(customRejectedJobsHandler != null) {
-        jobExecutor.setRejectedJobsHandler(customRejectedJobsHandler);
-      } else {
-        jobExecutor.setRejectedJobsHandler(new CallerRunsRejectedJobsHandler());
+  // job executor /////////////////////////////////////////////////////////////
+  
+  protected void initJobExecutor() {
+    if (isAsyncExecutorEnabled() == false) {
+      if (jobExecutor == null) {
+        jobExecutor = new DefaultJobExecutor();
+      }
+  
+      jobExecutor.setClockReader(this.clock);
+  
+      jobExecutor.setCommandExecutor(commandExecutor);
+      jobExecutor.setAutoActivate(jobExecutorActivate);
+      
+      if (jobExecutor.getRejectedJobsHandler() == null) {
+        if(customRejectedJobsHandler != null) {
+          jobExecutor.setRejectedJobsHandler(customRejectedJobsHandler);
+        } else {
+          jobExecutor.setRejectedJobsHandler(new CallerRunsRejectedJobsHandler());
+        }
       }
     }
-    
+  }
+  
+  // async executor /////////////////////////////////////////////////////////////
+  
+  protected void initAsyncExecutor() {
+    if (isAsyncExecutorEnabled()) {
+      if (asyncExecutor == null) {
+        asyncExecutor = new DefaultAsyncJobExecutor();
+      }
+  
+      asyncExecutor.setCommandExecutor(commandExecutor);
+      asyncExecutor.setAutoActivate(asyncExecutorActivate);
+    }
   }
   
   // history //////////////////////////////////////////////////////////////////

@@ -735,6 +735,7 @@
         <module>modules/activiti-diagram-rest</module>
         <module>modules/activiti-rest</module>
         <module>modules/activiti-spring</module>
+        <module>modules/activiti-spring-boot</module>
         <module>modules/activiti-cxf</module>
         <module>modules/activiti-mule</module>
         <module>modules/activiti-camel</module>
@@ -773,14 +774,15 @@
     <profile>
       <id>check</id>
       <modules>
-        <module>modules/activiti-spring</module>
-        <module>modules/activiti-common-rest</module>
         <module>modules/activiti-bpmn-model</module>
         <module>modules/activiti-process-validation</module>
         <module>modules/activiti-image-generator</module>
         <module>modules/activiti-bpmn-converter</module>
         <module>modules/activiti-bpmn-layout</module>
         <module>modules/activiti-json-converter</module>
+        <module>modules/activiti-spring</module>
+        <module>modules/activiti-spring-boot</module>
+        <module>modules/activiti-common-rest</module>
         <module>modules/activiti-simple-workflow</module>
         <module>modules/activiti-rest</module>
         <module>modules/activiti-cxf</module>
@@ -909,7 +911,12 @@
       <url>http://www.alfresco.com</url>
     </developer>
     <developer>
-      <name>Frederik Heremans</name>
+      <name>Yvo Swillens</name>
+      <organization>Alfresco</organization>
+      <url>http://www.alfresco.com</url>
+    </developer>
+    <developer>
+      <name>Erik Winlof</name>
       <organization>Alfresco</organization>
       <url>http://www.alfresco.com</url>
     </developer>
