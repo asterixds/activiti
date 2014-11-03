@@ -11,17 +11,14 @@
 
     <artifactId>spring-boot-starter-security</artifactId>
 
-
     <dependencies>
         <dependency>
             <groupId>com.activiti</groupId>
             <artifactId>activiti-engine</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.activiti</groupId>
             <artifactId>activiti-spring</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

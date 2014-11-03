@@ -44,7 +44,7 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-common-rest</artifactId>
             <optional>true</optional>
         </dependency>
@@ -59,7 +59,6 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
-            <version>1.7.5</version>
             <scope>test</scope>
         </dependency>
 
