@@ -419,12 +419,12 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   
   protected void initLicenseHolder() {
     licenseHolder = new LicenseHolder();
-    licenseHolder.setClock(clock);;
+    licenseHolder.setClock(clock);
   }
 
   private final void verifyLicense() {
-    if(!licenseHolder.isLicenseValid()) {
-      throw new ActivitiException("Cannot create process engine: invalid license");
+    if (!licenseHolder.isLicenseValid()) {
+      log.info("Found an invalid license, no new process instances and tasks can be started");
     } else {
       log.info("License found: " + licenseHolder.getLicenseInformation());
     }
