@@ -238,7 +238,7 @@ public class ExecutionEntity extends VariableScopeImpl implements ActivityExecut
    * persisted reference to the parent of this execution.
    * 
    * @see #getParent()
-   * @see #setParent(ExecutionEntity)
+   * @see #setParentId(String)
    */
   protected String parentId;
   
@@ -289,7 +289,7 @@ public class ExecutionEntity extends VariableScopeImpl implements ActivityExecut
 
     return createdExecution;
   }
-  
+
   public PvmProcessInstance createSubProcessInstance(PvmProcessDefinition processDefinition) {
     ExecutionEntity subProcessInstance = newExecution();
     
@@ -304,6 +304,10 @@ public class ExecutionEntity extends VariableScopeImpl implements ActivityExecut
     Context.getCommandContext().getHistoryManager()
       .recordSubProcessInstanceStart(this, subProcessInstance);
 
+    if (Context.getProcessEngineConfiguration() != null && Context.getProcessEngineConfiguration().getEventDispatcher().isEnabled()) {
+      Context.getProcessEngineConfiguration().getEventDispatcher().dispatchEvent(
+        ActivitiEventBuilder.createEntityEvent(ActivitiEventType.ENTITY_CREATED, subProcessInstance));
+    }
     return subProcessInstance;
   }
 
@@ -1420,7 +1424,7 @@ public class ExecutionEntity extends VariableScopeImpl implements ActivityExecut
    **/
   public IdentityLinkEntity involveUser(String userId, String type) {
     for (IdentityLinkEntity identityLink : getIdentityLinks()) {
-      if (identityLink.getUserId().equals(userId)) {
+      if (identityLink.isUser() && identityLink.getUserId().equals(userId)) {
         return identityLink;
       }
     }
