@@ -34,6 +34,8 @@ public final class LicenseHolder {
   public static final String NUMBER_PROCESSES = "numberOfProcesses";
   public static final String NUMBER_EDITORS = "numberOfEditors";
   public static final String NUMBER_ADMINS = "numberOfAdmins";
+  public static final String MULTI_TENANT = "multiTenant";
+  public static final String DEFAULT_TENANT = "defaultTenant";
 
   private static List<String> validVersionsList = Arrays.asList("1.0ev", "1.0ent", "1.0dep");
   
@@ -122,6 +124,8 @@ public final class LicenseHolder {
     featureInfo.setNumberOfProcesses(Integer.valueOf(license.getFeature(NUMBER_PROCESSES)));
     featureInfo.setNumberOfEditors(Integer.valueOf(license.getFeature(NUMBER_EDITORS)));
     featureInfo.setNumberOfAdmins(Integer.valueOf(license.getFeature(NUMBER_ADMINS)));
+    featureInfo.setMultiTenant(Boolean.valueOf(license.getFeature(MULTI_TENANT)));
+    featureInfo.setDefaultTenant(license.getFeature(DEFAULT_TENANT));
     return featureInfo;
   }
   
@@ -260,10 +264,14 @@ public final class LicenseHolder {
     strb.append("Good After date:" + license.getFeature(GOOD_AFTER_DATE) + separator);
     strb.append("Good Before date:" + license.getFeature(GOOD_BEFORE_DATE) + separator);
     
+    FeatureInfo featureInfo = getLicenseFeatureInfo();
     if (isDepartemental()) {
-      FeatureInfo featureInfo = getLicenseFeatureInfo();
       strb.append("Max number of process instances:" + featureInfo.getNumberOfProcesses() + separator);
     }
+    
+    strb.append("Multi tenant?:" + featureInfo.isMultiTenant() + separator);
+    strb.append("Default tenant name:" + featureInfo.getDefaultTenant() + separator);
+    
     strb.append("------------------------------------------" + separator);
     
     return strb.toString();

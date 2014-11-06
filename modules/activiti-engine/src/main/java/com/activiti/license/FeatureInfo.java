@@ -6,6 +6,8 @@ public class FeatureInfo {
 	protected int numberOfProcesses = 100;
 	protected int numberOfEditors = 5;
 	protected int numberOfAdmins = 1;
+	protected boolean multiTenant = false;
+	protected String defaultTenant = "test";
 	
 	public int getNumberOfLicenses() {
 		return numberOfLicenses;
@@ -31,4 +33,16 @@ public class FeatureInfo {
 	public void setNumberOfAdmins(int numberOfAdmins) {
 		this.numberOfAdmins = numberOfAdmins;
 	}
+  public boolean isMultiTenant() {
+    return multiTenant;
+  }
+  public void setMultiTenant(boolean multiTenant) {
+    this.multiTenant = multiTenant;
+  }
+  public String getDefaultTenant() {
+    return defaultTenant;
+  }
+  public void setDefaultTenant(String defaultTenant) {
+    this.defaultTenant = defaultTenant;
+  }
 }
