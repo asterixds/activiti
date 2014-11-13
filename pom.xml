@@ -7,7 +7,7 @@
   <groupId>com.activiti</groupId>
   <artifactId>activiti-root</artifactId>
   <packaging>pom</packaging>
-  <version>5.17.0-SNAPSHOT</version>
+  <version>5.17.0.0</version>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <spring.framework.version>4.0.6.RELEASE</spring.framework.version>
@@ -740,7 +740,7 @@
         <module>modules/activiti-mule</module>
         <module>modules/activiti-camel</module>
         <module>modules/activiti-cdi</module>
-        <module>modules/activiti-osgi</module>
+        <!-- <module>modules/activiti-osgi</module> -->
         <module>modules/activiti-ldap</module>
       </modules>
       <build>

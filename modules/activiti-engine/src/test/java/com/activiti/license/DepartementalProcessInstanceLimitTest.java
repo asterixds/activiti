@@ -38,7 +38,7 @@ public class DepartementalProcessInstanceLimitTest {
         licenseHolder.setCustomLocationClassPath("com/activiti/license/limited.lic");
       }
       
-    }.buildProcessEngine();
+    }.setDatabaseSchemaUpdate("true").buildProcessEngine();
     
     // Deploy test process
     deployOneTaskTestProcess();
