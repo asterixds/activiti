@@ -124,8 +124,7 @@ public class IntegrationAutoConfigurationTest {
         }
 
         public static class AnalysingService {
-            private final AtomicReference<String> stringAtomicReference
-                    = new AtomicReference<String>();
+            private final AtomicReference<String> stringAtomicReference = new AtomicReference<String>();
 
             public void dump(String projectId) {
                 this.stringAtomicReference.set(projectId);
