@@ -220,13 +220,13 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 		String clusterName = clusterConfigProperties.getClusterName();
 		if (clusterName == null) {
 			logger.info("No cluster name defined. Default to 'dev'");
-			clusterName = "dev-" + System.getProperty("user.name");
+			clusterName = "cluster-" + System.getProperty("user.name");
 		}
 		
 		String clusterPassword = clusterConfigProperties.getClusterPassword();
 		if (clusterPassword == null) {
 			logger.info("No cluster password defined. Default to default one");
-			clusterPassword = "dev-pass";
+			clusterPassword = "cluster-pass";
 		}
 		
 		config.setGroupConfig(new GroupConfig(clusterName, clusterPassword));
