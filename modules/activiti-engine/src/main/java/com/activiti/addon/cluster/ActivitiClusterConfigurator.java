@@ -1,7 +1,6 @@
 package com.activiti.addon.cluster;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -9,6 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.activiti.engine.ActivitiException;
 import org.activiti.engine.ProcessEngineLifecycleListener;
 import org.activiti.engine.cfg.AbstractProcessEngineConfigurator;
 import org.activiti.engine.cfg.ProcessEngineConfigurator;
@@ -173,13 +173,9 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 	/** A distributed map for the shared 'master' configuration */
 	protected IMap<String, Object> masterConfigurationMap;
 	
-	public ActivitiClusterConfigurator() {
-	}
-	
 	public ActivitiClusterConfigurator(ClusterConfigProperties clusterConfigProperties) {
 	  this.clusterConfigProperties = clusterConfigProperties;
 	}
-
 	
 	/*
 	 * The logic 
@@ -193,9 +189,6 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 	  }
 
 		logger.info(NAME + " : initializing ...");
-		
-		// Read properties from classpath
-		initProperties();
 		
 		// Fire up Hazelcast with the default config
 		initHazelcast();
@@ -218,12 +211,6 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 		
 		// Add custom command interceptor (keeps metrics for command execution)
 		initCustomCommandInterceptor(processEngineConfiguration);
-	}
-	
-	protected void initProperties() {
-	  if (clusterConfigProperties == null) {
-	    clusterConfigProperties = new ClusterConfigProperties();
-	  }
 	}
 	
 	protected void initHazelcast() {
@@ -251,14 +238,15 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 		JoinConfig joinConfig = new JoinConfig();
 		networkConfig.setJoin(joinConfig);
 		
-		Boolean multiCastEnabled = clusterConfigProperties.isNetworkMulticastEnabled();
-		Boolean tcpIpEnabled = clusterConfigProperties.isNetworkTcpEnabled();
+		Boolean multiCastEnabled = clusterConfigProperties.getNetworkMulticastEnabled();
+		Boolean tcpIpEnabled = clusterConfigProperties.getNetworkTcpEnabled();
 		
-		if (!multiCastEnabled && !tcpIpEnabled) {
+		if ((multiCastEnabled == null || !multiCastEnabled) && (tcpIpEnabled == null || !tcpIpEnabled)) {
 			logger.info("No correct configuration found for network multicast/tcpIp (both are 'false') : defaulting to multicast");
 			multiCastEnabled = true;
 		}
-		if (multiCastEnabled && tcpIpEnabled) {
+		
+		if (multiCastEnabled != null && multiCastEnabled && tcpIpEnabled != null && tcpIpEnabled) {
 			logger.info("No correct configuration found for network multicast/tcpIp (both are 'true'): defaulting to multicast");
 			multiCastEnabled = true;
 			tcpIpEnabled = false;
@@ -273,11 +261,9 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 		
 		if (multiCastEnabled) {
 		  
-		  String startingPortString = clusterConfigProperties.getNetworkStartingPort();
-	    Integer startingPort = 5701;
-	    if (startingPortString != null) {
-	      startingPort = Integer.valueOf(startingPortString);
-	    } else {
+		  Integer startingPort = clusterConfigProperties.getNetworkStartingPort();
+	    if (startingPort == null) {
+	      startingPort = 5701;
 	      logger.info("No starting port set, using default one (5701");
 	    }
 	    networkConfig.setPort(startingPort);
@@ -293,11 +279,9 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 			}
 			multicastConfig.setMulticastGroup(multiCastGroup);
 			
-			String multiCastPortString = clusterConfigProperties.getNetworkMulticastPort();
-			Integer multiCastPort = 54327;
-			if (multiCastPortString != null) {
-				multiCastPort = Integer.valueOf(multiCastPortString);
-			} else {
+			Integer multiCastPort = clusterConfigProperties.getNetworkMulticastPort();
+			if (multiCastPort == null) {
+			  multiCastPort = 54327;
 				logger.info("Multicast is enabled, but no group set. Defaulting to " + multiCastPort);
 			}
 			multicastConfig.setMulticastPort(multiCastPort);
@@ -309,17 +293,16 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 		  
 			tcpIpConfig.setEnabled(true);
 			tcpIpConfig.setConnectionTimeoutSeconds(30);
-			String tcpInterfaces = clusterConfigProperties.getNetworkTcpInterfaces();
-			if (tcpInterfaces != null) {
-				tcpIpConfig.setMembers(Arrays.asList(tcpInterfaces));
+			List<String> tcpInterfaces = clusterConfigProperties.getNetworkTcpInterfaces();
+			if (tcpInterfaces != null && tcpInterfaces.size() > 0) {
+				tcpIpConfig.setMembers(tcpInterfaces);
 			} else {
 				logger.warn("Tcp ip is enabled, but no interfaces provided!");
 			}
-			
 		}
 		
 		// Security
-		if (clusterConfigProperties.isSecurityEnabled()) {
+		if (clusterConfigProperties.getSecurityEnabled() != null && clusterConfigProperties.getSecurityEnabled()) {
 			SymmetricEncryptionConfig symmetricEncryptionConfig = new SymmetricEncryptionConfig();
 			symmetricEncryptionConfig.setEnabled(true);
 			symmetricEncryptionConfig.setAlgorithm("PBEWithMD5AndDES");
@@ -330,16 +313,17 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 			} else {
 				logger.warn("Security is enabled, but not password set!");
 			}
+			
 			String securitySalt = clusterConfigProperties.getSecuritySalt();
 			if (securitySalt != null) {
 				symmetricEncryptionConfig.setSalt(securitySalt);
 			} else {
 				logger.warn("Security is enabled, but no salt set!");
 			}
-			Integer securityIterationCount = 19;
-			String securityIterationCountString = clusterConfigProperties.getSecurityIterationCount();
-			if (securityIterationCountString != null) {
-				securityIterationCount = Integer.valueOf(securityIterationCountString);
+	
+			Integer securityIterationCount = clusterConfigProperties.getSecurityIterationCount();
+			if (securityIterationCount == null) {
+			  securityIterationCount = 19;
 			}
 			symmetricEncryptionConfig.setIterationCount(securityIterationCount);
 			
@@ -466,12 +450,9 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 			logger.info("Master configuration disabled.");
 			masterConfigurationState.setUsingMasterConfiguration(false);
 			
-			String requiresMasterConfigString = clusterConfigProperties.getMasterConfigurationRequired();
-			if (requiresMasterConfigString != null) {
-				Boolean requiresMasterConfig = Boolean.valueOf(requiresMasterConfigString);
-				if (requiresMasterConfig) {
-					throw new RuntimeException("This Activiti instance is configured to only boot up when a valid master configuration is available.");
-				}
+			Boolean requiresMasterConfig = clusterConfigProperties.getMasterConfigurationRequired();
+			if (requiresMasterConfig != null && requiresMasterConfig) {
+				throw new ActivitiException("This Activiti instance is configured to only boot up when a valid master configuration is available.");
 			}
 			
 		}
@@ -748,11 +729,9 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 		sendEventsRunnable.setMasterConfigurationState(masterConfigurationState);
 		sendEventsRunnable.setWrappedJobExecutor(wrappedJobExecutor);
 		
-		String metricSendingIntervalString = clusterConfigProperties.getMetricSendingInterval();
-		Integer metricSendingInterval = 60;
-		if (metricSendingIntervalString != null) {
-			metricSendingInterval = Integer.valueOf(metricSendingIntervalString);
-		} else {
+		Integer metricSendingInterval = clusterConfigProperties.getMetricSendingInterval();
+		if (metricSendingInterval == null) {
+		  metricSendingInterval = 60;
 			logger.info("No metric sending interval configured, defaulting to " + metricSendingInterval + " seconds");
 		}
 

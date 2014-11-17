@@ -1,5 +1,7 @@
 package com.activiti.addon.cluster;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -36,97 +38,224 @@ public class ClusterConfigProperties {
   private static final String SECURITY_SALT = "security.salt";
   private static final String SECURITY_ITERATION_COUNT = "security.iterationcount";
   
-  protected Properties properties = new Properties();
-  protected boolean exists;
+  protected String clusterName;
+  protected String clusterPassword;
+  protected Integer networkStartingPort;
+  
+  protected Boolean masterConfigurationRequired;
+  protected Integer metricSendingInterval;
+  
+  protected Boolean networkMulticastEnabled;
+  protected String networkMulticastGroup;
+  protected Integer networkMulticastPort;
+  
+  protected Boolean networkTcpEnabled;
+  protected String networkTcpHost;
+  protected Integer networkTcpPort;
+  protected List<String> networkTcpInterfaces = new ArrayList<String>();
+  
+  protected Boolean securityEnabled;
+  protected String securityPassword;
+  protected String securitySalt;
+  protected Integer securityIterationCount;
+  
+  protected boolean propertyFileExists;
   
   public ClusterConfigProperties() {
     try {
+      Properties properties = new Properties();
       properties.load(this.getClass().getResourceAsStream(PROPERTIES_FILE));
-      exists = true; // Not catching exception = file exists
+      propertyFileExists = true; // Not catching exception = file exists
+      
+      clusterName = properties.getProperty(CLUSTER_NAME);
+      clusterPassword = properties.getProperty(CLUSTER_PASSWORD);
+      networkStartingPort = readIntegerProperty(NETWORK_STARTINGPORT, properties);
+      
+      masterConfigurationRequired = readBooleanProperty(MASTER_CFG_REQUIRED, properties);
+      metricSendingInterval = readIntegerProperty(METRIC_SENDING_INTERVAL, properties);
+      
+      networkMulticastEnabled = readBooleanProperty(NETWORK_MULTICAST_ENABLED, properties);
+      networkMulticastGroup = properties.getProperty(NETWORK_MULTICAST_GROUP);
+      networkMulticastPort = readIntegerProperty(NETWORK_MULTICAST_PORT, properties);
+      
+      networkTcpEnabled = readBooleanProperty(NETWORK_TCP_ENABLED, properties);
+      networkTcpHost = properties.getProperty(NETWORK_TCP_HOST);
+      networkTcpPort = readIntegerProperty(NETWORK_TCP_PORT, properties);
+      
+      String commaSeparatedInterfaces = properties.getProperty(NETWORK_TCP_INTERFACES);
+      if (commaSeparatedInterfaces != null) {
+        String[] interfacesArray = commaSeparatedInterfaces.split(",");
+        for (String interfaceObject : interfacesArray) {
+          networkTcpInterfaces.add(interfaceObject.trim());
+        }
+      }
+      
+      securityEnabled = readBooleanProperty(SECURITY_ENABLED, properties);
+      securityPassword = properties.getProperty(SECURITY_PASSWORD);
+      securitySalt = properties.getProperty(SECURITY_SALT);
+      securityIterationCount = readIntegerProperty(SECURITY_ITERATION_COUNT, properties);
+      
     } catch (Exception e) {
-      logger.warn("Could not read 'activiti-cluster.properties' from classpath. Using defaults.");
+      logger.warn("Could not read 'activiti-cluster.properties' from classpath. Using defaults or process engine config.");
     }
-  }
-  
-  public boolean exists() {
-    return properties != null && exists;
   }
   
   public String getClusterName() {
-    return properties.getProperty(CLUSTER_NAME);
+    return clusterName;
   }
-  
+
+  public void setClusterName(String clusterName) {
+    this.clusterName = clusterName;
+  }
+
   public String getClusterPassword() {
-    return properties.getProperty(CLUSTER_PASSWORD);
+    return clusterPassword;
   }
-  
-  public String getNetworkStartingPort() {
-    return properties.getProperty(NETWORK_STARTINGPORT);
+
+  public void setClusterPassword(String clusterPassword) {
+    this.clusterPassword = clusterPassword;
   }
-  
-  public String getMasterConfigurationRequired() {
-    return properties.getProperty(MASTER_CFG_REQUIRED);
+
+  public Integer getNetworkStartingPort() {
+    return networkStartingPort;
   }
-  
-  public String getMetricSendingInterval() {
-    return properties.getProperty(METRIC_SENDING_INTERVAL);
+
+  public void setNetworkStartingPort(Integer networkStartingPort) {
+    this.networkStartingPort = networkStartingPort;
   }
-  
-  public String getNetworkTcpHost() {
-    return properties.getProperty(NETWORK_TCP_HOST);
+
+  public Boolean getMasterConfigurationRequired() {
+    return masterConfigurationRequired;
   }
-  
-  public Integer getNetworkTcpPort() {
-    return Integer.valueOf(properties.getProperty(NETWORK_TCP_PORT));
+
+  public void setMasterConfigurationRequired(Boolean masterConfigurationRequired) {
+    this.masterConfigurationRequired = masterConfigurationRequired;
   }
-  
-  public Boolean isNetworkMulticastEnabled() {
-    String multiCastEnabledString = properties.getProperty(NETWORK_MULTICAST_ENABLED);
-    if (multiCastEnabledString != null) {
-      return Boolean.valueOf(multiCastEnabledString);
-    }
-    return false;
+
+  public Integer getMetricSendingInterval() {
+    return metricSendingInterval;
   }
-  
+
+  public void setMetricSendingInterval(Integer metricSendingInterval) {
+    this.metricSendingInterval = metricSendingInterval;
+  }
+
+  public Boolean getNetworkMulticastEnabled() {
+    return networkMulticastEnabled;
+  }
+
+  public void setNetworkMulticastEnabled(Boolean networkMulticastEnabled) {
+    this.networkMulticastEnabled = networkMulticastEnabled;
+  }
+
   public String getNetworkMulticastGroup() {
-    return properties.getProperty(NETWORK_MULTICAST_GROUP);
+    return networkMulticastGroup;
   }
-  
-  public String getNetworkMulticastPort() {
-    return properties.getProperty(NETWORK_MULTICAST_PORT);
+
+  public void setNetworkMulticastGroup(String networkMulticastGroup) {
+    this.networkMulticastGroup = networkMulticastGroup;
   }
-  
-  public Boolean isNetworkTcpEnabled() {
-    String tcpIpEnabledString = properties.getProperty(NETWORK_TCP_ENABLED);
-    if (tcpIpEnabledString != null) {
-      return  Boolean.valueOf(tcpIpEnabledString);
-    }
-    return false;
+
+  public Integer getNetworkMulticastPort() {
+    return networkMulticastPort;
   }
-  
-  public String getNetworkTcpInterfaces() {
-    return properties.getProperty(NETWORK_TCP_INTERFACES);
+
+  public void setNetworkMulticastPort(Integer networkMulticastPort) {
+    this.networkMulticastPort = networkMulticastPort;
   }
-  
-  public Boolean isSecurityEnabled() {
-    Boolean securityEnabled = false;
-    String securityEnabledString = properties.getProperty(SECURITY_ENABLED);
-    if (securityEnabledString != null) {
-      securityEnabled = Boolean.valueOf(securityEnabledString);
-    }
+
+  public Boolean getNetworkTcpEnabled() {
+    return networkTcpEnabled;
+  }
+
+  public void setNetworkTcpEnabled(Boolean networkTcpEnabled) {
+    this.networkTcpEnabled = networkTcpEnabled;
+  }
+
+  public String getNetworkTcpHost() {
+    return networkTcpHost;
+  }
+
+  public void setNetworkTcpHost(String networkTcpHost) {
+    this.networkTcpHost = networkTcpHost;
+  }
+
+  public Integer getNetworkTcpPort() {
+    return networkTcpPort;
+  }
+
+  public void setNetworkTcpPort(Integer networkTcpPort) {
+    this.networkTcpPort = networkTcpPort;
+  }
+
+  public List<String> getNetworkTcpInterfaces() {
+    return networkTcpInterfaces;
+  }
+
+  public void setNetworkTcpInterfaces(List<String> networkTcpInterfaces) {
+    this.networkTcpInterfaces = networkTcpInterfaces;
+  }
+
+  public void addNetworkTcpInterface(String tcpInterface) {
+    this.networkTcpInterfaces.add(tcpInterface);
+  }
+
+  public Boolean getSecurityEnabled() {
     return securityEnabled;
   }
-  
+
+  public void setSecurityEnabled(Boolean securityEnabled) {
+    this.securityEnabled = securityEnabled;
+  }
+
   public String getSecurityPassword() {
-    return properties.getProperty(SECURITY_PASSWORD);
+    return securityPassword;
   }
-  
+
+  public void setSecurityPassword(String securityPassword) {
+    this.securityPassword = securityPassword;
+  }
+
   public String getSecuritySalt() {
-    return properties.getProperty(SECURITY_SALT);
+    return securitySalt;
+  }
+
+  public void setSecuritySalt(String securitySalt) {
+    this.securitySalt = securitySalt;
+  }
+
+  public Integer getSecurityIterationCount() {
+    return securityIterationCount;
+  }
+
+  public void setSecurityIterationCount(Integer securityIterationCount) {
+    this.securityIterationCount = securityIterationCount;
+  }
+
+  public boolean isPropertyFileExists() {
+    return propertyFileExists;
+  }
+
+  public void setPropertyFileExists(boolean propertyFileExists) {
+    this.propertyFileExists = propertyFileExists;
+  }
+
+  protected Integer readIntegerProperty(String name, Properties properties) {
+    Integer resultValue = null;
+    String propValue = properties.getProperty(name);
+    if (propValue != null) {
+      resultValue = Integer.valueOf(propValue);
+    }
+    return resultValue;
   }
   
-  public String getSecurityIterationCount() {
-    return properties.getProperty(SECURITY_ITERATION_COUNT);
+  protected Boolean readBooleanProperty(String name, Properties properties) {
+    Boolean resultValue = false;
+    String propValue = properties.getProperty(name);
+    if (propValue != null) {
+      resultValue = Boolean.valueOf(propValue);
+    }
+    return resultValue;
   }
 
 }

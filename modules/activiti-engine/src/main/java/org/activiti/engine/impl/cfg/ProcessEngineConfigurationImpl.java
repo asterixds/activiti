@@ -252,6 +252,27 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   // ENTERPRISE /////////////////////////////////////////////////////////////////  
   protected LicenseHolder licenseHolder;
   
+  protected String enterpriseClusterName;
+  protected String enterpriseClusterPassword;
+  protected Integer enterpriseNetworkStartingPort;
+  
+  protected Boolean enterpriseMasterConfigurationRequired;
+  protected Integer enterpriseMetricSendingInterval;
+  
+  protected Boolean enterpriseNetworkMulticastEnabled;
+  protected String enterpriseNetworkMulticastGroup;
+  protected Integer enterpriseNetworkMulticastPort;
+  
+  protected Boolean enterpriseNetworkTcpEnabled;
+  protected String enterpriseNetworkTcpHost;
+  protected Integer enterpriseNetworkTcpPort;
+  protected List<String> enterpriseNetworkTcpInterfaces = new ArrayList<String>();
+  
+  protected Boolean enterpriseSecurityEnabled;
+  protected String enterpriseSecurityPassword;
+  protected String enterpriseSecuritySalt;
+  protected Integer enterpriseSecurityIterationCount;
+  
   // SERVICES /////////////////////////////////////////////////////////////////
 
   protected RepositoryService repositoryService = new RepositoryServiceImpl();
@@ -900,13 +921,83 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     }
     
     // Enterprise-only: add cluster config configurator if flag is set
+    ClusterConfigProperties clusterConfigProperties = new ClusterConfigProperties();
     if (isEnableClusterConfig()) {
       log.info("Cluster config enabled. Starting Cluster config.");
-      allConfigurators.add(new ActivitiClusterConfigurator());
+      if (clusterConfigProperties.isPropertyFileExists() == false) {
+        log.info("Using defaults or process engine config settings for cluster config.");
+        
+        if (enterpriseClusterName != null) {
+          clusterConfigProperties.setClusterName(enterpriseClusterName);
+        }
+        
+        if (enterpriseClusterPassword != null) {
+          clusterConfigProperties.setClusterPassword(enterpriseClusterPassword);
+        }
+        
+        if (enterpriseNetworkStartingPort != null) {
+          clusterConfigProperties.setNetworkStartingPort(enterpriseNetworkStartingPort);
+        }
+         
+        if (enterpriseMasterConfigurationRequired != null) {
+          clusterConfigProperties.setMasterConfigurationRequired(enterpriseMasterConfigurationRequired);
+        }
+        
+        if (enterpriseMetricSendingInterval != null) {
+          clusterConfigProperties.setMetricSendingInterval(enterpriseMetricSendingInterval);
+        }
+         
+        if (enterpriseNetworkMulticastEnabled != null) {
+          clusterConfigProperties.setNetworkMulticastEnabled(enterpriseNetworkMulticastEnabled);
+        }
+          
+        if (enterpriseNetworkMulticastGroup != null) {
+          clusterConfigProperties.setNetworkMulticastGroup(enterpriseNetworkMulticastGroup);
+        }
+        
+        if (enterpriseNetworkMulticastPort != null) {
+          clusterConfigProperties.setNetworkMulticastPort(enterpriseNetworkMulticastPort);
+        }
+        
+        if (enterpriseNetworkTcpEnabled != null) {
+          clusterConfigProperties.setNetworkTcpEnabled(enterpriseNetworkTcpEnabled);
+        }
+        
+        if (enterpriseNetworkTcpHost != null) {
+          clusterConfigProperties.setNetworkTcpHost(enterpriseNetworkTcpHost);
+        }
+        
+        if (enterpriseNetworkTcpPort != null) {
+          clusterConfigProperties.setNetworkTcpPort(enterpriseNetworkTcpPort);
+        }
+        
+        if (enterpriseNetworkTcpInterfaces != null) {
+          clusterConfigProperties.setNetworkTcpInterfaces(enterpriseNetworkTcpInterfaces);
+        }
+        
+        if (enterpriseSecurityEnabled != null) {
+          clusterConfigProperties.setSecurityEnabled(enterpriseSecurityEnabled);
+        }
+        
+        if (enterpriseSecurityPassword != null) {
+          clusterConfigProperties.setSecurityPassword(enterpriseSecurityPassword);
+        }
+        
+        if (enterpriseSecuritySalt != null) {
+          clusterConfigProperties.setSecuritySalt(enterpriseSecuritySalt);
+        }
+        
+        if (enterpriseSecurityIterationCount != null) {
+          clusterConfigProperties.setSecurityIterationCount(enterpriseSecurityIterationCount);
+        }
+        
+      } else {
+        log.info("Using cluster properties file for cluster config.");
+      }
+      allConfigurators.add(new ActivitiClusterConfigurator(clusterConfigProperties));
     } else {
-      // Also enable cluster config add on if cluster config properties file is on classpath
-      ClusterConfigProperties clusterConfigProperties = new ClusterConfigProperties();
-      if (clusterConfigProperties.exists()) {
+      // Also enable cluster config add-on if cluster config properties file is on classpath
+      if (clusterConfigProperties.isPropertyFileExists()) {
         log.info("Cluster config enabled due to cluster config properties file on classpath. Starting Cluster config.");
         allConfigurators.add(new ActivitiClusterConfigurator(clusterConfigProperties));
       }
@@ -2060,21 +2151,150 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
 		this.processValidator = processValidator;
 	}
 	
+	public boolean isEnableEventDispatcher() {
+    return enableEventDispatcher;
+  }
+
+  public boolean isEnableDatabaseEventLogging() {
+    return enableDatabaseEventLogging;
+  }
+
+  public ProcessEngineConfigurationImpl setEnableDatabaseEventLogging(boolean enableDatabaseEventLogging) {
+    this.enableDatabaseEventLogging = enableDatabaseEventLogging;
+    return this;
+  }
+	
+	// ENTERPRISE /////////////////////////////////////////////////////////////////
+	
 	public LicenseHolder getLicenseHolder() {
 	  return licenseHolder;
 	}
 
-	public boolean isEnableEventDispatcher() {
-		return enableEventDispatcher;
-	}
+  public String getEnterpriseClusterName() {
+    return enterpriseClusterName;
+  }
 
-	public boolean isEnableDatabaseEventLogging() {
-		return enableDatabaseEventLogging;
-	}
+  public void setEnterpriseClusterName(String enterpriseClusterName) {
+    this.enterpriseClusterName = enterpriseClusterName;
+  }
 
-	public ProcessEngineConfigurationImpl setEnableDatabaseEventLogging(boolean enableDatabaseEventLogging) {
-		this.enableDatabaseEventLogging = enableDatabaseEventLogging;
-    return this;
-	}
-	
+  public String getEnterpriseClusterPassword() {
+    return enterpriseClusterPassword;
+  }
+
+  public void setEnterpriseClusterPassword(String enterpriseClusterPassword) {
+    this.enterpriseClusterPassword = enterpriseClusterPassword;
+  }
+
+  public Integer getEnterpriseNetworkStartingPort() {
+    return enterpriseNetworkStartingPort;
+  }
+
+  public void setEnterpriseNetworkStartingPort(Integer enterpriseNetworkStartingPort) {
+    this.enterpriseNetworkStartingPort = enterpriseNetworkStartingPort;
+  }
+
+  public Boolean getEnterpriseMasterConfigurationRequired() {
+    return enterpriseMasterConfigurationRequired;
+  }
+
+  public void setEnterpriseMasterConfigurationRequired(Boolean enterpriseMasterConfigurationRequired) {
+    this.enterpriseMasterConfigurationRequired = enterpriseMasterConfigurationRequired;
+  }
+
+  public Integer getEnterpriseMetricSendingInterval() {
+    return enterpriseMetricSendingInterval;
+  }
+
+  public void setEnterpriseMetricSendingInterval(Integer enterpriseMetricSendingInterval) {
+    this.enterpriseMetricSendingInterval = enterpriseMetricSendingInterval;
+  }
+
+  public Boolean getEnterpriseNetworkMulticastEnabled() {
+    return enterpriseNetworkMulticastEnabled;
+  }
+
+  public void setEnterpriseNetworkMulticastEnabled(Boolean enterpriseNetworkMulticastEnabled) {
+    this.enterpriseNetworkMulticastEnabled = enterpriseNetworkMulticastEnabled;
+  }
+
+  public String getEnterpriseNetworkMulticastGroup() {
+    return enterpriseNetworkMulticastGroup;
+  }
+
+  public void setEnterpriseNetworkMulticastGroup(String enterpriseNetworkMulticastGroup) {
+    this.enterpriseNetworkMulticastGroup = enterpriseNetworkMulticastGroup;
+  }
+
+  public Integer getEnterpriseNetworkMulticastPort() {
+    return enterpriseNetworkMulticastPort;
+  }
+
+  public void setEnterpriseNetworkMulticastPort(Integer enterpriseNetworkMulticastPort) {
+    this.enterpriseNetworkMulticastPort = enterpriseNetworkMulticastPort;
+  }
+
+  public Boolean getEnterpriseNetworkTcpEnabled() {
+    return enterpriseNetworkTcpEnabled;
+  }
+
+  public void setEnterpriseNetworkTcpEnabled(Boolean enterpriseNetworkTcpEnabled) {
+    this.enterpriseNetworkTcpEnabled = enterpriseNetworkTcpEnabled;
+  }
+
+  public String getEnterpriseNetworkTcpHost() {
+    return enterpriseNetworkTcpHost;
+  }
+
+  public void setEnterpriseNetworkTcpHost(String enterpriseNetworkTcpHost) {
+    this.enterpriseNetworkTcpHost = enterpriseNetworkTcpHost;
+  }
+
+  public Integer getEnterpriseNetworkTcpPort() {
+    return enterpriseNetworkTcpPort;
+  }
+
+  public void setEnterpriseNetworkTcpPort(Integer enterpriseNetworkTcpPort) {
+    this.enterpriseNetworkTcpPort = enterpriseNetworkTcpPort;
+  }
+
+  public List<String> getEnterpriseNetworkTcpInterfaces() {
+    return enterpriseNetworkTcpInterfaces;
+  }
+
+  public void setEnterpriseNetworkTcpInterfaces(List<String> enterpriseNetworkTcpInterfaces) {
+    this.enterpriseNetworkTcpInterfaces = enterpriseNetworkTcpInterfaces;
+  }
+
+  public Boolean getEnterpriseSecurityEnabled() {
+    return enterpriseSecurityEnabled;
+  }
+
+  public void setEnterpriseSecurityEnabled(Boolean enterpriseSecurityEnabled) {
+    this.enterpriseSecurityEnabled = enterpriseSecurityEnabled;
+  }
+
+  public String getEnterpriseSecurityPassword() {
+    return enterpriseSecurityPassword;
+  }
+
+  public void setEnterpriseSecurityPassword(String enterpriseSecurityPassword) {
+    this.enterpriseSecurityPassword = enterpriseSecurityPassword;
+  }
+
+  public String getEnterpriseSecuritySalt() {
+    return enterpriseSecuritySalt;
+  }
+
+  public void setEnterpriseSecuritySalt(String enterpriseSecuritySalt) {
+    this.enterpriseSecuritySalt = enterpriseSecuritySalt;
+  }
+
+  public Integer getEnterpriseSecurityIterationCount() {
+    return enterpriseSecurityIterationCount;
+  }
+
+  public void setEnterpriseSecurityIterationCount(Integer enterpriseSecurityIterationCount) {
+    this.enterpriseSecurityIterationCount = enterpriseSecurityIterationCount;
+  }
 }
