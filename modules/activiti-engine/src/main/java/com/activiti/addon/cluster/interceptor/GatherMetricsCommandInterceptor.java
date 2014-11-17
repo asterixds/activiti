@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.activiti.engine.impl.cmd.CompleteTaskCmd;
-import org.activiti.engine.impl.cmd.ExecuteJobsCmd;
+import org.activiti.engine.impl.cmd.ExecuteAsyncJobCmd;
 import org.activiti.engine.impl.cmd.StartProcessInstanceByMessageCmd;
 import org.activiti.engine.impl.cmd.StartProcessInstanceCmd;
 import org.activiti.engine.impl.interceptor.AbstractCommandInterceptor;
@@ -29,7 +29,7 @@ public class GatherMetricsCommandInterceptor extends AbstractCommandInterceptor 
 	public <T> T execute(CommandConfig config, Command<T> command) {
 		
 		Context timerContext = null;
-		if (command instanceof ExecuteJobsCmd) {
+		if (command instanceof ExecuteAsyncJobCmd) {
 			timerContext = handleExecuteJobCmd();
 		} else if (command instanceof StartProcessInstanceCmd) {
 			handleStartProcessInstanceCmd();

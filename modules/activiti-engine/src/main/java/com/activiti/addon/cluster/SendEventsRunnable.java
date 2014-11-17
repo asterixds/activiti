@@ -3,7 +3,7 @@ package com.activiti.addon.cluster;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
-import org.activiti.engine.impl.jobexecutor.WrappedJobExecutor;
+import org.activiti.engine.impl.jobexecutor.WrappedAsyncExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,7 @@ public class SendEventsRunnable implements Runnable {
 	protected JvmMetricsManager jvmMetricsManager;
 	protected GatherMetricsCommandInterceptor gatherMetricsCommandInterceptor;
 	protected JobMetricsManager jobMetricsManager;
-	protected WrappedJobExecutor wrappedJobExecutor;
+	protected WrappedAsyncExecutor wrappedAsyncExecutor;
 	
 	public SendEventsRunnable(String uniqueId, AdminAppState adminAppState, BlockingQueue<Map<String, Object>> eventQueue) {
 		this.uniqueNodeId = uniqueId;
@@ -73,8 +73,8 @@ public class SendEventsRunnable implements Runnable {
 					publishEvent(jobMetricsManager.gatherMetrics());
 				}
 				
-				if (wrappedJobExecutor != null) {
-					publishEvent(wrappedJobExecutor.getJobExecutorState());
+				if (wrappedAsyncExecutor != null) {
+					publishEvent(wrappedAsyncExecutor.getJobExecutorState());
 				}
 				
 			} else {
@@ -153,12 +153,12 @@ public class SendEventsRunnable implements Runnable {
 		this.clusterEnabledProcessEngineLifeCycleListener = clusterEnabledProcessEngineLifeCycleListener;
 	}
 
-	public WrappedJobExecutor getWrappedJobExecutor() {
-		return wrappedJobExecutor;
+	public WrappedAsyncExecutor getWrappedAsyncExecutor() {
+		return wrappedAsyncExecutor;
 	}
 
-	public void setWrappedJobExecutor(WrappedJobExecutor wrappedJobExecutor) {
-		this.wrappedJobExecutor = wrappedJobExecutor;
+	public void setWrappedAsyncExecutor(WrappedAsyncExecutor wrappedAsyncExecutor) {
+		this.wrappedAsyncExecutor = wrappedAsyncExecutor;
 	}
 	
 }

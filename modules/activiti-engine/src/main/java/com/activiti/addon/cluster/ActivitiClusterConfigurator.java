@@ -12,11 +12,12 @@ import org.activiti.engine.ActivitiException;
 import org.activiti.engine.ProcessEngineLifecycleListener;
 import org.activiti.engine.cfg.AbstractProcessEngineConfigurator;
 import org.activiti.engine.cfg.ProcessEngineConfigurator;
+import org.activiti.engine.impl.asyncexecutor.AsyncExecutor;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.engine.impl.interceptor.CommandInterceptor;
 import org.activiti.engine.impl.jobexecutor.DefaultJobExecutor;
 import org.activiti.engine.impl.jobexecutor.JobExecutor;
-import org.activiti.engine.impl.jobexecutor.WrappedJobExecutor;
+import org.activiti.engine.impl.jobexecutor.WrappedAsyncExecutor;
 import org.activiti.engine.impl.persistence.deploy.DeploymentCache;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.slf4j.Logger;
@@ -144,7 +145,7 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 	
 	protected MasterConfigurationState masterConfigurationState;
 	
-	protected WrappedJobExecutor wrappedJobExecutor;
+	protected WrappedAsyncExecutor wrappedAsyncExecutor;
 	
 	protected JvmMetricsManager jvmMetricsManager;
 	
@@ -355,7 +356,7 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 		initMasterConfigurationPostInit(processEngineConfiguration);
 		
 		// Job executor state
-		initWrappedJobExecutor(processEngineConfiguration);
+		initWrappedAsyncExecutor(processEngineConfiguration);
 		
 		// Fire up the JVM metrics gathering
 		// HAS to be at the end here, has dependencies on all the other stuff
@@ -373,9 +374,11 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 	}
 	
 	protected void initJobRejectionHandler(ProcessEngineConfigurationImpl processEngineConfiguration) {
-		gatherMetricsRejectedJobsHandler = new GatherMetricsRejectedJobsHandler(
-				processEngineConfiguration.getJobExecutor().getRejectedJobsHandler());
-		processEngineConfiguration.getJobExecutor().setRejectedJobsHandler(gatherMetricsRejectedJobsHandler);
+	  if (processEngineConfiguration.isAsyncExecutorEnabled() == false) {
+  		gatherMetricsRejectedJobsHandler = new GatherMetricsRejectedJobsHandler(
+  				processEngineConfiguration.getJobExecutor().getRejectedJobsHandler());
+  		processEngineConfiguration.getJobExecutor().setRejectedJobsHandler(gatherMetricsRejectedJobsHandler);
+	  }
 	}
 	
 	protected void initFailedJobCommandFactory(ProcessEngineConfigurationImpl processEngineConfiguration) {
@@ -408,13 +411,12 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 				if (type != null) {
 					if (type.equals("i-am-alive")) {
 						adminAppState.iAmAliveEventReceived();
-					} else if (type.equals("start-job-executor")) {
+					} else if (type.equals("start-async-executor")) {
 						String host = (String) event.get("host");
 						Integer port = (Integer) event.get("port");
 						
-						if (host != null && port != null
-								&& host.equals(localNodeHost) && port.equals(localNodePort)) {
-							wrappedJobExecutor.start();
+						if (host != null && port != null && host.equals(localNodeHost) && port.equals(localNodePort)) {
+						  wrappedAsyncExecutor.start();
 						}
 						
 					} else {
@@ -525,12 +527,11 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 		}
 	}
 	
-	protected void initWrappedJobExecutor(ProcessEngineConfigurationImpl processEngineConfiguration) {
-		JobExecutor originalJobExecutor = processEngineConfiguration.getJobExecutor();
-		if (originalJobExecutor != null) {
-			this.wrappedJobExecutor = new WrappedJobExecutor(originalJobExecutor);
-			processEngineConfiguration.setJobExecutor(wrappedJobExecutor);
-			processEngineConfiguration.setJobExecutorActivate(false); // Don't start automatically, the admin app will tell when to start one
+	protected void initWrappedAsyncExecutor(ProcessEngineConfigurationImpl processEngineConfiguration) {
+		AsyncExecutor originalAsyncExecutor = processEngineConfiguration.getAsyncExecutor();
+		if (originalAsyncExecutor != null) {
+			this.wrappedAsyncExecutor = new WrappedAsyncExecutor(originalAsyncExecutor);
+			processEngineConfiguration.setAsyncExecutor(wrappedAsyncExecutor);
 		}
 	}
 	
@@ -727,7 +728,7 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 		sendEventsRunnable.setGatherMetricsCommandInterceptor(gatherMetricsCommandInterceptor);
 		sendEventsRunnable.setJobMetricsManager(jobMetricsManager);
 		sendEventsRunnable.setMasterConfigurationState(masterConfigurationState);
-		sendEventsRunnable.setWrappedJobExecutor(wrappedJobExecutor);
+		sendEventsRunnable.setWrappedAsyncExecutor(wrappedAsyncExecutor);
 		
 		Integer metricSendingInterval = clusterConfigProperties.getMetricSendingInterval();
 		if (metricSendingInterval == null) {
