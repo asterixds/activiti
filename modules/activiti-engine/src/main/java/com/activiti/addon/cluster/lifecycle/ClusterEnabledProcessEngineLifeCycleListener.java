@@ -10,14 +10,16 @@ import org.slf4j.LoggerFactory;
 
 import com.activiti.addon.cluster.constants.EventTypes;
 import com.activiti.addon.cluster.util.EventUtil;
+import com.hazelcast.core.HazelcastInstance;
 
 /**
  * @author jbarrez
  */
-public class ClusterEnabledProcessEngineLifeCycleListener implements
-		ProcessEngineLifecycleListener {
+public class ClusterEnabledProcessEngineLifeCycleListener implements ProcessEngineLifecycleListener {
 
 	protected Logger logger = LoggerFactory.getLogger(ClusterEnabledProcessEngineLifeCycleListener.class);
+	
+	protected HazelcastInstance hazelcastInstance;
 
 	protected String uniqueNodeId;
 	
@@ -27,7 +29,8 @@ public class ClusterEnabledProcessEngineLifeCycleListener implements
 	
 	protected String currentState;
 
-	public ClusterEnabledProcessEngineLifeCycleListener(String uniqueNodeId, BlockingQueue<Map<String, Object>> eventQueue) {
+	public ClusterEnabledProcessEngineLifeCycleListener(HazelcastInstance hazelcastInstance, String uniqueNodeId, BlockingQueue<Map<String, Object>> eventQueue) {
+		this.hazelcastInstance = hazelcastInstance;
 		this.uniqueNodeId = uniqueNodeId;
 		this.eventQueue = eventQueue;
 		
@@ -36,10 +39,11 @@ public class ClusterEnabledProcessEngineLifeCycleListener implements
 	}
 
 	public ClusterEnabledProcessEngineLifeCycleListener(
+			HazelcastInstance hazelcastInstance,
 			String uniqueNodeId,
 			BlockingQueue<Map<String, Object>> eventQueue,
 			ProcessEngineLifecycleListener wrappedListener) {
-		this(uniqueNodeId, eventQueue);
+		this(hazelcastInstance, uniqueNodeId, eventQueue);
 		this.wrappedListener = wrappedListener;
 	}
 
@@ -54,6 +58,13 @@ public class ClusterEnabledProcessEngineLifeCycleListener implements
 
 	public void onProcessEngineClosed(ProcessEngine processEngine) {
 
+		if (hazelcastInstance != null) {
+			logger.info("Shutting down hazelcast instance");
+			hazelcastInstance.shutdown();
+		} else {
+			logger.info("No hazelcast instance found. Nothing to shut down.");
+		}
+		
 		changeLifeCycleState(EventTypes.PROCESS_ENGINE_CLOSED);
 		
 		if (wrappedListener != null) {

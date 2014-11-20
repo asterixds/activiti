@@ -9,6 +9,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.activiti.engine.ActivitiException;
+import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngineLifecycleListener;
 import org.activiti.engine.cfg.AbstractProcessEngineConfigurator;
 import org.activiti.engine.cfg.ProcessEngineConfigurator;
@@ -360,7 +361,7 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 		
 		// Fire up the JVM metrics gathering
 		// HAS to be at the end here, has dependencies on all the other stuff
-		initSendEventsThread();
+		initSendEventsThread(processEngineConfiguration);
 		
 		logger.info(NAME + " : initialization completed.");
 	}
@@ -396,7 +397,7 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 
 	private void initProcessEngineLifeCycleListener(ProcessEngineConfigurationImpl processEngineConfiguration) {
 		ProcessEngineLifecycleListener listener = new ClusterEnabledProcessEngineLifeCycleListener(
-				uniqueNodeId, eventQueue, processEngineConfiguration.getProcessEngineLifecycleListener());
+				hazelcastInstance, uniqueNodeId, eventQueue, processEngineConfiguration.getProcessEngineLifecycleListener());
 		processEngineConfiguration.setProcessEngineLifecycleListener(listener);
 	}
 
@@ -719,7 +720,7 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 		processEngineConfiguration.setCustomPreCommandInterceptors(commandInterceptors);
 	}
 	
-	protected void initSendEventsThread() {
+	protected void initSendEventsThread(ProcessEngineConfigurationImpl processEngineConfiguration) {
 		jvmMetricsManager = new JvmMetricsManager();
 		
 		SendEventsRunnable sendEventsRunnable = new SendEventsRunnable(uniqueNodeId, adminAppState, eventQueue);
@@ -737,22 +738,38 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 		}
 
 		final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-		executorService.scheduleAtFixedRate(sendEventsRunnable, 5, metricSendingInterval, TimeUnit.SECONDS);
-
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-
+		executorService.scheduleAtFixedRate(sendEventsRunnable, 30, metricSendingInterval, TimeUnit.SECONDS); // 30 seconds initial wait time
+		
+		// Add a closing hook as process engine listener
+		final ProcessEngineLifecycleListener originalProcessEngineLifecycleListener =
+				processEngineConfiguration.getProcessEngineLifecycleListener();
+		processEngineConfiguration.setProcessEngineLifecycleListener(new ProcessEngineLifecycleListener() {
+			
 			@Override
-			public void run() {
+			public void onProcessEngineBuilt(ProcessEngine processEngine) {
+				if (originalProcessEngineLifecycleListener != null) {
+					originalProcessEngineLifecycleListener.onProcessEngineBuilt(processEngine);
+				}
+			}
+			
+			@Override
+			public void onProcessEngineClosed(ProcessEngine processEngine) {
+
 				logger.info("Shutting down threadpool used to send metrics...");
 				executorService.shutdown();
 				try {
-					executorService.awaitTermination(60, TimeUnit.SECONDS);
+					executorService.awaitTermination(30, TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
-					logger.warn("Waited for 1 minute for threadpool (used for sending metrics) shutdown, but was interrupted", e);
+					logger.warn("Waited for 30 seconds for threadpool (used for sending metrics) shutdown, but was interrupted", e);
 				}
-				logger.info("Shutdown of threadpool used to send metrics completed.");
+				
+				if (originalProcessEngineLifecycleListener != null) {
+					originalProcessEngineLifecycleListener.onProcessEngineClosed(processEngine);
+				}
 			}
+			
 		});
+
 	}
 
 	public int getPriority() {
