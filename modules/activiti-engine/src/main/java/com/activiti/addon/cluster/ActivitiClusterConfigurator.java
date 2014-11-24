@@ -44,6 +44,7 @@ import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.EntryListener;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.HazelcastInstanceNotActiveException;
 import com.hazelcast.core.IMap;
 import com.hazelcast.core.ITopic;
 import com.hazelcast.core.Message;
@@ -755,12 +756,18 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 			@Override
 			public void onProcessEngineClosed(ProcessEngine processEngine) {
 
-				logger.info("Shutting down threadpool used to send metrics...");
-				executorService.shutdown();
 				try {
-					executorService.awaitTermination(30, TimeUnit.SECONDS);
-				} catch (InterruptedException e) {
-					logger.warn("Waited for 30 seconds for threadpool (used for sending metrics) shutdown, but was interrupted", e);
+					logger.info("Shutting down threadpool used to send metrics...");
+					executorService.shutdown();
+					try {
+						executorService.awaitTermination(30, TimeUnit.SECONDS);
+					} catch (InterruptedException e) {
+						logger.warn("Waited for 30 seconds for threadpool (used for sending metrics) shutdown, but was interrupted", e);
+					}
+				} catch (Exception e) {
+					if (!(e instanceof HazelcastInstanceNotActiveException)) {
+						logger.warn("Could not properly shut down executor service for SendRunnable thread", e);
+					}
 				}
 				
 				if (originalProcessEngineLifecycleListener != null) {
