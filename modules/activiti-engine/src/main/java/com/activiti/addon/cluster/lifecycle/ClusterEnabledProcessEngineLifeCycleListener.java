@@ -58,14 +58,18 @@ public class ClusterEnabledProcessEngineLifeCycleListener implements ProcessEngi
 
 	public void onProcessEngineClosed(ProcessEngine processEngine) {
 
-		if (hazelcastInstance != null) {
-			logger.info("Shutting down hazelcast instance");
-			hazelcastInstance.shutdown();
-		} else {
-			logger.info("No hazelcast instance found. Nothing to shut down.");
+		try {
+			changeLifeCycleState(EventTypes.PROCESS_ENGINE_CLOSED);
+			
+			if (hazelcastInstance != null) {
+				logger.info("Shutting down hazelcast instance");
+				hazelcastInstance.shutdown();
+			} else {
+				logger.info("No hazelcast instance found. Nothing to shut down.");
+			}
+		} catch (Exception e) {
+			logger.warn("Could not shut down Hazelcast properly", e);
 		}
-		
-		changeLifeCycleState(EventTypes.PROCESS_ENGINE_CLOSED);
 		
 		if (wrappedListener != null) {
 			wrappedListener.onProcessEngineClosed(processEngine);
