@@ -104,6 +104,9 @@
 			<fileset dir="../modules/activiti-osgi/target">
 				<include name="activiti-osgi-*.jar" />
 			</fileset>
+			<fileset dir="../modules/activiti-jmx/target">
+				<include name="activiti-jmx-*.jar" />
+			</fileset>
 		</copy>
 
 	</target>

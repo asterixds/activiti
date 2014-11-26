@@ -46,6 +46,7 @@ import org.activiti.bpmn.model.InclusiveGateway;
 import org.activiti.bpmn.model.IntermediateCatchEvent;
 import org.activiti.bpmn.model.Lane;
 import org.activiti.bpmn.model.ManualTask;
+import org.activiti.bpmn.model.MessageEventDefinition;
 import org.activiti.bpmn.model.MultiInstanceLoopCharacteristics;
 import org.activiti.bpmn.model.ParallelGateway;
 import org.activiti.bpmn.model.Pool;
@@ -98,6 +99,8 @@ public class DefaultProcessDiagramGenerator implements ProcessDiagramGenerator {
             processDiagramCanvas.drawErrorStartEvent(graphicInfo, scaleFactor);
           } else if (eventDefinition instanceof SignalEventDefinition) {
             processDiagramCanvas.drawSignalStartEvent(graphicInfo, scaleFactor);
+          } else if (eventDefinition instanceof MessageEventDefinition) {
+            processDiagramCanvas.drawMessageStartEvent(graphicInfo, scaleFactor);
           }
         } else {
           processDiagramCanvas.drawNoneStartEvent(graphicInfo);
@@ -117,6 +120,8 @@ public class DefaultProcessDiagramGenerator implements ProcessDiagramGenerator {
             processDiagramCanvas.drawCatchingSignalEvent(flowNode.getName(), graphicInfo, true, scaleFactor);
           } else if (intermediateCatchEvent.getEventDefinitions().get(0) instanceof TimerEventDefinition) {
             processDiagramCanvas.drawCatchingTimerEvent(flowNode.getName(), graphicInfo, true, scaleFactor);
+          } else if (intermediateCatchEvent.getEventDefinitions().get(0) instanceof MessageEventDefinition) {
+            processDiagramCanvas.drawCatchingMessageEvent(flowNode.getName(), graphicInfo, true, scaleFactor);  
           }
         }
       }
@@ -131,6 +136,8 @@ public class DefaultProcessDiagramGenerator implements ProcessDiagramGenerator {
         if (throwEvent.getEventDefinitions() != null && !throwEvent.getEventDefinitions().isEmpty()) {
           if (throwEvent.getEventDefinitions().get(0) instanceof SignalEventDefinition) {
             processDiagramCanvas.drawThrowingSignalEvent(graphicInfo, scaleFactor);
+          } else {
+            processDiagramCanvas.drawThrowingNoneEvent(graphicInfo, scaleFactor);
           }
         } else {
           processDiagramCanvas.drawThrowingNoneEvent(graphicInfo, scaleFactor);
@@ -147,6 +154,8 @@ public class DefaultProcessDiagramGenerator implements ProcessDiagramGenerator {
         if (endEvent.getEventDefinitions() != null && !endEvent.getEventDefinitions().isEmpty()) {
           if (endEvent.getEventDefinitions().get(0) instanceof ErrorEventDefinition) {
             processDiagramCanvas.drawErrorEndEvent(flowNode.getName(), graphicInfo, scaleFactor);
+          } else {
+            processDiagramCanvas.drawNoneEndEvent(graphicInfo, scaleFactor);
           }
         } else {
           processDiagramCanvas.drawNoneEndEvent(graphicInfo, scaleFactor);
@@ -287,6 +296,8 @@ public class DefaultProcessDiagramGenerator implements ProcessDiagramGenerator {
             
           } else if (boundaryEvent.getEventDefinitions().get(0) instanceof SignalEventDefinition) {
             processDiagramCanvas.drawCatchingSignalEvent(flowNode.getName(), graphicInfo, boundaryEvent.isCancelActivity(), scaleFactor);
+          } else if (boundaryEvent.getEventDefinitions().get(0) instanceof MessageEventDefinition) {
+            processDiagramCanvas.drawCatchingMessageEvent(flowNode.getName(), graphicInfo, boundaryEvent.isCancelActivity(), scaleFactor);  
           }
         }
         
