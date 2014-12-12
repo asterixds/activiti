@@ -788,13 +788,19 @@ public class BpmnJsonConverter implements EditorJsonConstants, StencilConstants,
         } else if (STENCIL_SEQUENCE_FLOW.equals(stencilId)) {
           
           String childEdgeId = BpmnJsonConverterUtil.getElementId(childNode);
-          String targetRefId = childNode.get("target").get(EDITOR_SHAPE_ID).asText();
-          List<JsonNode> sourceAndTargetList = new ArrayList<JsonNode>();
-          sourceAndTargetList.add(sourceRefMap.get(childNode.get(EDITOR_SHAPE_ID).asText()));
-          sourceAndTargetList.add(shapeMap.get(targetRefId));
-          
-          edgeMap.put(childEdgeId, childNode);
-          sourceAndTargetMap.put(childEdgeId, sourceAndTargetList);
+          JsonNode targetNode = childNode.get("target");
+          if (targetNode != null) {
+            JsonNode targetResourceIdNode = targetNode.get(EDITOR_SHAPE_ID);
+            if (targetResourceIdNode != null) {
+              String targetRefId = targetResourceIdNode.asText();
+              List<JsonNode> sourceAndTargetList = new ArrayList<JsonNode>();
+              sourceAndTargetList.add(sourceRefMap.get(childNode.get(EDITOR_SHAPE_ID).asText()));
+              sourceAndTargetList.add(shapeMap.get(targetRefId));
+              
+              edgeMap.put(childEdgeId, childNode);
+              sourceAndTargetMap.put(childEdgeId, sourceAndTargetList);
+            }
+          }
         }
       }
     }
@@ -894,21 +900,21 @@ public class BpmnJsonConverter implements EditorJsonConstants, StencilConstants,
         
         Collection<Point2D> intersections = eventCircle.intersections(firstLine);
         Point2D intersection = intersections.iterator().next();
-        graphicInfoList.add(createGraphicInfo(intersection.getX(), intersection.getY()));
+        graphicInfoList.add(createGraphicInfo(intersection.x(), intersection.y()));
       
       } else if (DI_RECTANGLES.contains(sourceRefStencilId)) {
         Polyline2D rectangle = createRectangle(sourceInfo);
         
         Collection<Point2D> intersections = rectangle.intersections(firstLine);
         Point2D intersection = intersections.iterator().next();
-        graphicInfoList.add(createGraphicInfo(intersection.getX(), intersection.getY()));
+        graphicInfoList.add(createGraphicInfo(intersection.x(), intersection.y()));
       
       } else if (DI_GATEWAY.contains(sourceRefStencilId)) {
         Polyline2D gatewayRectangle = createGateway(sourceInfo);
         
         Collection<Point2D> intersections = gatewayRectangle.intersections(firstLine);
         Point2D intersection = intersections.iterator().next();
-        graphicInfoList.add(createGraphicInfo(intersection.getX(), intersection.getY()));
+        graphicInfoList.add(createGraphicInfo(intersection.x(), intersection.y()));
       }
       
       Line2D lastLine = null;
@@ -940,7 +946,7 @@ public class BpmnJsonConverter implements EditorJsonConstants, StencilConstants,
         
         Collection<Point2D> intersections = rectangle.intersections(lastLine);
         Point2D intersection = intersections.iterator().next();
-        graphicInfoList.add(createGraphicInfo(intersection.getX(), intersection.getY()));
+        graphicInfoList.add(createGraphicInfo(intersection.x(), intersection.y()));
         
       } else if (DI_CIRCLES.contains(targetRefStencilId)) {
         
@@ -952,17 +958,22 @@ public class BpmnJsonConverter implements EditorJsonConstants, StencilConstants,
         
         Collection<Point2D> intersections = eventCircle.intersections(lastLine);
         Point2D intersection = intersections.iterator().next();
-        graphicInfoList.add(createGraphicInfo(intersection.getX(), intersection.getY()));
+        graphicInfoList.add(createGraphicInfo(intersection.x(), intersection.y()));
         
       } else if (DI_GATEWAY.contains(targetRefStencilId)) {
         Polyline2D gatewayRectangle = createGateway(targetInfo);
         
         Collection<Point2D> intersections = gatewayRectangle.intersections(lastLine);
         Point2D intersection = intersections.iterator().next();
-        graphicInfoList.add(createGraphicInfo(intersection.getX(), intersection.getY()));
+        graphicInfoList.add(createGraphicInfo(intersection.x(), intersection.y()));
       }
       
       bpmnModel.addFlowGraphicInfoList(edgeId, graphicInfoList);
+      // if sequence has a name, just add a label graphic info
+      String flowName = JsonConverterUtil.getPropertyValueAsString("name", edgeNode);
+      if (StringUtils.isNotEmpty(flowName)) {
+        bpmnModel.addLabelGraphicInfo(edgeId, createGraphicInfo(0D, 0D));
+      }
     }
   }
   
