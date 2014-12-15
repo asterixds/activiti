@@ -1,7 +1,7 @@
 package com.activiti.addon.cluster;
 
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
 
 import org.activiti.engine.impl.jobexecutor.WrappedAsyncExecutor;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ public class SendEventsRunnable implements Runnable {
 	protected Logger logger = LoggerFactory.getLogger(SendEventsRunnable.class);
 
 	protected String uniqueNodeId;
-	protected BlockingQueue<Map<String, Object>> eventQueue;
+	protected AdminAppService adminAppService;
 	
 	protected AdminAppState adminAppState;
 	protected MasterConfigurationState masterConfigurationState; 
@@ -35,10 +35,10 @@ public class SendEventsRunnable implements Runnable {
 	protected JobMetricsManager jobMetricsManager;
 	protected WrappedAsyncExecutor wrappedAsyncExecutor;
 	
-	public SendEventsRunnable(String uniqueId, AdminAppState adminAppState, BlockingQueue<Map<String, Object>> eventQueue) {
+	public SendEventsRunnable(String uniqueId, AdminAppState adminAppState, AdminAppService adminAppService) {
 		this.uniqueNodeId = uniqueId;
 		this.adminAppState = adminAppState;
-		this.eventQueue = eventQueue;
+		this.adminAppService = adminAppService;
 	}
 
 	public void run() {
@@ -49,9 +49,9 @@ public class SendEventsRunnable implements Runnable {
 		try {
 			if (adminAppState.getState().equals(State.ALIVE)) {
 				
-				if (masterConfigurationState != null) {
-					publishEvent(masterConfigurationState.getConfigurationState());
-				}
+//				if (masterConfigurationState != null) {
+//					publishEvent(masterConfigurationState.getConfigurationState());
+//				}
 				
 				if (clusterEnabledProcessEngineLifeCycleListener != null) {
 					publishEvent(clusterEnabledProcessEngineLifeCycleListener.getCurrentlLifeCycleStateEvent());
@@ -61,25 +61,24 @@ public class SendEventsRunnable implements Runnable {
 					publishEvent(jvmMetricsManager.gatherMetrics());
 				}
 				
-				if (wrappedProcessDefinitionCache != null) {
-					publishEvent(wrappedProcessDefinitionCache.gatherMetrics());
-				}
-				
-				if (gatherMetricsCommandInterceptor != null) {
-					publishEvent(gatherMetricsCommandInterceptor.gatherMetrics());
-				}
-				
-				if (jobMetricsManager != null) {
-					publishEvent(jobMetricsManager.gatherMetrics());
-				}
-				
-				if (wrappedAsyncExecutor != null) {
-					publishEvent(wrappedAsyncExecutor.getJobExecutorState());
-				}
+//				if (wrappedProcessDefinitionCache != null) {
+//					publishEvent(wrappedProcessDefinitionCache.gatherMetrics());
+//				}
+//				
+//				if (gatherMetricsCommandInterceptor != null) {
+//					publishEvent(gatherMetricsCommandInterceptor.gatherMetrics());
+//				}
+//				
+//				if (jobMetricsManager != null) {
+//					publishEvent(jobMetricsManager.gatherMetrics());
+//				}
+//				
+//				if (wrappedAsyncExecutor != null) {
+//					publishEvent(wrappedAsyncExecutor.getJobExecutorState());
+//				}
 				
 			} else {
-				logger.warn("Admin app is presumed to be dead. Not sending any event to avoid overflowing the event queue");
-				eventQueue.clear();
+				logger.warn("Admin app is presumed to be dead. Not sending any events");
 			}
 		}
 		catch (Exception e) {
@@ -88,20 +87,10 @@ public class SendEventsRunnable implements Runnable {
 	}
 	
 	protected void publishEvent(Map<String, Object> event) {
-		try {
-			event.put("id", uniqueNodeId);
-			eventQueue.put(event);
-		} catch (InterruptedException e) {
-			logger.error("Could not send metrics (type='" + event.get("type") + "') to events queue", e);
-		}
-	}
-
-	public BlockingQueue<Map<String, Object>> getEventQueue() {
-		return eventQueue;
-	}
-
-	public void setEventQueue(BlockingQueue<Map<String, Object>> eventQueue) {
-		this.eventQueue = eventQueue;
+		event.put("nodeId", uniqueNodeId);
+		ArrayList<Map<String, Object>> events = new ArrayList<Map<String,Object>>();
+		events.add(event);
+		adminAppService.publishEvents(events);
 	}
 
 	public ProcessDefinitionCacheMetricsWrapper getWrappedProcessDefinitionCache() {

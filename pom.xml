@@ -591,9 +591,9 @@
         
       <!-- ENTERPRISE depdencies -->
 	  <dependency>
-	    <groupId>com.hazelcast</groupId>
-		<artifactId>hazelcast</artifactId>
-		<version>3.1.5</version>
+	  	<groupId>org.apache.httpcomponents</groupId>
+	    <artifactId>httpclient</artifactId>
+		<version>4.3.6</version>
 	  </dependency>
 	  <dependency>
 		<groupId>com.verhas</groupId>

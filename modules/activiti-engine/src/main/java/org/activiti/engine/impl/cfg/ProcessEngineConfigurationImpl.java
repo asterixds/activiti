@@ -254,25 +254,11 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   protected LicenseHolder licenseHolder;
   
   protected String enterpriseClusterName;
+  protected String enterpriseClusterUserName;
   protected String enterpriseClusterPassword;
-  protected Integer enterpriseNetworkStartingPort;
-  
+
   protected Boolean enterpriseMasterConfigurationRequired;
   protected Integer enterpriseMetricSendingInterval;
-  
-  protected Boolean enterpriseNetworkMulticastEnabled;
-  protected String enterpriseNetworkMulticastGroup;
-  protected Integer enterpriseNetworkMulticastPort;
-  
-  protected Boolean enterpriseNetworkTcpEnabled;
-  protected String enterpriseNetworkTcpHost;
-  protected Integer enterpriseNetworkTcpPort;
-  protected List<String> enterpriseNetworkTcpInterfaces = new ArrayList<String>();
-  
-  protected Boolean enterpriseSecurityEnabled;
-  protected String enterpriseSecurityPassword;
-  protected String enterpriseSecuritySalt;
-  protected Integer enterpriseSecurityIterationCount;
   
   // SERVICES /////////////////////////////////////////////////////////////////
 
@@ -922,7 +908,7 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     }
     
     // Enterprise-only: add cluster config configurator if flag is set
-    ClusterConfigProperties clusterConfigProperties = new ClusterConfigProperties();
+    ClusterConfigProperties clusterConfigProperties = new ClusterConfigProperties(); // Will load from classpath if present
     if (isEnableClusterConfig()) {
       log.info("Cluster config enabled. Starting Cluster config.");
       if (clusterConfigProperties.isPropertyFileExists() == false) {
@@ -932,14 +918,14 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
           clusterConfigProperties.setClusterName(enterpriseClusterName);
         }
         
+        if (enterpriseClusterUserName != null) {
+        	clusterConfigProperties.setClusterUserName(enterpriseClusterUserName);
+        }
+        
         if (enterpriseClusterPassword != null) {
           clusterConfigProperties.setClusterPassword(enterpriseClusterPassword);
         }
         
-        if (enterpriseNetworkStartingPort != null) {
-          clusterConfigProperties.setNetworkStartingPort(enterpriseNetworkStartingPort);
-        }
-         
         if (enterpriseMasterConfigurationRequired != null) {
           clusterConfigProperties.setMasterConfigurationRequired(enterpriseMasterConfigurationRequired);
         }
@@ -948,50 +934,6 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
           clusterConfigProperties.setMetricSendingInterval(enterpriseMetricSendingInterval);
         }
          
-        if (enterpriseNetworkMulticastEnabled != null) {
-          clusterConfigProperties.setNetworkMulticastEnabled(enterpriseNetworkMulticastEnabled);
-        }
-          
-        if (enterpriseNetworkMulticastGroup != null) {
-          clusterConfigProperties.setNetworkMulticastGroup(enterpriseNetworkMulticastGroup);
-        }
-        
-        if (enterpriseNetworkMulticastPort != null) {
-          clusterConfigProperties.setNetworkMulticastPort(enterpriseNetworkMulticastPort);
-        }
-        
-        if (enterpriseNetworkTcpEnabled != null) {
-          clusterConfigProperties.setNetworkTcpEnabled(enterpriseNetworkTcpEnabled);
-        }
-        
-        if (enterpriseNetworkTcpHost != null) {
-          clusterConfigProperties.setNetworkTcpHost(enterpriseNetworkTcpHost);
-        }
-        
-        if (enterpriseNetworkTcpPort != null) {
-          clusterConfigProperties.setNetworkTcpPort(enterpriseNetworkTcpPort);
-        }
-        
-        if (enterpriseNetworkTcpInterfaces != null) {
-          clusterConfigProperties.setNetworkTcpInterfaces(enterpriseNetworkTcpInterfaces);
-        }
-        
-        if (enterpriseSecurityEnabled != null) {
-          clusterConfigProperties.setSecurityEnabled(enterpriseSecurityEnabled);
-        }
-        
-        if (enterpriseSecurityPassword != null) {
-          clusterConfigProperties.setSecurityPassword(enterpriseSecurityPassword);
-        }
-        
-        if (enterpriseSecuritySalt != null) {
-          clusterConfigProperties.setSecuritySalt(enterpriseSecuritySalt);
-        }
-        
-        if (enterpriseSecurityIterationCount != null) {
-          clusterConfigProperties.setSecurityIterationCount(enterpriseSecurityIterationCount);
-        }
-        
       } else {
         log.info("Using cluster properties file for cluster config.");
       }
@@ -2181,127 +2123,42 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     return enterpriseClusterName;
   }
 
-  public void setEnterpriseClusterName(String enterpriseClusterName) {
-    this.enterpriseClusterName = enterpriseClusterName;
-  }
+	public String getEnterpriseClusterUserName() {
+		return enterpriseClusterUserName;
+	}
 
-  public String getEnterpriseClusterPassword() {
-    return enterpriseClusterPassword;
-  }
+	public void setEnterpriseClusterUserName(String enterpriseClusterUserName) {
+		this.enterpriseClusterUserName = enterpriseClusterUserName;
+	}
 
-  public void setEnterpriseClusterPassword(String enterpriseClusterPassword) {
-    this.enterpriseClusterPassword = enterpriseClusterPassword;
-  }
+	public String getEnterpriseClusterPassword() {
+		return enterpriseClusterPassword;
+	}
 
-  public Integer getEnterpriseNetworkStartingPort() {
-    return enterpriseNetworkStartingPort;
-  }
+	public void setEnterpriseClusterPassword(String enterpriseClusterPassword) {
+		this.enterpriseClusterPassword = enterpriseClusterPassword;
+	}
 
-  public void setEnterpriseNetworkStartingPort(Integer enterpriseNetworkStartingPort) {
-    this.enterpriseNetworkStartingPort = enterpriseNetworkStartingPort;
-  }
+	public Boolean getEnterpriseMasterConfigurationRequired() {
+		return enterpriseMasterConfigurationRequired;
+	}
 
-  public Boolean getEnterpriseMasterConfigurationRequired() {
-    return enterpriseMasterConfigurationRequired;
-  }
+	public void setEnterpriseMasterConfigurationRequired(
+	    Boolean enterpriseMasterConfigurationRequired) {
+		this.enterpriseMasterConfigurationRequired = enterpriseMasterConfigurationRequired;
+	}
 
-  public void setEnterpriseMasterConfigurationRequired(Boolean enterpriseMasterConfigurationRequired) {
-    this.enterpriseMasterConfigurationRequired = enterpriseMasterConfigurationRequired;
-  }
+	public Integer getEnterpriseMetricSendingInterval() {
+		return enterpriseMetricSendingInterval;
+	}
 
-  public Integer getEnterpriseMetricSendingInterval() {
-    return enterpriseMetricSendingInterval;
-  }
+	public void setEnterpriseMetricSendingInterval(
+	    Integer enterpriseMetricSendingInterval) {
+		this.enterpriseMetricSendingInterval = enterpriseMetricSendingInterval;
+	}
 
-  public void setEnterpriseMetricSendingInterval(Integer enterpriseMetricSendingInterval) {
-    this.enterpriseMetricSendingInterval = enterpriseMetricSendingInterval;
-  }
+	public void setEnterpriseClusterName(String enterpriseClusterName) {
+		this.enterpriseClusterName = enterpriseClusterName;
+	}
 
-  public Boolean getEnterpriseNetworkMulticastEnabled() {
-    return enterpriseNetworkMulticastEnabled;
-  }
-
-  public void setEnterpriseNetworkMulticastEnabled(Boolean enterpriseNetworkMulticastEnabled) {
-    this.enterpriseNetworkMulticastEnabled = enterpriseNetworkMulticastEnabled;
-  }
-
-  public String getEnterpriseNetworkMulticastGroup() {
-    return enterpriseNetworkMulticastGroup;
-  }
-
-  public void setEnterpriseNetworkMulticastGroup(String enterpriseNetworkMulticastGroup) {
-    this.enterpriseNetworkMulticastGroup = enterpriseNetworkMulticastGroup;
-  }
-
-  public Integer getEnterpriseNetworkMulticastPort() {
-    return enterpriseNetworkMulticastPort;
-  }
-
-  public void setEnterpriseNetworkMulticastPort(Integer enterpriseNetworkMulticastPort) {
-    this.enterpriseNetworkMulticastPort = enterpriseNetworkMulticastPort;
-  }
-
-  public Boolean getEnterpriseNetworkTcpEnabled() {
-    return enterpriseNetworkTcpEnabled;
-  }
-
-  public void setEnterpriseNetworkTcpEnabled(Boolean enterpriseNetworkTcpEnabled) {
-    this.enterpriseNetworkTcpEnabled = enterpriseNetworkTcpEnabled;
-  }
-
-  public String getEnterpriseNetworkTcpHost() {
-    return enterpriseNetworkTcpHost;
-  }
-
-  public void setEnterpriseNetworkTcpHost(String enterpriseNetworkTcpHost) {
-    this.enterpriseNetworkTcpHost = enterpriseNetworkTcpHost;
-  }
-
-  public Integer getEnterpriseNetworkTcpPort() {
-    return enterpriseNetworkTcpPort;
-  }
-
-  public void setEnterpriseNetworkTcpPort(Integer enterpriseNetworkTcpPort) {
-    this.enterpriseNetworkTcpPort = enterpriseNetworkTcpPort;
-  }
-
-  public List<String> getEnterpriseNetworkTcpInterfaces() {
-    return enterpriseNetworkTcpInterfaces;
-  }
-
-  public void setEnterpriseNetworkTcpInterfaces(List<String> enterpriseNetworkTcpInterfaces) {
-    this.enterpriseNetworkTcpInterfaces = enterpriseNetworkTcpInterfaces;
-  }
-
-  public Boolean getEnterpriseSecurityEnabled() {
-    return enterpriseSecurityEnabled;
-  }
-
-  public void setEnterpriseSecurityEnabled(Boolean enterpriseSecurityEnabled) {
-    this.enterpriseSecurityEnabled = enterpriseSecurityEnabled;
-  }
-
-  public String getEnterpriseSecurityPassword() {
-    return enterpriseSecurityPassword;
-  }
-
-  public void setEnterpriseSecurityPassword(String enterpriseSecurityPassword) {
-    this.enterpriseSecurityPassword = enterpriseSecurityPassword;
-  }
-
-  public String getEnterpriseSecuritySalt() {
-    return enterpriseSecuritySalt;
-  }
-
-  public void setEnterpriseSecuritySalt(String enterpriseSecuritySalt) {
-    this.enterpriseSecuritySalt = enterpriseSecuritySalt;
-  }
-
-  public Integer getEnterpriseSecurityIterationCount() {
-    return enterpriseSecurityIterationCount;
-  }
-
-  public void setEnterpriseSecurityIterationCount(Integer enterpriseSecurityIterationCount) {
-    this.enterpriseSecurityIterationCount = enterpriseSecurityIterationCount;
-  }
 }

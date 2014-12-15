@@ -80,9 +80,9 @@
       <artifactId>license3j</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.hazelcast</groupId>
-      <artifactId>hazelcast</artifactId>
-    </dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+	  <artifactId>httpclient</artifactId>
+	</dependency>
     
     <!-- Test dependencies -->
     <dependency>
