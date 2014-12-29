@@ -464,7 +464,7 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     verifyLicense();
     // End Enterprise only
     
-  	initConfigurators();
+    initConfigurators();
   	configuratorsBeforeInit();
     initProcessDiagramGenerator();
     initHistoryLevel();
