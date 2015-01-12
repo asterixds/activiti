@@ -10,7 +10,7 @@
     <groupId>com.activiti</groupId>
     <artifactId>activiti-root</artifactId>
     <relativePath>../..</relativePath>
-    <version>5.17.0.3</version>
+    <version>5.17.0.4</version>
   </parent>
 
   <dependencies>
@@ -203,7 +203,6 @@
             <exclude>**/RepeatingServiceTaskTest.java</exclude>
           </excludes>
           <runOrder>alphabetical</runOrder>
-          <argLine>-Duser.language=en</argLine>
         </configuration>
       </plugin>
       <plugin>
@@ -476,7 +475,6 @@
                 <exclude>org/activiti/standalone/**</exclude>
               </excludes>
               <runOrder>alphabetical</runOrder>
-              <argLine>-Duser.language=en</argLine>
             </configuration>
           </plugin>
         </plugins>
@@ -542,7 +540,6 @@
 							<exclude>org/activiti/standalone/**</exclude>
 						</excludes>
 						<runOrder>alphabetical</runOrder>
-            <argLine>-Duser.language=en</argLine>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -594,7 +591,6 @@
                 <exclude>org/activiti/standalone/**</exclude>
               </excludes>
               <runOrder>alphabetical</runOrder>
-              <argLine>-Duser.language=en</argLine>
             </configuration>
           </plugin>
         </plugins>
@@ -685,7 +681,6 @@
                 <exclude>org/activiti/standalone/**</exclude>
               </excludes>
               <runOrder>alphabetical</runOrder>
-              <argLine>-Duser.language=en</argLine>
             </configuration>
           </plugin>
         </plugins>
@@ -732,7 +727,6 @@
                 <exclude>org/activiti/standalone/**</exclude>
               </excludes>
               <runOrder>alphabetical</runOrder>
-              <argLine>-Duser.language=en</argLine>
             </configuration>
           </plugin>
         </plugins>
@@ -756,7 +750,6 @@
               </includes>
               <excludes />
               <runOrder>alphabetical</runOrder>
-              <argLine>-Duser.language=en</argLine>
             </configuration>
           </plugin>
           <plugin>

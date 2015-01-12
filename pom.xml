@@ -7,7 +7,7 @@
   <groupId>com.activiti</groupId>
   <artifactId>activiti-root</artifactId>
   <packaging>pom</packaging>
-  <version>5.17.0.3</version>
+  <version>5.17.0.4</version>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <spring.framework.version>4.0.6.RELEASE</spring.framework.version>
@@ -15,6 +15,8 @@
     <mule.version>3.5.0</mule.version>
     <cxf.version>2.6.14</cxf.version>
     <batik.version>1.7</batik.version>
+    <!-- JVM params for test execution -->
+    <argLine>-Duser.language=en</argLine>
 
     <!-- OSGi bundles properties -->
     <activiti.artifact />
@@ -101,6 +103,11 @@
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>2.0.1</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-collections</groupId>
+        <artifactId>commons-collections</artifactId>
+        <version>3.2.1</version>
       </dependency>
       <dependency>
         <groupId>commons-fileupload</groupId>
@@ -479,7 +486,7 @@
       <dependency>
         <groupId>joda-time</groupId>
         <artifactId>joda-time</artifactId>
-        <version>2.1</version>
+        <version>2.6</version>
       </dependency>
       <!-- Activiti Modeler -->
       <dependency>
@@ -642,7 +649,6 @@
             <exclude>**/*TestCase.java</exclude>
           </excludes>
           <runOrder>alphabetical</runOrder>
-          <argLine>-Duser.language=en</argLine>
         </configuration>
       </plugin>
       <plugin>
@@ -801,7 +807,6 @@
         <module>modules/activiti-cdi</module>
         <module>modules/activiti-ldap</module>
         <module>modules/activiti-jmx</module>
-        <module>modules/activiti-hazelcast-async-executor</module>
       </modules>
     </profile>
     <profile>
