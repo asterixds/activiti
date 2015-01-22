@@ -7,19 +7,15 @@
 	<artifactId>activiti-hazelcast-async-executor</artifactId>
 
 	<parent>
-		<groupId>org.activiti</groupId>
+		<groupId>com.activiti</groupId>
 		<artifactId>activiti-root</artifactId>
 		<relativePath>../..</relativePath>
-<<<<<<< HEAD
-		<version>5.17.0.3</version>
-=======
-		<version>5.17.1-SNAPSHOT</version>
->>>>>>> a286929e4971412a72d557eaf0e1ed80c11b20b0
+		<version>5.17.0.5</version>
 	</parent>
 
 	<dependencies>
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-engine</artifactId>
 		</dependency>
 			<dependency>
