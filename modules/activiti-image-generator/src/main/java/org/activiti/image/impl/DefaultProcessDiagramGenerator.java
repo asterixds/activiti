@@ -30,6 +30,7 @@ import org.activiti.bpmn.model.BoundaryEvent;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.BusinessRuleTask;
 import org.activiti.bpmn.model.CallActivity;
+import org.activiti.bpmn.model.CompensateEventDefinition;
 import org.activiti.bpmn.model.EndEvent;
 import org.activiti.bpmn.model.ErrorEventDefinition;
 import org.activiti.bpmn.model.Event;
@@ -75,8 +76,8 @@ import org.activiti.image.ProcessDiagramGenerator;
  */
 public class DefaultProcessDiagramGenerator implements ProcessDiagramGenerator {
 
-  protected final Map<Class<? extends BaseElement>, ActivityDrawInstruction> activityDrawInstructions = new HashMap<Class<? extends BaseElement>, ActivityDrawInstruction>();
-  protected final Map<Class<? extends BaseElement>, ArtifactDrawInstruction> artifactDrawInstructions = new HashMap<Class<? extends BaseElement>, ArtifactDrawInstruction>();
+  protected Map<Class<? extends BaseElement>, ActivityDrawInstruction> activityDrawInstructions = new HashMap<Class<? extends BaseElement>, ActivityDrawInstruction>();
+  protected Map<Class<? extends BaseElement>, ArtifactDrawInstruction> artifactDrawInstructions = new HashMap<Class<? extends BaseElement>, ArtifactDrawInstruction>();
   
   public DefaultProcessDiagramGenerator() {
     this(1.0);
@@ -101,6 +102,8 @@ public class DefaultProcessDiagramGenerator implements ProcessDiagramGenerator {
             processDiagramCanvas.drawSignalStartEvent(graphicInfo, scaleFactor);
           } else if (eventDefinition instanceof MessageEventDefinition) {
             processDiagramCanvas.drawMessageStartEvent(graphicInfo, scaleFactor);
+          } else {
+            processDiagramCanvas.drawNoneStartEvent(graphicInfo);
           }
         } else {
           processDiagramCanvas.drawNoneStartEvent(graphicInfo);
@@ -136,6 +139,8 @@ public class DefaultProcessDiagramGenerator implements ProcessDiagramGenerator {
         if (throwEvent.getEventDefinitions() != null && !throwEvent.getEventDefinitions().isEmpty()) {
           if (throwEvent.getEventDefinitions().get(0) instanceof SignalEventDefinition) {
             processDiagramCanvas.drawThrowingSignalEvent(graphicInfo, scaleFactor);
+          } else if (throwEvent.getEventDefinitions().get(0) instanceof CompensateEventDefinition) {
+            processDiagramCanvas.drawThrowingCompensateEvent(graphicInfo, scaleFactor);
           } else {
             processDiagramCanvas.drawThrowingNoneEvent(graphicInfo, scaleFactor);
           }
@@ -296,8 +301,12 @@ public class DefaultProcessDiagramGenerator implements ProcessDiagramGenerator {
             
           } else if (boundaryEvent.getEventDefinitions().get(0) instanceof SignalEventDefinition) {
             processDiagramCanvas.drawCatchingSignalEvent(flowNode.getName(), graphicInfo, boundaryEvent.isCancelActivity(), scaleFactor);
+
           } else if (boundaryEvent.getEventDefinitions().get(0) instanceof MessageEventDefinition) {
             processDiagramCanvas.drawCatchingMessageEvent(flowNode.getName(), graphicInfo, boundaryEvent.isCancelActivity(), scaleFactor);  
+
+          } else if (boundaryEvent.getEventDefinitions().get(0) instanceof CompensateEventDefinition) {
+            processDiagramCanvas.drawCatchingCompensateEvent(graphicInfo, boundaryEvent.isCancelActivity(), scaleFactor);
           }
         }
         
@@ -866,8 +875,28 @@ public class DefaultProcessDiagramGenerator implements ProcessDiagramGenerator {
     }
     return flowNodes;
   }
+  
+  public Map<Class<? extends BaseElement>, ActivityDrawInstruction> getActivityDrawInstructions() {
+		return activityDrawInstructions;
+	}
 
-  protected interface ActivityDrawInstruction {
+	public void setActivityDrawInstructions(
+	    Map<Class<? extends BaseElement>, ActivityDrawInstruction> activityDrawInstructions) {
+		this.activityDrawInstructions = activityDrawInstructions;
+	}
+
+	public Map<Class<? extends BaseElement>, ArtifactDrawInstruction> getArtifactDrawInstructions() {
+		return artifactDrawInstructions;
+	}
+
+	public void setArtifactDrawInstructions(
+	    Map<Class<? extends BaseElement>, ArtifactDrawInstruction> artifactDrawInstructions) {
+		this.artifactDrawInstructions = artifactDrawInstructions;
+	}
+
+
+
+	protected interface ActivityDrawInstruction {
     void draw(DefaultProcessDiagramCanvas processDiagramCanvas, BpmnModel bpmnModel, FlowNode flowNode);
   }
 

@@ -34,6 +34,7 @@ import java.util.Set;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.FormService;
 import org.activiti.engine.HistoryService;
@@ -218,6 +219,7 @@ import org.activiti.validation.ProcessValidator;
 import org.activiti.validation.ProcessValidatorFactory;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
+import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
@@ -309,6 +311,8 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   
   protected int processDefinitionCacheLimit = -1; // By default, no limit
   protected DeploymentCache<ProcessDefinitionEntity> processDefinitionCache;
+  protected int bpmnModelCacheLimit = -1; // By default, no limit
+  protected DeploymentCache<BpmnModel> bpmnModelCache;
   
   protected int knowledgeBaseCacheLimit = -1;
   protected DeploymentCache<Object> knowledgeBaseCache;
@@ -324,6 +328,7 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   protected TransactionFactory transactionFactory;
   
   protected Set<Class<?>> customMybatisMappers;
+  protected Set<String> customMybatisXMLMappers;
 
   // ID GENERATOR /////////////////////////////////////////////////////////////
   
@@ -448,7 +453,7 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     verifyLicense();
     // End Enterprise only
     
-  	initConfigurators();
+    initConfigurators();
   	configuratorsBeforeInit();
     initProcessDiagramGenerator();
     initHistoryLevel();
@@ -772,11 +777,26 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   }
 	
 	protected Configuration parseMybatisConfiguration(Configuration configuration, XMLConfigBuilder parser) {
-	  return parser.parse();
+	  return parseCustomMybatisXMLMappers(parser.parse());
+  }
+	
+	protected Configuration parseCustomMybatisXMLMappers(Configuration configuration) {
+	  if (getCustomMybatisXMLMappers() != null)
+    // see XMLConfigBuilder.mapperElement()
+    for(String resource: getCustomMybatisXMLMappers()){
+      XMLMapperBuilder mapperParser = new XMLMapperBuilder(getResourceAsStream(resource), 
+          configuration, resource, configuration.getSqlFragments());
+      mapperParser.parse();
+    }
+    return configuration;
   }
   
+	protected InputStream getResourceAsStream(String resource) {
+    return ReflectUtil.getResourceAsStream(resource);
+  }
+	
   protected InputStream getMyBatisXmlConfigurationSteam() {
-    return ReflectUtil.getResourceAsStream(DEFAULT_MYBATIS_MAPPING_FILE);
+    return getResourceAsStream(DEFAULT_MYBATIS_MAPPING_FILE);
   }
   
   public Set<Class<?>> getCustomMybatisMappers() {
@@ -785,6 +805,14 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
 
   public void setCustomMybatisMappers(Set<Class<?>> customMybatisMappers) {
 	this.customMybatisMappers = customMybatisMappers;
+  }
+  
+  public Set<String> getCustomMybatisXMLMappers() {
+    return customMybatisXMLMappers;
+  }
+  
+  public void setCustomMybatisXMLMappers(Set<String> customMybatisXMLMappers) {
+    this.customMybatisXMLMappers = customMybatisXMLMappers;
   }
   
   // session factories ////////////////////////////////////////////////////////
@@ -985,7 +1013,16 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
         } else {
           processDefinitionCache = new DefaultDeploymentCache<ProcessDefinitionEntity>(processDefinitionCacheLimit);
         }
-      } 
+      }
+      
+      // BpmnModel cache
+      if (bpmnModelCache == null) {
+        if (bpmnModelCacheLimit <= 0) {
+          bpmnModelCache = new DefaultDeploymentCache<BpmnModel>();
+        } else {
+          bpmnModelCache = new DefaultDeploymentCache<BpmnModel>(bpmnModelCacheLimit);
+        }
+      }
       
       // Knowledge base cache (used for Drools business task)
       if (knowledgeBaseCache == null) {
@@ -997,6 +1034,7 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
       }
       
       deploymentManager.setProcessDefinitionCache(processDefinitionCache);
+      deploymentManager.setBpmnModelCache(bpmnModelCache);
       deploymentManager.setKnowledgeBaseCache(knowledgeBaseCache);
     }
   }

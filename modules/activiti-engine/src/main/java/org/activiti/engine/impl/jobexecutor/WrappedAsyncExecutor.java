@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.activiti.engine.impl.asyncexecutor.AsyncExecutor;
 import org.activiti.engine.impl.asyncexecutor.DefaultAsyncJobExecutor;
+import org.activiti.engine.impl.interceptor.CommandExecutor;
+import org.activiti.engine.impl.persistence.entity.JobEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +32,7 @@ public class WrappedAsyncExecutor extends DefaultAsyncJobExecutor {
 	@Override
 	public void start() {
 		logger.info("Starting async executor");
-		super.start();
+		originalAsyncExecutor.start();
 		this.state = State.STARTED;
 		logger.info("Async executor is started");
 	}
@@ -39,12 +41,82 @@ public class WrappedAsyncExecutor extends DefaultAsyncJobExecutor {
 	public synchronized void shutdown() {
 		logger.info("Stopping async executor");
 		this.state = State.STOPPING;
-		super.shutdown();
+		originalAsyncExecutor.shutdown();
 		this.state = State.STOPPED;
 		logger.info("Async excutor is stopped");
 	}
 
-	public State getState() {
+	@Override
+  public void executeAsyncJob(JobEntity job) {
+	  originalAsyncExecutor.executeAsyncJob(job);
+  }
+
+  @Override
+  public CommandExecutor getCommandExecutor() {
+    return originalAsyncExecutor.getCommandExecutor();
+  }
+
+  @Override
+  public void setCommandExecutor(CommandExecutor commandExecutor) {
+    originalAsyncExecutor.setCommandExecutor(commandExecutor);
+  }
+
+  @Override
+  public boolean isAutoActivate() {
+    return originalAsyncExecutor.isAutoActivate();
+  }
+
+  @Override
+  public void setAutoActivate(boolean isAutoActivate) {
+    originalAsyncExecutor.setAutoActivate(isAutoActivate);
+  }
+
+  @Override
+  public boolean isActive() {
+    return originalAsyncExecutor.isActive();
+  }
+
+  @Override
+  public String getLockOwner() {
+    return originalAsyncExecutor.getLockOwner();
+  }
+
+  @Override
+  public int getTimerLockTimeInMillis() {
+    return originalAsyncExecutor.getTimerLockTimeInMillis();
+  }
+
+  @Override
+  public int getAsyncJobLockTimeInMillis() {
+    return originalAsyncExecutor.getAsyncJobLockTimeInMillis();
+  }
+
+  @Override
+  public void setAsyncJobLockTimeInMillis(int asyncJobLockTimeInMillis) {
+    originalAsyncExecutor.setAsyncJobLockTimeInMillis(asyncJobLockTimeInMillis);
+  }
+
+  @Override
+  public int getMaxTimerJobsPerAcquisition() {
+    return originalAsyncExecutor.getMaxTimerJobsPerAcquisition();
+  }
+
+  @Override
+  public int getMaxAsyncJobsDuePerAcquisition() {
+    return originalAsyncExecutor.getMaxAsyncJobsDuePerAcquisition();
+  }
+
+  @Override
+  public int getDefaultTimerJobAcquireWaitTimeInMillis() {
+    return originalAsyncExecutor.getDefaultTimerJobAcquireWaitTimeInMillis();
+  }
+
+  @Override
+  public int getDefaultAsyncJobAcquireWaitTimeInMillis() {
+    return originalAsyncExecutor.getDefaultAsyncJobAcquireWaitTimeInMillis();
+  }
+
+  public State getState() {
 		return state;
 	}
 	

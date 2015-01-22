@@ -79,19 +79,19 @@ public class BlueprintBasicTest {
   @Configuration
   public Option[] createConfiguration() {
     Option[] coreBundles = options(
-        mavenBundle().groupId("com.activiti").artifactId("activiti-bpmn-model").version("5.17.0-SNAPSHOT"),
-        mavenBundle().groupId("com.activiti").artifactId("activiti-bpmn-converter").version("5.17.0-SNAPSHOT"),
-        mavenBundle().groupId("com.activiti").artifactId("activiti-process-validation").version("5.17.0-SNAPSHOT"),
-        mavenBundle().groupId("com.activiti").artifactId("activiti-image-generator").version("5.17.0-SNAPSHOT"),
-        mavenBundle().groupId("com.activiti").artifactId("activiti-engine").version("5.17.0-SNAPSHOT"),
+        mavenBundle().groupId("org.activiti").artifactId("activiti-bpmn-model").version("5.17.1-SNAPSHOT"),
+        mavenBundle().groupId("org.activiti").artifactId("activiti-bpmn-converter").version("5.17.1-SNAPSHOT"),
+        mavenBundle().groupId("org.activiti").artifactId("activiti-process-validation").version("5.17.1-SNAPSHOT"),
+        mavenBundle().groupId("org.activiti").artifactId("activiti-image-generator").version("5.17.1-SNAPSHOT"),
+        mavenBundle().groupId("org.activiti").artifactId("activiti-engine").version("5.17.1-SNAPSHOT"),
         mavenBundle().groupId("org.apache.commons").artifactId("commons-lang3").version("3.3.2"),
         mavenBundle().groupId("com.fasterxml.jackson.core").artifactId("jackson-core").version("2.2.3"),
         mavenBundle().groupId("com.fasterxml.jackson.core").artifactId("jackson-databind").version("2.2.3"),
         mavenBundle().groupId("com.fasterxml.jackson.core").artifactId("jackson-annotations").version("2.2.3"),
         mavenBundle().groupId("log4j").artifactId("log4j").version("1.2.17"),
-        mavenBundle().groupId("joda-time").artifactId("joda-time").version("2.1"),
-        mavenBundle().groupId("com.h2database").artifactId("h2").version("1.3.170"),
-        mavenBundle().groupId("org.mybatis").artifactId("mybatis").version("3.2.2"),
+        mavenBundle().groupId("joda-time").artifactId("joda-time").version("2.6"),
+        mavenBundle().groupId("com.h2database").artifactId("h2").version("1.3.176"),
+        mavenBundle().groupId("org.mybatis").artifactId("mybatis").version("3.2.5"),
         mavenBundle().groupId("com.hazelcast").artifactId("hazelcast").version("3.1.5"),
         mavenBundle().groupId("org.slf4j").artifactId("slf4j-api").version("1.7.6"),
         mavenBundle().groupId("org.slf4j").artifactId("slf4j-log4j12").version("1.7.6").noStart(),
@@ -99,7 +99,9 @@ public class BlueprintBasicTest {
         mavenBundle().groupId("org.apache.aries.blueprint").artifactId("org.apache.aries.blueprint.core").version("1.0.0"),
         mavenBundle().groupId("org.apache.aries.proxy").artifactId("org.apache.aries.proxy").version("1.0.0"),
         mavenBundle().groupId("org.apache.aries").artifactId("org.apache.aries.util").version("1.0.0"),
+        mavenBundle().groupId("org.osgi").artifactId("org.osgi.enterprise").version("4.2.0"),
         bundle("reference:file:target/classes"));
+    
     Option[] optionArray = OptionUtils.combine(coreBundles, CoreOptions.junitBundles(),
         provision(createTestBundleWithProcessEngineConfiguration(), 
             createTestBundleWithProcessDefinition(), 
