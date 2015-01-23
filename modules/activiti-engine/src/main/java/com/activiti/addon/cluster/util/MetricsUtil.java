@@ -3,6 +3,7 @@ package com.activiti.addon.cluster.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.activiti.addon.cluster.metrics.HourCounter;
 import com.activiti.addon.cluster.metrics.codahale.Meter;
 import com.activiti.addon.cluster.metrics.codahale.Snapshot;
 import com.activiti.addon.cluster.metrics.codahale.Timer;
@@ -12,13 +13,22 @@ import com.activiti.addon.cluster.metrics.codahale.Timer;
  */
 public class MetricsUtil {
 	
-	public static Map<String, Object> meterToMap(Meter meter) {
+	public static Map<String, Object> metricsToMap(Meter meter) {
+		return metricsToMap(meter, null);
+	}
+	
+	public static Map<String, Object> metricsToMap(Meter meter, HourCounter hourCounter) {
 		Map<String, Object> metrics = new HashMap<String, Object>();
 		metrics.put("count", meter.getCount());
 		metrics.put("mean-rate", meter.getMeanRate());
 		metrics.put("one-minute-rate", meter.getOneMinuteRate());
 		metrics.put("five-minute-rate", meter.getFiveMinuteRate());
 		metrics.put("fifteen-minute-rate", meter.getFifteenMinuteRate());
+		
+		if (hourCounter != null) {
+			metrics.put("hour-counts", hourCounter.getCounts());
+		}
+		
 		return metrics;
 	}
 	

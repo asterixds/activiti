@@ -1,15 +1,17 @@
 package com.activiti.addon.cluster;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.impl.jobexecutor.WrappedAsyncExecutor;
+import org.activiti.engine.runtime.Clock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.activiti.addon.cluster.cache.ProcessDefinitionCacheMetricsWrapper;
 import com.activiti.addon.cluster.interceptor.GatherMetricsCommandInterceptor;
-import com.activiti.addon.cluster.jobexecutor.JobMetricsManager;
+import com.activiti.addon.cluster.jobexecutor.GatherMetricsFailedJobCommandFactory;
 import com.activiti.addon.cluster.lifecycle.ClusterEnabledProcessEngineLifeCycleListener;
 import com.activiti.addon.cluster.metrics.JvmMetricsManager;
 import com.activiti.addon.cluster.state.AdminAppState;
@@ -24,19 +26,23 @@ public class SendEventsRunnable implements Runnable {
 	protected Logger logger = LoggerFactory.getLogger(SendEventsRunnable.class);
 
 	protected String uniqueNodeId;
+	protected String ipAddress;
+	protected Clock clock;
+	protected AdminAppState adminAppState;
 	protected AdminAppService adminAppService;
 	
-	protected AdminAppState adminAppState;
 	protected MasterConfigurationState masterConfigurationState; 
 	protected ClusterEnabledProcessEngineLifeCycleListener clusterEnabledProcessEngineLifeCycleListener;
-	protected ProcessDefinitionCacheMetricsWrapper wrappedProcessDefinitionCache;
+	protected ProcessDefinitionCacheMetricsWrapper processDefinitionCache;
 	protected JvmMetricsManager jvmMetricsManager;
 	protected GatherMetricsCommandInterceptor gatherMetricsCommandInterceptor;
-	protected JobMetricsManager jobMetricsManager;
+	protected GatherMetricsFailedJobCommandFactory gatherMetricsFailedJobCommandFactory;
 	protected WrappedAsyncExecutor wrappedAsyncExecutor;
 	
-	public SendEventsRunnable(String uniqueId, AdminAppState adminAppState, AdminAppService adminAppService) {
+	public SendEventsRunnable(String uniqueId, String ipAddress, Clock clock, AdminAppState adminAppState, AdminAppService adminAppService) {
 		this.uniqueNodeId = uniqueId;
+		this.ipAddress = ipAddress;
+		this.clock = clock;
 		this.adminAppState = adminAppState;
 		this.adminAppService = adminAppService;
 	}
@@ -49,36 +55,43 @@ public class SendEventsRunnable implements Runnable {
 		try {
 			if (adminAppState.getState().equals(State.ALIVE)) {
 				
+				List<Map<String, Object>> events = new ArrayList<Map<String,Object>>();
+				
 //				if (masterConfigurationState != null) {
 //					publishEvent(masterConfigurationState.getConfigurationState());
 //				}
 				
 				if (clusterEnabledProcessEngineLifeCycleListener != null) {
-					publishEvent(clusterEnabledProcessEngineLifeCycleListener.getCurrentlLifeCycleStateEvent());
+					events.add(clusterEnabledProcessEngineLifeCycleListener.getCurrentlLifeCycleStateEvent());
 				}
 				
 				if (jvmMetricsManager != null) {
-					publishEvent(jvmMetricsManager.gatherMetrics());
+					events.add(jvmMetricsManager.gatherMetrics());
 				}
 				
-//				if (wrappedProcessDefinitionCache != null) {
-//					publishEvent(wrappedProcessDefinitionCache.gatherMetrics());
-//				}
-//				
-//				if (gatherMetricsCommandInterceptor != null) {
-//					publishEvent(gatherMetricsCommandInterceptor.gatherMetrics());
-//				}
-//				
-//				if (jobMetricsManager != null) {
-//					publishEvent(jobMetricsManager.gatherMetrics());
-//				}
-//				
-//				if (wrappedAsyncExecutor != null) {
-//					publishEvent(wrappedAsyncExecutor.getJobExecutorState());
-//				}
+				if (processDefinitionCache != null) {
+					events.add(processDefinitionCache.gatherMetrics());
+				}
+				
+				if (gatherMetricsCommandInterceptor != null) {
+					events.add(gatherMetricsCommandInterceptor.gatherMetrics());
+				}
+				
+				if (gatherMetricsFailedJobCommandFactory != null) {
+					events.add(gatherMetricsFailedJobCommandFactory.gatherMetrics());
+				}
+				
+				if (wrappedAsyncExecutor != null) {
+					events.add(wrappedAsyncExecutor.getJobExecutorState());
+				}
+				
+				publishEvents(events);
 				
 			} else {
 				logger.warn("Admin app is presumed to be dead. Not sending any events");
+				
+				// TODO: retries!
+				
 			}
 		}
 		catch (Exception e) {
@@ -86,19 +99,30 @@ public class SendEventsRunnable implements Runnable {
 		}
 	}
 	
-	protected void publishEvent(Map<String, Object> event) {
-		event.put("nodeId", uniqueNodeId);
-		ArrayList<Map<String, Object>> events = new ArrayList<Map<String,Object>>();
-		events.add(event);
+	protected void publishEvents(List<Map<String, Object>> events) {
+		
+		for (Map<String, Object> event : events ) {
+			
+			// Always add the node id and ip addres for this engine
+			event.put("nodeId", uniqueNodeId);
+			if (ipAddress != null) {
+				event.put("ipAddress", ipAddress);
+			}
+		
+			// Always add the local date
+			event.put("timestamp", clock.getCurrentTime());
+			
+		}
+		
 		adminAppService.publishEvents(events);
 	}
 
 	public ProcessDefinitionCacheMetricsWrapper getWrappedProcessDefinitionCache() {
-		return wrappedProcessDefinitionCache;
+		return processDefinitionCache;
 	}
 
 	public void setWrappedProcessDefinitionCache(ProcessDefinitionCacheMetricsWrapper wrappedProcessDefinitionCache) {
-		this.wrappedProcessDefinitionCache = wrappedProcessDefinitionCache;
+		this.processDefinitionCache = wrappedProcessDefinitionCache;
 	}
 
 	public JvmMetricsManager getJvmMetricsManager() {
@@ -117,14 +141,6 @@ public class SendEventsRunnable implements Runnable {
 		this.gatherMetricsCommandInterceptor = gatherMetricsCommandInterceptor;
 	}
 
-	public JobMetricsManager getJobMetricsManager() {
-		return jobMetricsManager;
-	}
-
-	public void setJobMetricsManager(JobMetricsManager jobMetricsManager) {
-		this.jobMetricsManager = jobMetricsManager;
-	}
-	
 	public MasterConfigurationState getMasterConfigurationState() {
 		return masterConfigurationState;
 	}
@@ -148,6 +164,15 @@ public class SendEventsRunnable implements Runnable {
 
 	public void setWrappedAsyncExecutor(WrappedAsyncExecutor wrappedAsyncExecutor) {
 		this.wrappedAsyncExecutor = wrappedAsyncExecutor;
+	}
+
+	public GatherMetricsFailedJobCommandFactory getGatherMetricsFailedJobCommandFactory() {
+		return gatherMetricsFailedJobCommandFactory;
+	}
+
+	public void setGatherMetricsFailedJobCommandFactory(
+	    GatherMetricsFailedJobCommandFactory gatherMetricsFailedJobCommandFactory) {
+		this.gatherMetricsFailedJobCommandFactory = gatherMetricsFailedJobCommandFactory;
 	}
 	
 }

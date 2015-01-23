@@ -1,5 +1,8 @@
 package com.activiti.addon.cluster;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -11,6 +14,7 @@ import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngineLifecycleListener;
 import org.activiti.engine.cfg.AbstractProcessEngineConfigurator;
 import org.activiti.engine.cfg.ProcessEngineConfigurator;
+import org.activiti.engine.impl.asyncexecutor.AsyncExecutor;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.engine.impl.interceptor.CommandInterceptor;
 import org.activiti.engine.impl.jobexecutor.WrappedAsyncExecutor;
@@ -22,8 +26,7 @@ import org.slf4j.LoggerFactory;
 import com.activiti.addon.cluster.cache.ProcessDefinitionCacheMetricsWrapper;
 import com.activiti.addon.cluster.interceptor.GatherMetricsCommandInterceptor;
 import com.activiti.addon.cluster.jobexecutor.GatherMetricsFailedJobCommandFactory;
-import com.activiti.addon.cluster.jobexecutor.GatherMetricsRejectedJobsHandler;
-import com.activiti.addon.cluster.jobexecutor.JobMetricsManager;
+import com.activiti.addon.cluster.lifecycle.ClusterEnabledProcessEngineLifeCycleListener;
 import com.activiti.addon.cluster.metrics.JvmMetricsManager;
 import com.activiti.addon.cluster.state.AdminAppState;
 import com.activiti.addon.cluster.state.MasterConfigurationState;
@@ -119,6 +122,8 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 	
 	protected String uniqueNodeId;
 	
+	protected String ipAddress;
+	
 	protected String localNodeHost;
 	
 	protected Integer localNodePort;
@@ -131,30 +136,13 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 	
 	protected JvmMetricsManager jvmMetricsManager;
 	
+	protected ClusterEnabledProcessEngineLifeCycleListener clusterEnabledProcessEngineLifecycleListener;
+	
 	protected ProcessDefinitionCacheMetricsWrapper wrappedProcessDefinitionCache;
 	
 	protected GatherMetricsCommandInterceptor gatherMetricsCommandInterceptor;
 	
-	protected GatherMetricsRejectedJobsHandler gatherMetricsRejectedJobsHandler;
-	
 	protected GatherMetricsFailedJobCommandFactory gatherMetricsFailedJobCommandFactory;
-	
-	protected JobMetricsManager jobMetricsManager;
-
-	/*
-	 * Distributed Hazelcast instances
-	 */
-
-//	protected HazelcastInstance hazelcastInstance;
-//
-//	/** A distributed topic where events will be published on */
-//	protected ITopic<Map<String, Object>> eventTopic;
-//
-//	/** A distributed queue for sending information to the admin app */
-//	protected BlockingQueue<Map<String, Object>> eventQueue;
-//	
-//	/** A distributed map for the shared 'master' configuration */
-//	protected IMap<String, Object> masterConfigurationMap;
 	
 	public ActivitiClusterConfigurator(ClusterConfigProperties clusterConfigProperties) {
 	  this.clusterConfigProperties = clusterConfigProperties;
@@ -171,10 +159,20 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 	    return;
 	  }
 
-		logger.info(NAME + " : initializing ...");
 		
-		uniqueNodeId = clusterConfigProperties.getClusterName() != null ? 
-				clusterConfigProperties.getClusterName() : "" +  UUID.randomUUID().toString();
+		// Let this be tweakable? Send ip info?
+		uniqueNodeId = UUID.randomUUID().toString();
+		logger.info(NAME + " : initializing engine node with id " + uniqueNodeId + "...");
+		try {
+			InetAddress inetAddress = InetAddress.getLocalHost();
+			if (inetAddress != null) {
+				if (inetAddress.getHostName() != null) {
+					ipAddress = inetAddress.getHostName().toString();
+				} else if (inetAddress.getHostAddress() != null) {
+					ipAddress = inetAddress.getHostAddress();
+				}
+			}
+    } catch (Exception e) { }
 		
 		initAdminAppService();
 		
@@ -195,10 +193,10 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 //		initAdminAppEventTopic();
 		
 		// Add a process engine lifecycle listener to send the event when the engine is ready/closing down
-//		initProcessEngineLifeCycleListener(processEngineConfiguration);
+		initProcessEngineLifeCycleListener(processEngineConfiguration);
 		
 		// Add custom command interceptor (keeps metrics for command execution)
-//		initCustomCommandInterceptor(processEngineConfiguration);
+		initCustomCommandInterceptor(processEngineConfiguration);
 	}
 	
 	protected void initAdminAppService() {
@@ -343,17 +341,13 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 		initProcessDefinitionCache(processEngineConfiguration);
 		
 		// Job rejection and failed
-		initJobRejectionHandler(processEngineConfiguration);
 		initFailedJobCommandFactory(processEngineConfiguration);
-		
-		// Job Metrics manager
-		initJobMetricsManager();
 		
 		// Master config support
 //		initMasterConfigurationPostInit(processEngineConfiguration);
 		
 		// Job executor state
-//		initWrappedAsyncExecutor(processEngineConfiguration);
+		initWrappedAsyncExecutor(processEngineConfiguration);
 		
 		// Fire up the JVM metrics gathering
 		initJvmMetricsManager();
@@ -372,33 +366,22 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 		processEngineConfiguration.getDeploymentManager().setProcessDefinitionCache(wrappedProcessDefinitionCache);
 	}
 	
-	protected void initJobRejectionHandler(ProcessEngineConfigurationImpl processEngineConfiguration) {
-	  if (processEngineConfiguration.isAsyncExecutorEnabled() == false) {
-  		gatherMetricsRejectedJobsHandler = new GatherMetricsRejectedJobsHandler(
-  				processEngineConfiguration.getJobExecutor().getRejectedJobsHandler());
-  		processEngineConfiguration.getJobExecutor().setRejectedJobsHandler(gatherMetricsRejectedJobsHandler);
-	  }
-	}
-	
 	protected void initFailedJobCommandFactory(ProcessEngineConfigurationImpl processEngineConfiguration) {
 		gatherMetricsFailedJobCommandFactory = new GatherMetricsFailedJobCommandFactory(processEngineConfiguration.getFailedJobCommandFactory());
 		processEngineConfiguration.setFailedJobCommandFactory(gatherMetricsFailedJobCommandFactory);
 	}
 	
-	protected void initJobMetricsManager() {
-		jobMetricsManager = new JobMetricsManager(gatherMetricsRejectedJobsHandler, gatherMetricsFailedJobCommandFactory);
-	}
-
 //	protected void initEventQueue(ProcessEngineConfigurationImpl processEngineConfiguration) {
 //		eventQueue = hazelcastInstance.getQueue(EVENT_QUEUE);
 //	}
-//
-//	private void initProcessEngineLifeCycleListener(ProcessEngineConfigurationImpl processEngineConfiguration) {
-//		ProcessEngineLifecycleListener listener = new ClusterEnabledProcessEngineLifeCycleListener(
-//				hazelcastInstance, uniqueNodeId, eventQueue, processEngineConfiguration.getProcessEngineLifecycleListener());
-//		processEngineConfiguration.setProcessEngineLifecycleListener(listener);
-//	}
-//
+
+	protected void initProcessEngineLifeCycleListener(ProcessEngineConfigurationImpl processEngineConfiguration) {
+		clusterEnabledProcessEngineLifecycleListener = new ClusterEnabledProcessEngineLifeCycleListener(
+				processEngineConfiguration.getClock(),
+				processEngineConfiguration.getProcessEngineLifecycleListener());
+		processEngineConfiguration.setProcessEngineLifecycleListener(clusterEnabledProcessEngineLifecycleListener);
+	}
+
 //	protected void initAdminAppEventTopic() {
 //		eventTopic = hazelcastInstance.getTopic(ADMIN_APP_EVENT_TOPIC);
 //		
@@ -526,14 +509,14 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 //		}
 //	}
 //	
-//	protected void initWrappedAsyncExecutor(ProcessEngineConfigurationImpl processEngineConfiguration) {
-//		AsyncExecutor originalAsyncExecutor = processEngineConfiguration.getAsyncExecutor();
-//		if (originalAsyncExecutor != null) {
-//			this.wrappedAsyncExecutor = new WrappedAsyncExecutor(originalAsyncExecutor);
-//			processEngineConfiguration.setAsyncExecutor(wrappedAsyncExecutor);
-//		}
-//	}
-//	
+	protected void initWrappedAsyncExecutor(ProcessEngineConfigurationImpl processEngineConfiguration) {
+		AsyncExecutor originalAsyncExecutor = processEngineConfiguration.getAsyncExecutor();
+		if (originalAsyncExecutor != null) {
+			this.wrappedAsyncExecutor = new WrappedAsyncExecutor(originalAsyncExecutor);
+			processEngineConfiguration.setAsyncExecutor(wrappedAsyncExecutor);
+		}
+	}
+	
 //	protected void initMasterConfigurationForHistory(ProcessEngineConfigurationImpl processEngineConfiguration) {
 //		String history = (String) masterConfigurationMap.get(MASTER_CFG_HISTORY);
 //		if (history != null) {
@@ -713,7 +696,7 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 			commandInterceptors = new ArrayList<CommandInterceptor>();
 		}
 		
-		gatherMetricsCommandInterceptor = new GatherMetricsCommandInterceptor();
+		gatherMetricsCommandInterceptor = new GatherMetricsCommandInterceptor(processEngineConfiguration.getClock());
 		commandInterceptors.add(0, gatherMetricsCommandInterceptor);
 		processEngineConfiguration.setCustomPreCommandInterceptors(commandInterceptors);
 	}
@@ -724,11 +707,14 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 	
 	protected void initSendEventsThread(ProcessEngineConfigurationImpl processEngineConfiguration) {
 		
-		SendEventsRunnable sendEventsRunnable = new SendEventsRunnable(uniqueNodeId, adminAppState, adminAppService);
+		final SendEventsRunnable sendEventsRunnable = new SendEventsRunnable(uniqueNodeId, ipAddress,
+				processEngineConfiguration.getClock(), adminAppState, adminAppService);
+		
 		sendEventsRunnable.setJvmMetricsManager(jvmMetricsManager);
+		sendEventsRunnable.setClusterEnabledProcessEngineLifeCycleListener(clusterEnabledProcessEngineLifecycleListener);
 		sendEventsRunnable.setWrappedProcessDefinitionCache(wrappedProcessDefinitionCache);
 		sendEventsRunnable.setGatherMetricsCommandInterceptor(gatherMetricsCommandInterceptor);
-		sendEventsRunnable.setJobMetricsManager(jobMetricsManager);
+		sendEventsRunnable.setGatherMetricsFailedJobCommandFactory(gatherMetricsFailedJobCommandFactory);
 		sendEventsRunnable.setMasterConfigurationState(masterConfigurationState);
 		sendEventsRunnable.setWrappedAsyncExecutor(wrappedAsyncExecutor);
 		
@@ -738,11 +724,23 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 			logger.info("No metric sending interval configured, defaulting to " + metricSendingInterval + " seconds");
 		}
 
+		// TODO: make timing configurable!
+		
 		final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-		executorService.scheduleAtFixedRate(sendEventsRunnable, 10, metricSendingInterval, TimeUnit.SECONDS); // 30 seconds initial wait time
+		executorService.scheduleAtFixedRate(sendEventsRunnable, 10, metricSendingInterval, TimeUnit.SECONDS);
 		
 		// Add a closing hook as process engine listener
-		final ProcessEngineLifecycleListener originalProcessEngineLifecycleListener =
+		addCleanupExecutorHookOnShutdown(processEngineConfiguration,
+        sendEventsRunnable, executorService);
+
+	}
+
+	private void addCleanupExecutorHookOnShutdown(
+      ProcessEngineConfigurationImpl processEngineConfiguration,
+      final SendEventsRunnable sendEventsRunnable,
+      final ScheduledExecutorService executorService) {
+		
+	  final ProcessEngineLifecycleListener originalProcessEngineLifecycleListener =
 				processEngineConfiguration.getProcessEngineLifecycleListener();
 		processEngineConfiguration.setProcessEngineLifecycleListener(new ProcessEngineLifecycleListener() {
 			
@@ -755,6 +753,8 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 			
 			@Override
 			public void onProcessEngineClosed(ProcessEngine processEngine) {
+				
+				sendEventsRunnable.run(); // One last time sending the events
 
 				try {
 					logger.info("Shutting down threadpool used to send metrics...");
@@ -774,8 +774,8 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 			}
 			
 		});
-
-	}
+		
+  }
 
 	public int getPriority() {
 		return PRIORITY;

@@ -93,10 +93,10 @@ public class ProcessDefinitionCacheMetricsWrapper implements DeploymentCache<Pro
 	public Map<String, Object> gatherMetrics() {
 		Map<String, Object> metrics = new HashMap<String, Object>();
 		metrics.put("type", "process-definition-cache-metrics");
-		metrics.put("cache-miss", MetricsUtil.meterToMap(cacheMissMeter));
-		metrics.put("cache-hit", MetricsUtil.meterToMap(cacheHitMeter));
-		metrics.put("additions", MetricsUtil.meterToMap(addMeter));
-		metrics.put("removals", MetricsUtil.meterToMap(removeMeter));
+		metrics.put("cache-miss", MetricsUtil.metricsToMap(cacheMissMeter));
+		metrics.put("cache-hit", MetricsUtil.metricsToMap(cacheHitMeter));
+		metrics.put("additions", MetricsUtil.metricsToMap(addMeter));
+		metrics.put("removals", MetricsUtil.metricsToMap(removeMeter));
 		return metrics;
 	}
 
