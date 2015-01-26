@@ -8,13 +8,12 @@ import org.activiti.engine.impl.cmd.CompleteTaskCmd;
 import org.activiti.engine.impl.cmd.ExecuteAsyncJobCmd;
 import org.activiti.engine.impl.cmd.StartProcessInstanceByMessageCmd;
 import org.activiti.engine.impl.cmd.StartProcessInstanceCmd;
-import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.impl.interceptor.AbstractCommandInterceptor;
 import org.activiti.engine.impl.interceptor.Command;
 import org.activiti.engine.impl.interceptor.CommandConfig;
 import org.activiti.engine.runtime.Clock;
 
-import com.activiti.addon.cluster.metrics.HourCounter;
+import com.activiti.addon.cluster.metrics.EventCounter;
 import com.activiti.addon.cluster.metrics.codahale.Meter;
 import com.activiti.addon.cluster.util.MetricsUtil;
 
@@ -24,13 +23,13 @@ import com.activiti.addon.cluster.util.MetricsUtil;
 public class GatherMetricsCommandInterceptor extends AbstractCommandInterceptor {
 	
 	protected Meter startProcessInstanceMeter = new Meter();
-	protected HourCounter startProcessInstanceHourCounter = new HourCounter();
+	protected EventCounter startProcessInstanceCounter = new EventCounter();
 	
 	protected Meter taskCompletionMeter = new Meter();
-	protected HourCounter taskCompletionHourCounter = new HourCounter();
+	protected EventCounter taskCompletionCounter = new EventCounter();
 	
 	protected Meter jobsExecutionMeter = new Meter();
-	protected HourCounter jobExecutionHourCounter = new HourCounter();
+	protected EventCounter jobExecutionCounter = new EventCounter();
 	
 	private Clock clock;
 	
@@ -55,17 +54,17 @@ public class GatherMetricsCommandInterceptor extends AbstractCommandInterceptor 
 
 	private void handleExecuteJobCmd() {
 		jobsExecutionMeter.mark();
-		jobExecutionHourCounter.increment(getHour());
+		jobExecutionCounter.eventHappened(getCurrentTime());
 	}
 	
 	private void handleStartProcessInstanceCmd() {
 		startProcessInstanceMeter.mark();
-		startProcessInstanceHourCounter.increment(getHour());
+		startProcessInstanceCounter.eventHappened(getCurrentTime());
 	}
 	
 	private void handleCompleteTaskCmd() {
 		taskCompletionMeter.mark();
-		taskCompletionHourCounter.increment(getHour());
+		taskCompletionCounter.eventHappened(getCurrentTime());
 	}
 	
 	public Map<String, Object> gatherMetrics() {
@@ -73,23 +72,22 @@ public class GatherMetricsCommandInterceptor extends AbstractCommandInterceptor 
 		metrics.put("type", "runtime-metrics");
 
 		if (jobsExecutionMeter != null) {
-			metrics.put("job-execution", MetricsUtil.metricsToMap(jobsExecutionMeter, jobExecutionHourCounter));
+			metrics.put("job-execution", MetricsUtil.metricsToMap(jobsExecutionMeter, jobExecutionCounter));
 		}
 		
 		if (startProcessInstanceMeter != null) {
-			metrics.put("processinstance-start", MetricsUtil.metricsToMap(startProcessInstanceMeter, startProcessInstanceHourCounter));
+			metrics.put("processinstance-start", MetricsUtil.metricsToMap(startProcessInstanceMeter, startProcessInstanceCounter));
 		}
 		
 		if (taskCompletionMeter != null) {
-			metrics.put("task-completion", MetricsUtil.metricsToMap(taskCompletionMeter, taskCompletionHourCounter));
+			metrics.put("task-completion", MetricsUtil.metricsToMap(taskCompletionMeter, taskCompletionCounter));
 		}
 		
 		return metrics;
 	}
 	
-	private int getHour() {
-		Calendar currentTime = clock.getCurrentCalendar();
-		return currentTime.get(Calendar.HOUR_OF_DAY);
+	private Calendar getCurrentTime() {
+		return clock.getCurrentCalendar();
 	}
 	
 }
