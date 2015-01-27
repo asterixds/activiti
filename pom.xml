@@ -862,6 +862,24 @@
       </build>
     </profile>
     <profile>
+    	<id>doclint-java8-disable</id>
+    	<activation>
+      	<jdk>[1.8,)</jdk>
+    	</activation>
+
+    	<build>
+      		<plugins>
+        		<plugin>
+          			<groupId>org.apache.maven.plugins</groupId>
+          			<artifactId>maven-javadoc-plugin</artifactId>
+          			<configuration>
+            			<additionalparam>-Xdoclint:none</additionalparam>
+          			</configuration>
+        		</plugin>
+      		</plugins>
+    	</build>
+  	</profile>
+    <profile>
       <!-- Profile used by the start-rest.sh script to build the Explorer 
         webapp and all its dependencies -->
       <id>buildRestappDependencies</id>
