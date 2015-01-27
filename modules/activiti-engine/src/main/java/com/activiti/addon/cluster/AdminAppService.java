@@ -19,6 +19,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -84,7 +85,7 @@ public class AdminAppService {
 			try {
 				int statusCode = response.getStatusLine().getStatusCode();
 				if (statusCode != 200) {
-					logger.warn("Unexpected http status code received when posting events : " + statusCode);
+					logger.warn("Could not post events to Activiti Admin Application. Received status code: " + statusCode);
 					return false;
 				}
 
@@ -93,7 +94,7 @@ public class AdminAppService {
 			}
 
 		} catch (Exception e) {
-			logger.warn("Error posting events to Activiti Admin Application", e);
+			logger.warn("Error posting events to Activiti Admin Application: " + e.getMessage());
 			return false;
 
 		} finally {
@@ -109,24 +110,30 @@ public class AdminAppService {
 	
 	public CloseableHttpClient getHttpClient() {
 		
+
+    HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+    
+    // Basic Auth
 		CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
     credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(userName, password));
+    httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
 
-    SSLConnectionSocketFactory sslsf = null;
+    // Self signed certs for https
     try {
         SSLContextBuilder builder = new SSLContextBuilder();
         builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
-        sslsf = new SSLConnectionSocketFactory(builder.build(), SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build(), SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        httpClientBuilder.setSSLSocketFactory(sslsf);
     } catch (Exception e) {
     		logger.warn("Could not configure HTTP client to use SSL" , e);
     }
-
-    HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-    httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-
-    if (sslsf != null) {
-        httpClientBuilder.setSSLSocketFactory(sslsf);
-    }
+    
+    // Connection timeout
+    RequestConfig config = RequestConfig.custom()
+        .setSocketTimeout(30000)
+        .setConnectTimeout(30000)
+        .build();
+    httpClientBuilder.setDefaultRequestConfig(config);
 
     return httpClientBuilder.build();
 	}

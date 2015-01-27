@@ -14,8 +14,6 @@ import com.activiti.addon.cluster.interceptor.GatherMetricsCommandInterceptor;
 import com.activiti.addon.cluster.jobexecutor.GatherMetricsFailedJobCommandFactory;
 import com.activiti.addon.cluster.lifecycle.ClusterEnabledProcessEngineLifeCycleListener;
 import com.activiti.addon.cluster.metrics.JvmMetricsManager;
-import com.activiti.addon.cluster.state.AdminAppState;
-import com.activiti.addon.cluster.state.AdminAppState.State;
 import com.activiti.addon.cluster.state.MasterConfigurationState;
 
 /**
@@ -28,7 +26,6 @@ public class SendEventsRunnable implements Runnable {
 	protected String uniqueNodeId;
 	protected String ipAddress;
 	protected Clock clock;
-	protected AdminAppState adminAppState;
 	protected AdminAppService adminAppService;
 	
 	protected MasterConfigurationState masterConfigurationState; 
@@ -39,11 +36,10 @@ public class SendEventsRunnable implements Runnable {
 	protected GatherMetricsFailedJobCommandFactory gatherMetricsFailedJobCommandFactory;
 	protected WrappedAsyncExecutor wrappedAsyncExecutor;
 	
-	public SendEventsRunnable(String uniqueId, String ipAddress, Clock clock, AdminAppState adminAppState, AdminAppService adminAppService) {
+	public SendEventsRunnable(String uniqueId, String ipAddress, Clock clock, AdminAppService adminAppService) {
 		this.uniqueNodeId = uniqueId;
 		this.ipAddress = ipAddress;
 		this.clock = clock;
-		this.adminAppState = adminAppState;
 		this.adminAppService = adminAppService;
 	}
 
@@ -53,47 +49,40 @@ public class SendEventsRunnable implements Runnable {
 			logger.debug("About to send Activiti Node events...");
 		}
 		try {
-			if (adminAppState.getState().equals(State.ALIVE)) {
+			
+			List<Map<String, Object>> events = new ArrayList<Map<String,Object>>();
 				
-				List<Map<String, Object>> events = new ArrayList<Map<String,Object>>();
-				
-//				if (masterConfigurationState != null) {
-//					publishEvent(masterConfigurationState.getConfigurationState());
-//				}
-				
-				if (clusterEnabledProcessEngineLifeCycleListener != null) {
-					events.add(clusterEnabledProcessEngineLifeCycleListener.getCurrentlLifeCycleStateEvent());
-				}
-				
-				if (jvmMetricsManager != null) {
-					events.add(jvmMetricsManager.gatherMetrics());
-				}
-				
-				if (processDefinitionCache != null) {
-					events.add(processDefinitionCache.gatherMetrics());
-				}
-				
-				if (gatherMetricsCommandInterceptor != null) {
-					events.add(gatherMetricsCommandInterceptor.gatherMetrics());
-				}
-				
-				if (gatherMetricsFailedJobCommandFactory != null) {
-					events.add(gatherMetricsFailedJobCommandFactory.gatherMetrics());
-				}
-				
-				if (wrappedAsyncExecutor != null) {
-					events.add(wrappedAsyncExecutor.getJobExecutorState());
-				}
-				
-				publishEvents(events);
-				
-			} else {
-				logger.warn("Admin app is presumed to be dead. Not sending any events");
-				
-				// TODO: retries!
-				
+	//		if (masterConfigurationState != null) {
+	//			publishEvent(masterConfigurationState.getConfigurationState());
+	//		}
+			
+			if (clusterEnabledProcessEngineLifeCycleListener != null) {
+				events.add(clusterEnabledProcessEngineLifeCycleListener.getCurrentlLifeCycleStateEvent());
 			}
-		}
+			
+			if (jvmMetricsManager != null) {
+				events.add(jvmMetricsManager.gatherMetrics());
+			}
+			
+			if (processDefinitionCache != null) {
+				events.add(processDefinitionCache.gatherMetrics());
+			}
+			
+			if (gatherMetricsCommandInterceptor != null) {
+				events.add(gatherMetricsCommandInterceptor.gatherMetrics());
+			}
+			
+			if (gatherMetricsFailedJobCommandFactory != null) {
+				events.add(gatherMetricsFailedJobCommandFactory.gatherMetrics());
+			}
+			
+			if (wrappedAsyncExecutor != null) {
+				events.add(wrappedAsyncExecutor.getJobExecutorState());
+			}
+			
+			publishEvents(events);
+			
+			}
 		catch (Exception e) {
 			logger.error("Error while trying to send Activiti Node events", e);
 		}

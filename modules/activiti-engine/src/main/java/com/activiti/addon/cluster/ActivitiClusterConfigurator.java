@@ -1,8 +1,6 @@
 package com.activiti.addon.cluster;
 
 import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +26,6 @@ import com.activiti.addon.cluster.interceptor.GatherMetricsCommandInterceptor;
 import com.activiti.addon.cluster.jobexecutor.GatherMetricsFailedJobCommandFactory;
 import com.activiti.addon.cluster.lifecycle.ClusterEnabledProcessEngineLifeCycleListener;
 import com.activiti.addon.cluster.metrics.JvmMetricsManager;
-import com.activiti.addon.cluster.state.AdminAppState;
 import com.activiti.addon.cluster.state.MasterConfigurationState;
 
 /**
@@ -128,8 +125,6 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 	
 	protected Integer localNodePort;
 	
-	protected AdminAppState adminAppState;
-	
 	protected MasterConfigurationState masterConfigurationState;
 	
 	protected WrappedAsyncExecutor wrappedAsyncExecutor;
@@ -181,9 +176,6 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 //		uniqueNodeId = hazelcastInstance.getCluster().getLocalMember().getInetSocketAddress().toString();
 //		localNodeHost = hazelcastInstance.getCluster().getLocalMember().getInetSocketAddress().getHostName();
 //		localNodePort = hazelcastInstance.getCluster().getLocalMember().getInetSocketAddress().getPort();
-		
-		// Initialize admin app state object
-		adminAppState = new AdminAppState();
 		
 		// Master config support
 //		initMasterConfigurationPreInit(processEngineConfiguration);
@@ -708,7 +700,7 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 	protected void initSendEventsThread(ProcessEngineConfigurationImpl processEngineConfiguration) {
 		
 		final SendEventsRunnable sendEventsRunnable = new SendEventsRunnable(uniqueNodeId, ipAddress,
-				processEngineConfiguration.getClock(), adminAppState, adminAppService);
+				processEngineConfiguration.getClock(), adminAppService);
 		
 		sendEventsRunnable.setJvmMetricsManager(jvmMetricsManager);
 		sendEventsRunnable.setClusterEnabledProcessEngineLifeCycleListener(clusterEnabledProcessEngineLifecycleListener);
@@ -720,12 +712,10 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 		
 		Integer metricSendingInterval = clusterConfigProperties.getMetricSendingInterval();
 		if (metricSendingInterval == null) {
-		  metricSendingInterval = 10;
+		  metricSendingInterval = 30;
 			logger.info("No metric sending interval configured, defaulting to " + metricSendingInterval + " seconds");
 		}
 
-		// TODO: make timing configurable!
-		
 		final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 		executorService.scheduleAtFixedRate(sendEventsRunnable, 10, metricSendingInterval, TimeUnit.SECONDS);
 		
