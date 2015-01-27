@@ -39,7 +39,7 @@ public class GatherMetricsFailedJobCommandFactory implements FailedJobCommandFac
 	
 	public Map<String, Object> gatherMetrics() {
 		Map<String, Object> map = MetricsUtil.metricsToMap(failedJobMeter);
-		map.put("type", "job-fails");
+		map.put("type", "job-failures");
 		return map;
 	}
 	

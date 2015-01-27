@@ -744,6 +744,11 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 			@Override
 			public void onProcessEngineClosed(ProcessEngine processEngine) {
 				
+				// First call the original lifecycle listeners. Sending the event with the latest state possible.
+				if (originalProcessEngineLifecycleListener != null) {
+					originalProcessEngineLifecycleListener.onProcessEngineClosed(processEngine);
+				}
+				
 				sendEventsRunnable.run(); // One last time sending the events
 
 				try {
@@ -758,9 +763,7 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 					logger.warn("Could not properly shut down executor service for SendRunnable thread", e);
 				}
 				
-				if (originalProcessEngineLifecycleListener != null) {
-					originalProcessEngineLifecycleListener.onProcessEngineClosed(processEngine);
-				}
+				
 			}
 			
 		});

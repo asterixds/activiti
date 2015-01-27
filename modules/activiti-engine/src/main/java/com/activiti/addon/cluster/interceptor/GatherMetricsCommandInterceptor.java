@@ -6,8 +6,10 @@ import java.util.Map;
 
 import org.activiti.engine.impl.cmd.CompleteTaskCmd;
 import org.activiti.engine.impl.cmd.ExecuteAsyncJobCmd;
+import org.activiti.engine.impl.cmd.ExecuteJobsCmd;
 import org.activiti.engine.impl.cmd.StartProcessInstanceByMessageCmd;
 import org.activiti.engine.impl.cmd.StartProcessInstanceCmd;
+import org.activiti.engine.impl.cmd.SubmitStartFormCmd;
 import org.activiti.engine.impl.interceptor.AbstractCommandInterceptor;
 import org.activiti.engine.impl.interceptor.Command;
 import org.activiti.engine.impl.interceptor.CommandConfig;
@@ -39,14 +41,16 @@ public class GatherMetricsCommandInterceptor extends AbstractCommandInterceptor 
 	
 	public <T> T execute(CommandConfig config, Command<T> command) {
 		
-		if (command instanceof ExecuteAsyncJobCmd) {
-			handleExecuteJobCmd();
-		} else if (command instanceof StartProcessInstanceCmd) {
+		if (command instanceof StartProcessInstanceCmd
+				|| command instanceof StartProcessInstanceByMessageCmd
+	      || command instanceof SubmitStartFormCmd) {
 			handleStartProcessInstanceCmd();
-		} else if (command instanceof StartProcessInstanceByMessageCmd) {
-			handleStartProcessInstanceCmd();
-		} else if (command instanceof CompleteTaskCmd) {
+		} else if (command instanceof CompleteTaskCmd
+				|| command instanceof SubmitTaskFormCmd) {
 			handleCompleteTaskCmd();
+		} else if (command instanceof ExecuteAsyncJobCmd
+				|| command instanceof ExecuteJobsCmd) {
+			handleExecuteJobCmd();
 		}
 		
 		return next.execute(config, command);

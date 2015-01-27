@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 import org.activiti.bpmn.model.BoundaryEvent;
 import org.activiti.bpmn.model.BpmnModel;
@@ -39,8 +40,8 @@ public class EventSendingMain {
 //	  processEngineConfig.setDatabaseSchema("drop-create");
 //	  
 	  processEngineConfig.setJobExecutorActivate(false);
-	  processEngineConfig.setAsyncExecutorEnabled(false);
-	  processEngineConfig.setAsyncExecutorActivate(false);
+	  processEngineConfig.setAsyncExecutorEnabled(true);
+	  processEngineConfig.setAsyncExecutorActivate(true);
 	  
 	  
 	  processEngineConfig.enableClusterConfig();
@@ -65,7 +66,7 @@ public class EventSendingMain {
 	  TaskService taskService = processEngine.getTaskService();
 	  ManagementService managementService = processEngine.getManagementService();
 	  
-	  deployProcessDefinition(repositoryService);
+	  deployProcessDefinitions(repositoryService);
 	  
 //	  performanceTest(runtimeService, taskService, managementService);
 	  
@@ -76,22 +77,41 @@ public class EventSendingMain {
 	  startProcessInstance(runtimeService);
 	  startProcessInstance(runtimeService);
 	  startProcessInstance(runtimeService);
+
+	  // Type anything to stop
+	  new Thread(new Runnable() {
+			public void run() {
+			  Scanner scanner = new Scanner(System.in);
+			  scanner.nextLine();
+			  System.exit(0);
+			}
+		}).start();
 	  
 	  Random random = new Random();
 	  while (true) {
 	  	
 	  	Date time = new Date(new Date().getTime() - (  ((long)random.nextInt(30)) * ((long)random.nextInt(24 * 60 * 60 * 1000)) ));
 	  	processEngine.getProcessEngineConfiguration().getClock().setCurrentTime(time);
-	  	int nr = random.nextInt(3);
-	  	if (nr == 0) {
-	  		System.out.println("Starting process instance");
-	  		startProcessInstance(runtimeService);
-	  	} else if (nr == 1) {
-	  		System.out.println("Executing task");
-	  		executeTask(taskService);
-	  	} else if (nr == 2) {
-	  		System.out.println("executing job");
-	  		executeJob(managementService);
+	  	
+	  	try {
+		  	int nr = random.nextInt(4);
+		  	if (nr == 0) {
+		  		System.out.println("Starting process instance");
+		  		startProcessInstance(runtimeService);
+		  	} else if (nr == 1) {
+		  		System.out.println("Executing task");
+		  		executeTask(taskService);
+		  	} else if (nr == 2) {
+		  		System.out.println("executing job");
+		  		executeJob(managementService);
+		  	} else if (nr == 3) {
+		  		if (random.nextBoolean()) { // not TOO many of them
+		  			System.out.println("Executing failing job");
+		  			executeFailingJob(runtimeService);
+		  		}
+		  	}
+	  	} catch (Exception e) {
+	  		
 	  	}
 	  	
 	  	
@@ -123,7 +143,9 @@ public class EventSendingMain {
 	  System.out.println("-->" + (end-start) + " ms in total");
   }
 	
-	private static void deployProcessDefinition(RepositoryService repositoryService) {
+	private static void deployProcessDefinitions(RepositoryService repositoryService) {
+		
+		// Regular proc
 		BpmnModel model = new BpmnModel();
 		org.activiti.bpmn.model.Process process = new org.activiti.bpmn.model.Process();
 		model.addProcess(process);
@@ -160,7 +182,9 @@ public class EventSendingMain {
 		process.addFlowElement(new SequenceFlow("timer", "theEnd"));
 		
   	Deployment deployment = repositoryService.createDeployment()
-  			.addBpmnModel("oneTasktest.bpmn20.xml", model).deploy();
+  			.addBpmnModel("oneTasktest.bpmn20.xml", model)
+  			.addString("asyncFail.bpmn20.xml", FAILING_AYNC_TASK)
+  			.deploy();
 
 	}
 	
@@ -181,5 +205,52 @@ public class EventSendingMain {
 			managementService.executeJob(jobs.get(0).getId());
 		}
 	}
+	
+	private static void executeFailingJob(RuntimeService runtimeService) {
+		runtimeService.startProcessInstanceByKey("asyncScript");
+	}
+	
+	private static final String FAILING_AYNC_TASK = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
+			"<definitions xmlns=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:activiti=\"http://activiti.org/bpmn\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:omgdc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:omgdi=\"http://www.omg.org/spec/DD/20100524/DI\" typeLanguage=\"http://www.w3.org/2001/XMLSchema\" expressionLanguage=\"http://www.w3.org/1999/XPath\" targetNamespace=\"http://www.activiti.org/processdef\" xmlns:modeler=\"http://activiti.com/modeler\" modeler:version=\"1.0en\" modeler:exportDateTime=\"20141216191911527\" modeler:modelId=\"923565\" modeler:modelVersion=\"1\" modeler:modelLastUpdated=\"1418757549140\">\n" + 
+			"  <process id=\"asyncScript\" name=\"asyncScript\" isExecutable=\"true\">\n" + 
+			"    <startEvent id=\"startEvent1\"/>\n" + 
+			"    <sequenceFlow id=\"sid-1A341B40-2063-4D35-A607-4E0DBD35C3A0\" sourceRef=\"startEvent1\" targetRef=\"sid-B1E9D667-AB66-444E-9346-36A8FA71C68E\"/>\n" + 
+			"    <scriptTask id=\"sid-B1E9D667-AB66-444E-9346-36A8FA71C68E\" name=\"The Script task\" activiti:async=\"true\" activiti:exclusive=\"false\" scriptFormat=\"javascript\" activiti:autoStoreVariables=\"false\">\n" + 
+			"      <script>this should really fail!</script>\n" + 
+			"    </scriptTask>\n" + 
+			"    <userTask id=\"sid-9F529DCE-73D6-4281-BD31-B002F5DF8808\" name=\"Task after script\"/>\n" + 
+			"    <sequenceFlow id=\"sid-C839C9DA-E1B4-4CAB-A0FD-1022101384A3\" sourceRef=\"sid-B1E9D667-AB66-444E-9346-36A8FA71C68E\" targetRef=\"sid-9F529DCE-73D6-4281-BD31-B002F5DF8808\"/>\n" + 
+			"    <endEvent id=\"sid-586727F5-599B-41E8-BA3B-7FF739A74A18\"/>\n" + 
+			"    <sequenceFlow id=\"sid-E35E9BA7-5BC4-4B04-A3B9-7B47492E25CD\" sourceRef=\"sid-9F529DCE-73D6-4281-BD31-B002F5DF8808\" targetRef=\"sid-586727F5-599B-41E8-BA3B-7FF739A74A18\"/>\n" + 
+			"  </process>\n" + 
+			"  <bpmndi:BPMNDiagram id=\"BPMNDiagram_asyncScript\">\n" + 
+			"    <bpmndi:BPMNPlane bpmnElement=\"asyncScript\" id=\"BPMNPlane_asyncScript\">\n" + 
+			"      <bpmndi:BPMNShape bpmnElement=\"startEvent1\" id=\"BPMNShape_startEvent1\">\n" + 
+			"        <omgdc:Bounds height=\"30.0\" width=\"30.0\" x=\"100.0\" y=\"163.0\"/>\n" + 
+			"      </bpmndi:BPMNShape>\n" + 
+			"      <bpmndi:BPMNShape bpmnElement=\"sid-B1E9D667-AB66-444E-9346-36A8FA71C68E\" id=\"BPMNShape_sid-B1E9D667-AB66-444E-9346-36A8FA71C68E\">\n" + 
+			"        <omgdc:Bounds height=\"80.0\" width=\"100.0\" x=\"175.0\" y=\"138.0\"/>\n" + 
+			"      </bpmndi:BPMNShape>\n" + 
+			"      <bpmndi:BPMNShape bpmnElement=\"sid-9F529DCE-73D6-4281-BD31-B002F5DF8808\" id=\"BPMNShape_sid-9F529DCE-73D6-4281-BD31-B002F5DF8808\">\n" + 
+			"        <omgdc:Bounds height=\"80.0\" width=\"100.0\" x=\"320.0\" y=\"138.0\"/>\n" + 
+			"      </bpmndi:BPMNShape>\n" + 
+			"      <bpmndi:BPMNShape bpmnElement=\"sid-586727F5-599B-41E8-BA3B-7FF739A74A18\" id=\"BPMNShape_sid-586727F5-599B-41E8-BA3B-7FF739A74A18\">\n" + 
+			"        <omgdc:Bounds height=\"28.0\" width=\"28.0\" x=\"465.0\" y=\"164.0\"/>\n" + 
+			"      </bpmndi:BPMNShape>\n" + 
+			"      <bpmndi:BPMNEdge bpmnElement=\"sid-1A341B40-2063-4D35-A607-4E0DBD35C3A0\" id=\"BPMNEdge_sid-1A341B40-2063-4D35-A607-4E0DBD35C3A0\">\n" + 
+			"        <omgdi:waypoint x=\"130.0\" y=\"178.0\"/>\n" + 
+			"        <omgdi:waypoint x=\"175.0\" y=\"178.0\"/>\n" + 
+			"      </bpmndi:BPMNEdge>\n" + 
+			"      <bpmndi:BPMNEdge bpmnElement=\"sid-C839C9DA-E1B4-4CAB-A0FD-1022101384A3\" id=\"BPMNEdge_sid-C839C9DA-E1B4-4CAB-A0FD-1022101384A3\">\n" + 
+			"        <omgdi:waypoint x=\"275.0\" y=\"178.0\"/>\n" + 
+			"        <omgdi:waypoint x=\"320.0\" y=\"178.0\"/>\n" + 
+			"      </bpmndi:BPMNEdge>\n" + 
+			"      <bpmndi:BPMNEdge bpmnElement=\"sid-E35E9BA7-5BC4-4B04-A3B9-7B47492E25CD\" id=\"BPMNEdge_sid-E35E9BA7-5BC4-4B04-A3B9-7B47492E25CD\">\n" + 
+			"        <omgdi:waypoint x=\"420.0\" y=\"178.0\"/>\n" + 
+			"        <omgdi:waypoint x=\"465.0\" y=\"178.0\"/>\n" + 
+			"      </bpmndi:BPMNEdge>\n" + 
+			"    </bpmndi:BPMNPlane>\n" + 
+			"  </bpmndi:BPMNDiagram>\n" + 
+			"</definitions>";
 	
 }
