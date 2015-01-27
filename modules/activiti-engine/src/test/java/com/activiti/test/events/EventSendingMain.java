@@ -44,6 +44,7 @@ public class EventSendingMain {
 	  
 	  
 	  processEngineConfig.enableClusterConfig();
+	  processEngineConfig.setEnterpriseAdminAppUrl("http://localhost:8081/activiti-admin");
 	  processEngineConfig.setEnterpriseClusterName("development");
 	  processEngineConfig.setEnterpriseClusterUserName("dev");
 	  processEngineConfig.setEnterpriseClusterPassword("dev");
@@ -94,7 +95,7 @@ public class EventSendingMain {
 	  	}
 	  	
 	  	
-	  	Thread.sleep(random.nextInt(10000));
+	  	Thread.sleep(random.nextInt(1000));
 	  }
 	  
   }

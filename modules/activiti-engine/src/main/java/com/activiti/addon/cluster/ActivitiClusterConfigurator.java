@@ -193,8 +193,8 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 	
 	protected void initAdminAppService() {
 		
-		// TODO: read properties from classpath / engineConfig ?
-		this.adminAppService = new AdminAppService("http://localhost:8081/activiti-admin", 
+		this.adminAppService = new AdminAppService(
+				clusterConfigProperties.getAdminAppUrl(), 
 				clusterConfigProperties.getClusterName(),
 				clusterConfigProperties.getClusterUserName(),
 				clusterConfigProperties.getClusterPassword());

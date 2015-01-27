@@ -255,6 +255,7 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   // ENTERPRISE /////////////////////////////////////////////////////////////////  
   protected LicenseHolder licenseHolder;
   
+  protected String enterpriseAdminAppUrl;
   protected String enterpriseClusterName;
   protected String enterpriseClusterUserName;
   protected String enterpriseClusterPassword;
@@ -941,6 +942,10 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
       log.info("Cluster config enabled. Starting Cluster config.");
       if (clusterConfigProperties.isPropertyFileExists() == false) {
         log.info("Using defaults or process engine config settings for cluster config.");
+        
+        if (enterpriseAdminAppUrl != null) {
+        	clusterConfigProperties.setAdminAppUrl(enterpriseAdminAppUrl);
+        }
         
         if (enterpriseClusterName != null) {
           clusterConfigProperties.setClusterName(enterpriseClusterName);
@@ -2156,8 +2161,16 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
 	public LicenseHolder getLicenseHolder() {
 	  return licenseHolder;
 	}
+	
+  public String getEnterpriseAdminAppUrl() {
+		return enterpriseAdminAppUrl;
+	}
 
-  public String getEnterpriseClusterName() {
+	public void setEnterpriseAdminAppUrl(String enterpriseAdminAppUrl) {
+		this.enterpriseAdminAppUrl = enterpriseAdminAppUrl;
+	}
+
+	public String getEnterpriseClusterName() {
     return enterpriseClusterName;
   }
 

@@ -16,12 +16,16 @@ public class ClusterConfigProperties {
   
   private static final String PROPERTIES_FILE = "/activiti-cluster.properties";
   
+  private static final String ADMIN_APP_URL ="admin.app.url";
+  
   private static final String CLUSTER_NAME = "cluster.name";
   private static final String CLUSTER_USER_NAME = "cluster.username";
   private static final String CLUSTER_PASSWORD = "cluster.password";
   
   private static final String MASTER_CFG_REQUIRED = "master.cfg.required";
   private static final String METRIC_SENDING_INTERVAL = "metric.sending.interval";
+  
+  protected String adminAppUrl;
   
   protected String clusterName;
   protected String clusterUserName;
@@ -38,6 +42,8 @@ public class ClusterConfigProperties {
       properties.load(this.getClass().getResourceAsStream(PROPERTIES_FILE));
       propertyFileExists = true; // Not catching exception ==> file exists
       
+      adminAppUrl = properties.getProperty(ADMIN_APP_URL);
+      
       clusterName = properties.getProperty(CLUSTER_NAME);
       clusterUserName = properties.getProperty(CLUSTER_USER_NAME);
       clusterPassword = properties.getProperty(CLUSTER_PASSWORD);
@@ -46,11 +52,19 @@ public class ClusterConfigProperties {
       metricSendingInterval = readIntegerProperty(METRIC_SENDING_INTERVAL, properties);
       
     } catch (Exception e) {
-      logger.warn("Could not read 'activiti-cluster.properties' from classpath. Using defaults or process engine config.");
+      logger.warn("Could not find or read 'activiti-cluster.properties' from classpath. Using defaults or process engine config.");
     }
   }
   
-  public String getClusterName() {
+  public String getAdminAppUrl() {
+		return adminAppUrl;
+	}
+
+	public void setAdminAppUrl(String adminAppUrl) {
+		this.adminAppUrl = adminAppUrl;
+	}
+
+	public String getClusterName() {
 		return clusterName;
 	}
 
