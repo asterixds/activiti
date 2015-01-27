@@ -10,6 +10,7 @@ import org.activiti.engine.impl.cmd.ExecuteJobsCmd;
 import org.activiti.engine.impl.cmd.StartProcessInstanceByMessageCmd;
 import org.activiti.engine.impl.cmd.StartProcessInstanceCmd;
 import org.activiti.engine.impl.cmd.SubmitStartFormCmd;
+import org.activiti.engine.impl.cmd.SubmitTaskFormCmd;
 import org.activiti.engine.impl.interceptor.AbstractCommandInterceptor;
 import org.activiti.engine.impl.interceptor.Command;
 import org.activiti.engine.impl.interceptor.CommandConfig;
