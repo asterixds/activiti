@@ -21,6 +21,9 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContextBuilder;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -105,9 +108,27 @@ public class AdminAppService {
 	}
 	
 	public CloseableHttpClient getHttpClient() {
+		
 		CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
     credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(userName, password));
-    return HttpClientBuilder.create().setDefaultCredentialsProvider(credentialsProvider).build();
+
+    SSLConnectionSocketFactory sslsf = null;
+    try {
+        SSLContextBuilder builder = new SSLContextBuilder();
+        builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
+        sslsf = new SSLConnectionSocketFactory(builder.build(), SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+    } catch (Exception e) {
+    		logger.warn("Could not configure HTTP client to use SSL" , e);
+    }
+
+    HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+    httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+
+    if (sslsf != null) {
+        httpClientBuilder.setSSLSocketFactory(sslsf);
+    }
+
+    return httpClientBuilder.build();
 	}
 	
 	public void setUrl(String url) {
