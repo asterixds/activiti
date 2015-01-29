@@ -773,5 +773,118 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 	public int getPriority() {
 		return PRIORITY;
 	}
+	
+	/* Member getters and setters */
+
+	public AdminAppService getAdminAppService() {
+		return adminAppService;
+	}
+
+	public void setAdminAppService(AdminAppService adminAppService) {
+		this.adminAppService = adminAppService;
+	}
+
+	public ClusterConfigProperties getClusterConfigProperties() {
+		return clusterConfigProperties;
+	}
+
+	public void setClusterConfigProperties(
+	    ClusterConfigProperties clusterConfigProperties) {
+		this.clusterConfigProperties = clusterConfigProperties;
+	}
+
+	public String getUniqueNodeId() {
+		return uniqueNodeId;
+	}
+
+	public void setUniqueNodeId(String uniqueNodeId) {
+		this.uniqueNodeId = uniqueNodeId;
+	}
+
+	public String getIpAddress() {
+		return ipAddress;
+	}
+
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+
+	public String getLocalNodeHost() {
+		return localNodeHost;
+	}
+
+	public void setLocalNodeHost(String localNodeHost) {
+		this.localNodeHost = localNodeHost;
+	}
+
+	public Integer getLocalNodePort() {
+		return localNodePort;
+	}
+
+	public void setLocalNodePort(Integer localNodePort) {
+		this.localNodePort = localNodePort;
+	}
+
+	public MasterConfigurationState getMasterConfigurationState() {
+		return masterConfigurationState;
+	}
+
+	public void setMasterConfigurationState(
+	    MasterConfigurationState masterConfigurationState) {
+		this.masterConfigurationState = masterConfigurationState;
+	}
+
+	public WrappedAsyncExecutor getWrappedAsyncExecutor() {
+		return wrappedAsyncExecutor;
+	}
+
+	public void setWrappedAsyncExecutor(WrappedAsyncExecutor wrappedAsyncExecutor) {
+		this.wrappedAsyncExecutor = wrappedAsyncExecutor;
+	}
+
+	public JvmMetricsManager getJvmMetricsManager() {
+		return jvmMetricsManager;
+	}
+
+	public void setJvmMetricsManager(JvmMetricsManager jvmMetricsManager) {
+		this.jvmMetricsManager = jvmMetricsManager;
+	}
+
+	public ClusterEnabledProcessEngineLifeCycleListener getClusterEnabledProcessEngineLifecycleListener() {
+		return clusterEnabledProcessEngineLifecycleListener;
+	}
+
+	public void setClusterEnabledProcessEngineLifecycleListener(
+	    ClusterEnabledProcessEngineLifeCycleListener clusterEnabledProcessEngineLifecycleListener) {
+		this.clusterEnabledProcessEngineLifecycleListener = clusterEnabledProcessEngineLifecycleListener;
+	}
+
+	public ProcessDefinitionCacheMetricsWrapper getWrappedProcessDefinitionCache() {
+		return wrappedProcessDefinitionCache;
+	}
+
+	public void setWrappedProcessDefinitionCache(
+	    ProcessDefinitionCacheMetricsWrapper wrappedProcessDefinitionCache) {
+		this.wrappedProcessDefinitionCache = wrappedProcessDefinitionCache;
+	}
+
+	public GatherMetricsCommandInterceptor getGatherMetricsCommandInterceptor() {
+		return gatherMetricsCommandInterceptor;
+	}
+
+	public void setGatherMetricsCommandInterceptor(
+	    GatherMetricsCommandInterceptor gatherMetricsCommandInterceptor) {
+		this.gatherMetricsCommandInterceptor = gatherMetricsCommandInterceptor;
+	}
+
+	public GatherMetricsFailedJobCommandFactory getGatherMetricsFailedJobCommandFactory() {
+		return gatherMetricsFailedJobCommandFactory;
+	}
+
+	public void setGatherMetricsFailedJobCommandFactory(
+	    GatherMetricsFailedJobCommandFactory gatherMetricsFailedJobCommandFactory) {
+		this.gatherMetricsFailedJobCommandFactory = gatherMetricsFailedJobCommandFactory;
+	}
+	
 
 }
