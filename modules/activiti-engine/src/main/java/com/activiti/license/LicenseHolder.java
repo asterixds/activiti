@@ -169,6 +169,7 @@ public final class LicenseHolder {
         return userHomeLicense;
       } else {
         // Otherwise look for the license on the classpath
+        log.info("Last fallback, trying to load license from the classpath");
         License licenseFromClasspath = loadLicenseFromClassPath(LICENSE_FILE);
         setCachedLicense(now, licenseFromClasspath);
         return licenseFromClasspath;
@@ -208,6 +209,7 @@ public final class LicenseHolder {
    */
   private final License loadLicenseFromUserHome(String fileName) {
     String fileSeparator = System.getProperty("file.separator");
+    log.info("Trying to load license from user home " + System.getProperty("user.home") +  fileSeparator + ".activiti" + fileSeparator + "enterprise-license" + fileSeparator + fileName);
     return loadLicenseFromFileLocation(System.getProperty("user.home") +  fileSeparator + ".activiti" + fileSeparator + "enterprise-license" + fileSeparator, fileName);
   }
   
