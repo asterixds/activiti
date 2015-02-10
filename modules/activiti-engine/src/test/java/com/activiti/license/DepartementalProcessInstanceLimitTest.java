@@ -7,6 +7,7 @@ import org.activiti.bpmn.model.StartEvent;
 import org.activiti.bpmn.model.UserTask;
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration;
@@ -38,7 +39,7 @@ public class DepartementalProcessInstanceLimitTest {
         licenseHolder.setCustomLocationClassPath("com/activiti/license/limited.lic");
       }
       
-    }.setDatabaseSchemaUpdate("true").buildProcessEngine();
+    }.setDatabaseSchemaUpdate("true").setProcessEngineName("limited").buildProcessEngine();
     
     // Deploy test process
     deployOneTaskTestProcess();
@@ -49,6 +50,8 @@ public class DepartementalProcessInstanceLimitTest {
     for (Deployment deployment : processEngine.getRepositoryService().createDeploymentQuery().list()) {
       processEngine.getRepositoryService().deleteDeployment(deployment.getId(), true);
     }
+    processEngine.close();
+    ProcessEngines.unregister(processEngine);
   }
   
   @Test

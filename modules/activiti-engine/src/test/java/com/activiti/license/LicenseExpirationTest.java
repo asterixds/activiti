@@ -3,6 +3,7 @@ package com.activiti.license;
 import static org.junit.Assert.fail;
 
 import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration;
 import org.activiti.engine.test.util.TestProcessUtil;
 import org.junit.Test;
@@ -25,7 +26,7 @@ public class LicenseExpirationTest {
         licenseHolder.setCustomLocationClassPath("com/activiti/license/expired.lic");
       }
       
-    }.setDatabaseSchemaUpdate("true").buildProcessEngine();
+    }.setDatabaseSchemaUpdate("true").setProcessEngineName("expired").buildProcessEngine();
     
     processEngine.getRepositoryService().createDeployment().addBpmnModel(
         "onetask.bpmn", TestProcessUtil.createOneTaskBpmnModel()).deploy();
@@ -36,6 +37,9 @@ public class LicenseExpirationTest {
     } catch (Exception e) {
       // expected exception
     }
+    
+    processEngine.close();
+    ProcessEngines.unregister(processEngine);
   }
 
 }
