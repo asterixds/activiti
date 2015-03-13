@@ -34,7 +34,7 @@ public class MasterConfigurationState {
 		state.put("enabled", usingMasterConfiguration);
 		
 		if (configurationId != null) {
-			state.put("configuration-id", configurationId);
+			state.put("id", configurationId);
 		}
 		
 		return state;

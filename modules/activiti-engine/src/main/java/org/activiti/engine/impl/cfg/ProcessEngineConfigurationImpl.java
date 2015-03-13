@@ -263,6 +263,11 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   protected Boolean enterpriseMasterConfigurationRequired;
   protected Integer enterpriseMetricSendingInterval;
   
+  // When engine is used within the Suite, the master configuration will be done
+  // for the Suite, which will be propagated to the engine. This property is set to false in this case.
+  // By default true (which doesn't mean master config is used, simply that it is enabled).
+  protected Boolean enterpriseEnableMasterConfiguration = true;
+  
   // SERVICES /////////////////////////////////////////////////////////////////
 
   protected RepositoryService repositoryService = new RepositoryServiceImpl();
@@ -2212,6 +2217,14 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
 
 	public void setEnterpriseClusterName(String enterpriseClusterName) {
 		this.enterpriseClusterName = enterpriseClusterName;
+	}
+
+	public Boolean getEnterpriseEnableMasterConfiguration() {
+		return enterpriseEnableMasterConfiguration;
+	}
+	
+	public void setEnterpriseEnableMasterConfiguration(Boolean enterpriseEnableMasterConfiguration) {
+		this.enterpriseEnableMasterConfiguration = enterpriseEnableMasterConfiguration;
 	}
 
 }

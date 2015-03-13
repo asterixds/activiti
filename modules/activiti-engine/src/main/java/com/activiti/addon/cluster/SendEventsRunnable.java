@@ -52,9 +52,9 @@ public class SendEventsRunnable implements Runnable {
 			
 			List<Map<String, Object>> events = new ArrayList<Map<String,Object>>();
 				
-	//		if (masterConfigurationState != null) {
-	//			publishEvent(masterConfigurationState.getConfigurationState());
-	//		}
+			if (masterConfigurationState != null) {
+				events.add(masterConfigurationState.getConfigurationState());
+			}
 			
 			if (clusterEnabledProcessEngineLifeCycleListener != null) {
 				events.add(clusterEnabledProcessEngineLifeCycleListener.getCurrentlLifeCycleStateEvent());

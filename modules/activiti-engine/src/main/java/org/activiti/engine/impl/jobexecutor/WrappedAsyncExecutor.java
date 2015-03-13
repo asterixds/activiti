@@ -11,8 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * For enterprise usage: gather metrics about the job executor
- * 
  * @author jbarrez
  */
 public class WrappedAsyncExecutor extends DefaultAsyncJobExecutor {

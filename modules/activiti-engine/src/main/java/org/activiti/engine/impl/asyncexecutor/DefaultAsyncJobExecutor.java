@@ -29,7 +29,7 @@ private static Logger log = LoggerFactory.getLogger(DefaultAsyncJobExecutor.clas
   
   /** 
    * The time (in milliseconds) a thread used for job execution must be kept alive before it is
-   * destroyed. Default setting is 0. Having a non-default setting of 0 takes resources,
+   * destroyed. Default setting is 5 seconds. Having a non-default setting of 0 takes resources,
    * but in the case of many job executions it avoids creating new threads all the time. 
    */
   protected long keepAliveTime = 5000L;

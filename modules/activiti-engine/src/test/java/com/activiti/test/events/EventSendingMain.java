@@ -39,17 +39,13 @@ public class EventSendingMain {
 //	  processEngineConfig.setJdbcPassword("alfresco");
 //	  processEngineConfig.setDatabaseSchema("drop-create");
 //	  
-	  processEngineConfig.setJobExecutorActivate(false);
-	  processEngineConfig.setAsyncExecutorEnabled(true);
-	  processEngineConfig.setAsyncExecutorActivate(true);
-	  
 	  
 	  processEngineConfig.enableClusterConfig();
 	  processEngineConfig.setEnterpriseAdminAppUrl("http://localhost:8081/activiti-admin");
-	  processEngineConfig.setEnterpriseClusterName("development");
-	  processEngineConfig.setEnterpriseClusterUserName("dev");
-	  processEngineConfig.setEnterpriseClusterPassword("dev");
-	  processEngineConfig.setEnterpriseMasterConfigurationRequired(false);
+	  processEngineConfig.setEnterpriseClusterName("engines");
+	  processEngineConfig.setEnterpriseClusterUserName("activiti");
+	  processEngineConfig.setEnterpriseClusterPassword("activiti");
+	  processEngineConfig.setEnterpriseMasterConfigurationRequired(true);
 	  processEngineConfig.setEnterpriseMetricSendingInterval(10);
 	  
 	  final ProcessEngine processEngine = processEngineConfig.buildProcessEngine();
@@ -102,9 +98,6 @@ public class EventSendingMain {
 		  		System.out.println("Executing task");
 		  		executeTask(taskService);
 		  	} else if (nr == 2) {
-		  		System.out.println("executing job");
-		  		executeJob(managementService);
-		  	} else if (nr == 3) {
 		  		if (random.nextBoolean()) { // not TOO many of them
 		  			System.out.println("Executing failing job");
 		  			executeFailingJob(runtimeService);
@@ -136,7 +129,7 @@ public class EventSendingMain {
 		  }
 		  
 		  for (int i=0; i<5; i++) {
-		  	executeJob(managementService);
+		  	managementService.executeJob(managementService.createJobQuery().list().get(0).getId());
 		  }
 	  }
 	  long end = System.currentTimeMillis();
@@ -196,13 +189,6 @@ public class EventSendingMain {
 		List<Task> tasks = taskService.createTaskQuery().list();
 		if (tasks.size() > 0) {
 			taskService.complete(tasks.get(0).getId());
-		}
-	}
-	
-	private static void executeJob(ManagementService managementService) {
-		List<Job> jobs = managementService.createJobQuery().list();
-		if (jobs.size() > 0) {
-			managementService.executeJob(jobs.get(0).getId());
 		}
 	}
 	
