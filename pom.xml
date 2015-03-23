@@ -766,6 +766,7 @@
         <!-- <module>modules/activiti-osgi</module> -->
         <module>modules/activiti-ldap</module>
         <module>modules/activiti-jmx</module>
+        <module>modules/activiti-webapp-enterprise-rest</module>
       </modules>
       <build>
         <plugins>
