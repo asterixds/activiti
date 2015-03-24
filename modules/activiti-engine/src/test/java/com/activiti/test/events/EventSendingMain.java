@@ -33,18 +33,18 @@ public class EventSendingMain {
 	  ProcessEngineConfigurationImpl processEngineConfig = 
 	  		(ProcessEngineConfigurationImpl) new StandaloneInMemProcessEngineConfiguration();
 	  
-//	  processEngineConfig.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/act-perf?characterEncoding=UTF-8");
+//	  processEngineConfig.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/testjoram?characterEncoding=UTF-8");
 //	  processEngineConfig.setJdbcDriver("com.mysql.jdbc.Driver");
 //	  processEngineConfig.setJdbcUsername("alfresco");
 //	  processEngineConfig.setJdbcPassword("alfresco");
-//	  processEngineConfig.setDatabaseSchema("drop-create");
+//	  processEngineConfig.setDatabaseSchema("true");
 //	  
 	  
 	  processEngineConfig.enableClusterConfig();
 	  processEngineConfig.setEnterpriseAdminAppUrl("http://localhost:8081/activiti-admin");
-	  processEngineConfig.setEnterpriseClusterName("engines");
-	  processEngineConfig.setEnterpriseClusterUserName("activiti");
-	  processEngineConfig.setEnterpriseClusterPassword("activiti");
+	  processEngineConfig.setEnterpriseClusterName("development");
+	  processEngineConfig.setEnterpriseClusterUserName("dev");
+	  processEngineConfig.setEnterpriseClusterPassword("dev");
 	  processEngineConfig.setEnterpriseMasterConfigurationRequired(true);
 	  processEngineConfig.setEnterpriseMetricSendingInterval(10);
 	  

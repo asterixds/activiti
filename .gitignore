@@ -9,3 +9,5 @@ target
 .DS_Store
 *.bpmn/
 /userguide/src/en/index.html
+mockserver.log
+mockserver_request.log

@@ -69,7 +69,7 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 	
 	protected Integer localNodePort;
 	
-	protected MasterConfigurationState masterConfigurationState;
+	protected MasterConfigurationState masterConfigurationState = new MasterConfigurationState();;
 	
 	protected ProcessEngineMasterConfigurationRepresentation masterConfiguration;
 	
@@ -196,7 +196,6 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 		
 		if (masterConfiguration != null) {
 			
-			masterConfigurationState = new MasterConfigurationState();
 			logger.info("Master configuration enabled. Changing local configuration to master configuration.");
 			
 			masterConfigurationState.setUsingMasterConfiguration(true);
@@ -260,11 +259,11 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 		}
 	}
 
-	protected void checkIfCanContinue(boolean masterConfigRequired, Exception e) {
-		if (masterConfigRequired) {
+	protected void checkIfCanContinue(Boolean masterConfigRequired, Exception e) {
+		if (masterConfigRequired != null && masterConfigRequired) {
 			String text = "Master configuration is required, but could not get it from Activiti Admin Application";
 			if (e != null) {
-				throw new RuntimeException(text, e);
+				throw new ActivitiException(text, e);
 			} else {
 				throw new RuntimeException(text);
 			}
