@@ -7,7 +7,7 @@
   <groupId>com.activiti</groupId>
   <artifactId>activiti-root</artifactId>
   <packaging>pom</packaging>
-  <version>5.18.0.1</version>
+  <version>5.18.0.2-SNAPSHOT</version>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <spring.framework.version>4.1.4.RELEASE</spring.framework.version>
