@@ -758,7 +758,7 @@
         <module>modules/activiti-diagram-rest</module>
         <module>modules/activiti-rest</module>
         <module>modules/activiti-spring</module>
-        <module>modules/activiti-spring-boot</module>
+        <!-- <module>modules/activiti-spring-boot</module> -->
         <module>modules/activiti-cxf</module>
         <module>modules/activiti-mule</module>
         <module>modules/activiti-camel</module>
