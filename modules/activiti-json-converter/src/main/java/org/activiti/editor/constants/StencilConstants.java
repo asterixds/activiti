@@ -88,6 +88,7 @@ public interface StencilConstants {
   final String PROPERTY_TIMER_DURATON = "timerdurationdefinition";
   final String PROPERTY_TIMER_DATE = "timerdatedefinition";
   final String PROPERTY_TIMER_CYCLE = "timercycledefinition";
+  final String PROPERTY_TIMER_CYCLE_END_DATE = "timerenddatedefinition";
 
   final String PROPERTY_MESSAGES = "messages";
   final String PROPERTY_MESSAGE_ID = "message_id";
@@ -213,4 +214,14 @@ public interface StencilConstants {
 
   final String PROPERTY_SEQUENCEFLOW_CONDITION = "conditionsequenceflow";
   final String PROPERTY_SEQUENCEFLOW_ORDER = "sequencefloworder";
+  
+  final String PROPERTY_MESSAGE_DEFINITIONS = "messagedefinitions";
+  final String PROPERTY_MESSAGE_DEFINITION_ID = "id";
+  final String PROPERTY_MESSAGE_DEFINITION_NAME = "name";
+  final String PROPERTY_MESSAGE_DEFINITION_ITEM_REF = "message_item_ref";
+
+  final String PROPERTY_SIGNAL_DEFINITIONS = "signaldefinitions";
+  final String PROPERTY_SIGNAL_DEFINITION_ID = "id";
+  final String PROPERTY_SIGNAL_DEFINITION_NAME = "name";
+  final String PROPERTY_SIGNAL_DEFINITION_SCOPE = "scope";
 }

@@ -5,11 +5,11 @@
 
     <parent>
         <groupId>com.activiti</groupId>
-        <artifactId>spring-boot</artifactId>
-        <version>5.18.0.2-SNAPSHOT</version>
+        <artifactId>activiti-spring-boot</artifactId>
+        <version>5.18.0.2</version>
     </parent>
 
-    <artifactId>spring-boot-samples</artifactId>
+    <artifactId>activiti-spring-boot-samples</artifactId>
 
     <packaging>pom</packaging>
     <modules>
@@ -17,7 +17,7 @@
         <module>spring-boot-sample-jpa</module>
         <module>spring-boot-sample-security</module>
         <module>spring-boot-sample-rest-api</module>      
-		    <module>spring-boot-sample-rest-api-security</module>
+		<module>spring-boot-sample-rest-api-security</module>
         <module>spring-boot-sample-actuator</module>
         <module>spring-boot-sample-integration</module>
     </modules>

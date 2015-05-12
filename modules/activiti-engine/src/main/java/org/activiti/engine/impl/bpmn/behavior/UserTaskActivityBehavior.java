@@ -65,7 +65,7 @@ public class UserTaskActivityBehavior extends TaskActivityBehavior {
         name = (String) taskDefinition.getNameExpression().getValue(execution);
       } catch (ActivitiException e) {
         name = taskDefinition.getNameExpression().getExpressionText();
-        LOGGER.warn("property not found in task name expression " +  e.getMessage());
+        LOGGER.warn("property not found in task name expression " + e.getMessage());
       }
       task.setName(name);
     }
