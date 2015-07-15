@@ -131,7 +131,7 @@ public class AdminAppService {
     // Connection timeout
     RequestConfig config = RequestConfig.custom()
         .setSocketTimeout(30000)
-        .setConnectTimeout(30000)
+        .setConnectTimeout(5000)
         .build();
     httpClientBuilder.setDefaultRequestConfig(config);
 
