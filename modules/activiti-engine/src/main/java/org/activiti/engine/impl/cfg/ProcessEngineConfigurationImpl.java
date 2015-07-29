@@ -107,7 +107,6 @@ import org.activiti.engine.impl.calendar.DurationBusinessCalendar;
 import org.activiti.engine.impl.calendar.MapBusinessCalendarManager;
 import org.activiti.engine.impl.cfg.standalone.StandaloneMybatisTransactionContextFactory;
 import org.activiti.engine.impl.db.DbIdGenerator;
-import org.activiti.engine.impl.db.DbSqlSession;
 import org.activiti.engine.impl.db.DbSqlSessionFactory;
 import org.activiti.engine.impl.db.IbatisVariableTypeHandler;
 import org.activiti.engine.impl.delegate.DefaultDelegateInterceptor;
@@ -204,6 +203,8 @@ import org.activiti.engine.impl.variable.EntityManagerSessionFactory;
 import org.activiti.engine.impl.variable.IntegerType;
 import org.activiti.engine.impl.variable.JPAEntityListVariableType;
 import org.activiti.engine.impl.variable.JPAEntityVariableType;
+import org.activiti.engine.impl.variable.JsonType;
+import org.activiti.engine.impl.variable.LongJsonType;
 import org.activiti.engine.impl.variable.LongStringType;
 import org.activiti.engine.impl.variable.LongType;
 import org.activiti.engine.impl.variable.NullType;
@@ -411,14 +412,19 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   protected int batchSizeTasks = 25;
   
   /**
-   * Experimental setting. Default is false.
-   * 
-   * If set to true, in the {@link DbSqlSession} during the handling of delete operations,
-   * those operations of the same type are merged together. 
-   * (eg if you have two 'DELETE from X where id=Y' and 'DELETE from X where id=W', it will be merged
-   * into one delete statement 'DELETE from X where id=Y or id=W'.
+   * If set to true, enables bulk insert (grouping sql inserts together).
+   * Default true. For some databases (eg DB2 on Zos: https://activiti.atlassian.net/browse/ACT-4042) needs to be set to false
    */
-  protected boolean isOptimizeDeleteOperationsEnabled;
+  protected boolean isBulkInsertEnabled = true;
+  
+  /**
+  * Some databases have a limit of how many parameters one sql insert can have (eg SQL Server, 2000 params (!= insert statements) ).
+  * Tweak this parameter in case of exceptions indicating too much is being put into one bulk insert,
+  * or make it higher if your database can cope with it and there are inserts with a huge amount of data.
+  * 
+  * By default: 100.
+  */
+  protected int maxNrOfStatementsInBulkInsert = 100;
   
   protected boolean enableEventDispatcher = true;
   protected ActivitiEventDispatcher eventDispatcher;
@@ -848,7 +854,8 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
       dbSqlSessionFactory.setTablePrefixIsSchema(tablePrefixIsSchema);
       dbSqlSessionFactory.setDatabaseCatalog(databaseCatalog);
       dbSqlSessionFactory.setDatabaseSchema(databaseSchema);
-      dbSqlSessionFactory.setOptimizeDeleteOperationsEnabled(isOptimizeDeleteOperationsEnabled);
+      dbSqlSessionFactory.setBulkInsertEnabled(isBulkInsertEnabled, databaseType);
+      dbSqlSessionFactory.setMaxNrOfStatementsInBulkInsert(maxNrOfStatementsInBulkInsert);
       addSessionFactory(dbSqlSessionFactory);
       
       addSessionFactory(new GenericManagerFactory(AttachmentEntityManager.class));
@@ -1350,11 +1357,13 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
       variableTypes.addType(new DateType());
       variableTypes.addType(new DoubleType());
       variableTypes.addType(new UUIDType());
+      variableTypes.addType(new JsonType(maxLengthStringVariableType));
+      variableTypes.addType(new LongJsonType(maxLengthStringVariableType + 1));
       variableTypes.addType(new ByteArrayType());
       variableTypes.addType(new SerializableType());
       variableTypes.addType(new CustomObjectType("item", ItemInstance.class));
       variableTypes.addType(new CustomObjectType("message", MessageInstance.class));
-      if (customPostVariableTypes!=null) {
+      if (customPostVariableTypes != null) {
         for (VariableType customVariableType: customPostVariableTypes) {
           variableTypes.addType(customVariableType);
         }
@@ -2239,6 +2248,23 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     this.maxLengthStringVariableType = maxLengthStringVariableType;
     return this;
   }
+  
+	public ProcessEngineConfigurationImpl setBulkInsertEnabled(boolean isBulkInsertEnabled) {
+		this.isBulkInsertEnabled = isBulkInsertEnabled;
+		return this;
+	}
+
+	public boolean isBulkInsertEnabled() {
+		return isBulkInsertEnabled;
+	}
+
+	public int getMaxNrOfStatementsInBulkInsert() {
+		return maxNrOfStatementsInBulkInsert;
+	}
+
+	public void setMaxNrOfStatementsInBulkInsert(int maxNrOfStatementsInBulkInsert) {
+		this.maxNrOfStatementsInBulkInsert = maxNrOfStatementsInBulkInsert;
+	}
 	
 	public void setEnterpriseEnableMasterConfiguration(Boolean enterpriseEnableMasterConfiguration) {
 		this.enterpriseEnableMasterConfiguration = enterpriseEnableMasterConfiguration;
