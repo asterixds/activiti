@@ -980,11 +980,11 @@
   </developers>
   <issueManagement>
     <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/ACT</url>
+    <url>https://activiti.atlassian.net</url>
   </issueManagement>
   <ciManagement>
-    <system>Bamboo</system>
-    <url>http://bamboo.ci.codehaus.org/browse/ACT</url>
+    <system>Jenkins</system>
+    <url>http://ec2-54-217-5-246.eu-west-1.compute.amazonaws.com:8080/jenkins</url>
   </ciManagement>
   <scm>
     <url>git@github.com:Alfresco/Activiti.git</url>
