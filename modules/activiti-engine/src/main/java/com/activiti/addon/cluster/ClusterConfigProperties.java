@@ -52,7 +52,7 @@ public class ClusterConfigProperties {
       metricSendingInterval = readIntegerProperty(METRIC_SENDING_INTERVAL, properties);
       
     } catch (Exception e) {
-      logger.warn("Could not find or read 'activiti-cluster.properties' from classpath. Using defaults or process engine config.");
+      logger.debug("Could not find or read 'activiti-cluster.properties' from classpath. Using defaults or process engine config.");
     }
   }
   
