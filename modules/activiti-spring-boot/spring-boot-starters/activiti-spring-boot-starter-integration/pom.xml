@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.activiti</groupId>
         <artifactId>activiti-spring-boot-starters</artifactId>
-        <version>5.18.0.8-SNAPSHOT</version>
+        <version>5.19.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>activiti-spring-boot-starter-integration</artifactId>

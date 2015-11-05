@@ -36,6 +36,7 @@ import javax.sql.DataSource;
 
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.engine.ActivitiException;
+import org.activiti.engine.DynamicBpmnService;
 import org.activiti.engine.FormService;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.IdentityService;
@@ -51,6 +52,7 @@ import org.activiti.engine.delegate.event.ActivitiEventListener;
 import org.activiti.engine.delegate.event.ActivitiEventType;
 import org.activiti.engine.delegate.event.impl.ActivitiEventDispatcherImpl;
 import org.activiti.engine.form.AbstractFormType;
+import org.activiti.engine.impl.DynamicBpmnServiceImpl;
 import org.activiti.engine.impl.FormServiceImpl;
 import org.activiti.engine.impl.HistoryServiceImpl;
 import org.activiti.engine.impl.IdentityServiceImpl;
@@ -160,6 +162,7 @@ import org.activiti.engine.impl.persistence.deploy.DefaultDeploymentCache;
 import org.activiti.engine.impl.persistence.deploy.Deployer;
 import org.activiti.engine.impl.persistence.deploy.DeploymentCache;
 import org.activiti.engine.impl.persistence.deploy.DeploymentManager;
+import org.activiti.engine.impl.persistence.deploy.ProcessDefinitionInfoCache;
 import org.activiti.engine.impl.persistence.entity.AttachmentEntityManager;
 import org.activiti.engine.impl.persistence.entity.ByteArrayEntityManager;
 import org.activiti.engine.impl.persistence.entity.CommentEntityManager;
@@ -179,6 +182,7 @@ import org.activiti.engine.impl.persistence.entity.JobEntityManager;
 import org.activiti.engine.impl.persistence.entity.ModelEntityManager;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntityManager;
+import org.activiti.engine.impl.persistence.entity.ProcessDefinitionInfoEntityManager;
 import org.activiti.engine.impl.persistence.entity.PropertyEntityManager;
 import org.activiti.engine.impl.persistence.entity.ResourceEntityManager;
 import org.activiti.engine.impl.persistence.entity.TableDataManager;
@@ -236,6 +240,7 @@ import org.slf4j.LoggerFactory;
 import com.activiti.addon.cluster.ActivitiClusterConfigurator;
 import com.activiti.addon.cluster.ClusterConfigProperties;
 import com.activiti.license.LicenseHolder;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 /**
@@ -246,6 +251,9 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
 
   private static Logger log = LoggerFactory.getLogger(ProcessEngineConfigurationImpl.class);
   
+  public static final int DEFAULT_GENERIC_MAX_LENGTH_STRING= 4000;
+  public static final int DEFAULT_ORACLE_MAX_LENGTH_STRING= 2000;
+
   public static final String DB_SCHEMA_UPDATE_CREATE = "create";
   public static final String DB_SCHEMA_UPDATE_DROP_CREATE = "drop-create";
 
@@ -278,6 +286,7 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   protected TaskService taskService = new TaskServiceImpl(this);
   protected FormService formService = new FormServiceImpl();
   protected ManagementService managementService = new ManagementServiceImpl();
+  protected DynamicBpmnService dynamicBpmnService = new DynamicBpmnServiceImpl(this);
   
   // COMMAND EXECUTORS ////////////////////////////////////////////////////////
   
@@ -320,6 +329,8 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   protected DeploymentCache<ProcessDefinitionEntity> processDefinitionCache;
   protected int bpmnModelCacheLimit = -1; // By default, no limit
   protected DeploymentCache<BpmnModel> bpmnModelCache;
+  protected int processDefinitionInfoCacheLimit = -1; // By default, no limit
+  protected ProcessDefinitionInfoCache processDefinitionInfoCache;
   
   protected int knowledgeBaseCacheLimit = -1;
   protected DeploymentCache<Object> knowledgeBaseCache;
@@ -438,7 +449,9 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
    *  Define a max length for storing String variable types in the database.
    *  Mainly used for the Oracle NVARCHAR2 limit of 2000 characters
    */
-  protected int maxLengthStringVariableType = 4000;
+  protected int maxLengthStringVariableType = -1;
+  
+  protected ObjectMapper objectMapper = new ObjectMapper();
   
   // buildProcessEngine ///////////////////////////////////////////////////////
   
@@ -475,6 +488,7 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     initProcessDiagramGenerator();
     initHistoryLevel();
     initExpressionManager();
+    initDataSource();
     initVariableTypes();
     initBeans();
     initFormEngines();
@@ -490,7 +504,6 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     initJobHandlers();
     initJobExecutor();
     initAsyncExecutor();
-    initDataSource();
     initTransactionFactory();
     initSqlSessionFactory();
     initSessionFactories();
@@ -596,6 +609,7 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     initService(taskService);
     initService(formService);
     initService(managementService);
+    initService(dynamicBpmnService);
   }
 
   protected void initService(Object service) {
@@ -873,6 +887,7 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
       addSessionFactory(new GenericManagerFactory(IdentityLinkEntityManager.class));
       addSessionFactory(new GenericManagerFactory(JobEntityManager.class));
       addSessionFactory(new GenericManagerFactory(ProcessDefinitionEntityManager.class));
+      addSessionFactory(new GenericManagerFactory(ProcessDefinitionInfoEntityManager.class));
       addSessionFactory(new GenericManagerFactory(PropertyEntityManager.class));
       addSessionFactory(new GenericManagerFactory(ResourceEntityManager.class));
       addSessionFactory(new GenericManagerFactory(ByteArrayEntityManager.class));
@@ -1051,6 +1066,14 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
         }
       }
       
+      if (processDefinitionInfoCache == null) {
+        if (processDefinitionInfoCacheLimit <= 0) {
+          processDefinitionInfoCache = new ProcessDefinitionInfoCache(commandExecutor);
+        } else {
+          processDefinitionInfoCache = new ProcessDefinitionInfoCache(commandExecutor, processDefinitionInfoCacheLimit);
+        }
+      }
+      
       // Knowledge base cache (used for Drools business task)
       if (knowledgeBaseCache == null) {
         if (knowledgeBaseCacheLimit <= 0) {
@@ -1062,6 +1085,7 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
       
       deploymentManager.setProcessDefinitionCache(processDefinitionCache);
       deploymentManager.setBpmnModelCache(bpmnModelCache);
+      deploymentManager.setProcessDefinitionInfoCache(processDefinitionInfoCache);
       deploymentManager.setKnowledgeBaseCache(knowledgeBaseCache);
     }
   }
@@ -1348,8 +1372,8 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
         }
       }
       variableTypes.addType(new NullType());
-      variableTypes.addType(new StringType(maxLengthStringVariableType));
-      variableTypes.addType(new LongStringType(maxLengthStringVariableType + 1));
+      variableTypes.addType(new StringType(getMaxLengthString()));
+      variableTypes.addType(new LongStringType(getMaxLengthString() + 1));
       variableTypes.addType(new BooleanType());
       variableTypes.addType(new ShortType());
       variableTypes.addType(new IntegerType());
@@ -1357,8 +1381,8 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
       variableTypes.addType(new DateType());
       variableTypes.addType(new DoubleType());
       variableTypes.addType(new UUIDType());
-      variableTypes.addType(new JsonType(maxLengthStringVariableType));
-      variableTypes.addType(new LongJsonType(maxLengthStringVariableType + 1));
+      variableTypes.addType(new JsonType(getMaxLengthString(), objectMapper));
+      variableTypes.addType(new LongJsonType(getMaxLengthString() + 1, objectMapper));
       variableTypes.addType(new ByteArrayType());
       variableTypes.addType(new SerializableType());
       variableTypes.addType(new CustomObjectType("item", ItemInstance.class));
@@ -1368,6 +1392,18 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
           variableTypes.addType(customVariableType);
         }
       }
+    }
+  }
+
+  protected int getMaxLengthString() {
+    if (maxLengthStringVariableType == -1) {
+      if ("oracle".equalsIgnoreCase(databaseType) == true) {
+        return DEFAULT_ORACLE_MAX_LENGTH_STRING;
+      } else {
+        return DEFAULT_GENERIC_MAX_LENGTH_STRING;
+      }
+    } else {
+      return maxLengthStringVariableType;
     }
   }
 
@@ -1527,7 +1563,7 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   	if (enableDatabaseEventLogging) {
   		// Database event logging uses the default logging mechanism and adds
   		// a specific event listener to the list of event listeners
-  		getEventDispatcher().addEventListener(new EventLogger(clock));
+  		getEventDispatcher().addEventListener(new EventLogger(clock, objectMapper));
   	}
   }
 
@@ -1656,6 +1692,15 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     return this;
   }
   
+  public DynamicBpmnService getDynamicBpmnService() {
+    return dynamicBpmnService;
+  }
+
+  public ProcessEngineConfigurationImpl setDynamicBpmnService(DynamicBpmnService dynamicBpmnService) {
+    this.dynamicBpmnService = dynamicBpmnService;
+    return this;
+  }
+
   public ProcessEngineConfiguration getProcessEngineConfiguration() {
     return this;
   }
@@ -2262,12 +2307,16 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
 		return maxNrOfStatementsInBulkInsert;
 	}
 
-	public void setMaxNrOfStatementsInBulkInsert(int maxNrOfStatementsInBulkInsert) {
+	public ProcessEngineConfigurationImpl setMaxNrOfStatementsInBulkInsert(int maxNrOfStatementsInBulkInsert) {
 		this.maxNrOfStatementsInBulkInsert = maxNrOfStatementsInBulkInsert;
+		return this;
 	}
 	
 	public void setEnterpriseEnableMasterConfiguration(Boolean enterpriseEnableMasterConfiguration) {
 		this.enterpriseEnableMasterConfiguration = enterpriseEnableMasterConfiguration;
 	}
 
+  public ObjectMapper getObjectMapper() {
+    return objectMapper;
+  }
 }
