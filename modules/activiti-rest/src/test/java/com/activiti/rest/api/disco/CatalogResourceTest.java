@@ -111,8 +111,7 @@ public class CatalogResourceTest extends BaseSpringRestTestCase {
     CloseableHttpClient client = HttpClientBuilder.create().build();
     CloseableHttpResponse response = null;
     try {
-      response = client.execute(new HttpGet("http://localhost:" + HTTP_SERVER_PORT + 
-        "/service/" + RestUrls.createRelativeResourceUrl(EnterpriseRestUrls.URL_DISCO_CATALOG)));
+      response = client.execute(new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(EnterpriseRestUrls.URL_DISCO_CATALOG)));
       assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getStatusLine().getStatusCode());
     } finally {
       closeResponse(response);

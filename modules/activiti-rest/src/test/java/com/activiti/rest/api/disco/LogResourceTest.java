@@ -437,8 +437,7 @@ public class LogResourceTest extends BaseSpringRestTestCase {
     String simpleId = repositoryService.createProcessDefinitionQuery().processDefinitionKey("simple").singleResult().getId();
     
     HttpClient client = HttpClientBuilder.create().build();
-    HttpResponse response = client.execute(new HttpGet("http://localhost:" + HTTP_SERVER_PORT + 
-        "/service/" + RestUrls.createRelativeResourceUrl(EnterpriseRestUrls.URL_DISCO_LOG, simpleId)));
+    HttpResponse response = client.execute(new HttpGet(SERVER_URL_PREFIX + RestUrls.createRelativeResourceUrl(EnterpriseRestUrls.URL_DISCO_LOG, simpleId)));
     assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getStatusLine().getStatusCode());
     
     repositoryService.deleteDeployment(deployment.getId(), true);
