@@ -3,6 +3,7 @@ package com.activiti.rest.service.api;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -10,6 +11,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.rest.exception.ActivitiConflictException;
 import org.apache.commons.codec.binary.Base64;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.activiti.license.LicenseException;
 import com.activiti.license.LicenseHolder;
+import com.activiti.license.LicenseNotFoundException;
 import com.verhas.licensor.License;
 
 /**
@@ -28,13 +31,16 @@ import com.verhas.licensor.License;
  * 
  * @author Frederik Heremans
  * @author Joram Barrez
+ * @author Erik Winlof
  */
 @RestController
 public class EnterpriseLicenseResource {
 
+  private static final FastDateFormat dateFormat = FastDateFormat.getInstance("yyyyMMdd");
+
   private static final String KEY = "vN9kuqLLj5SDZ4UpBP6ekonWSVFJwZgg";
   private static final String ALGORITHM = "DESede";
-  
+
   @Autowired
   protected ProcessEngineConfigurationImpl processEngineConfiguration;
   
@@ -42,18 +48,56 @@ public class EnterpriseLicenseResource {
   public EnterpriseLicenseResponse getLicenseInfo() {
     
     LicenseHolder licenseHolder = processEngineConfiguration.getLicenseHolder();
-    
+
     try {
-      License license = licenseHolder.getLicense();
-      EnterpriseLicenseResponse response = new EnterpriseLicenseResponse();
-      response.setHolder(license.getFeature(LicenseHolder.HOLDER));
-      response.setLicenseCheck(generateLicenseCheck(license.getFeature(LicenseHolder.HOLDER)));
-      return response;
-      
+        EnterpriseLicenseResponse response = new EnterpriseLicenseResponse();
+        try {
+          License license = licenseHolder.getLicense();
+          response.setHolder(license.getFeature(LicenseHolder.HOLDER));
+          response.setLicenseCheck(generateLicenseCheck(license.getFeature(LicenseHolder.HOLDER)));
+          response.setStatus(EnterpriseLicenseResponse.STATUS_VALID);
+          if (!licenseDatesAreValid(license)) {
+            response.setStatus(EnterpriseLicenseResponse.STATUS_INVALID_DATE);
+          }
+        } catch (LicenseNotFoundException le) {
+          // Indicate that license didn't exist
+          // (can't use 404 since that is assumed to be a non existing endpoint by the client)
+          response.setStatus(EnterpriseLicenseResponse.STATUS_NOT_FOUND);
+        }
+        return response;
     } catch (LicenseException le) {
-      // Throw 409, indicating enterprise version is running with invalid license
+      // Throw 409, indicating enterprise version is running with an invalid license
       throw new ActivitiConflictException("Engine is running with invalid license", le);
     }
+  }
+
+  private boolean licenseDatesAreValid(License license) {
+    String goodAfterDateString = license.getFeature(LicenseHolder.GOOD_AFTER_DATE);
+    Date goodAfterDate = null;
+    try {
+        goodAfterDate = dateFormat.parse(goodAfterDateString);
+    } catch (Exception e) {
+        throw new LicenseException("Error parsing good after date", e);
+    }
+
+    Date todayDate = new Date();
+    if (todayDate.before(goodAfterDate)) {
+        return false;
+    }
+
+    String goodBeforeDateString = license.getFeature(LicenseHolder.GOOD_BEFORE_DATE);
+    Date goodBeforeDate = null;
+    try {
+        goodBeforeDate = dateFormat.parse(goodBeforeDateString);
+    } catch (Exception e) {
+        throw new LicenseException("Error parsing good before date", e);
+    }
+
+    if (todayDate.after(goodBeforeDate)) {
+        return false;
+    }
+
+    return true;
   }
 
   private String generateLicenseCheck(String holder) {

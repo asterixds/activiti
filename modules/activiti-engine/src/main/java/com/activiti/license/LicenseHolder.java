@@ -65,8 +65,12 @@ public final class LicenseHolder {
       validateLicense(license);
       return true;
     } catch (LicenseException e) {
+      // Empty license cache if license was invalid
+      setCachedLicense(null, null);
       log.error("License file could not be validated:", e);
     } catch (Throwable t) {
+      // Empty license cache if license was invalid
+      setCachedLicense(null, null);
       log.error("Unexpected exception while validating license", t);
     }
     return false;
@@ -171,8 +175,11 @@ public final class LicenseHolder {
         // Otherwise look for the license on the classpath
         log.info("Last fallback, trying to load license from the classpath");
         License licenseFromClasspath = loadLicenseFromClassPath(LICENSE_FILE);
-        setCachedLicense(now, licenseFromClasspath);
-        return licenseFromClasspath;
+        if (licenseFromClasspath != null) {
+          setCachedLicense(now, licenseFromClasspath);
+          return licenseFromClasspath;
+        }
+        throw new LicenseNotFoundException("No license could be found");
       }
       
     }
@@ -187,15 +194,21 @@ public final class LicenseHolder {
 
   private final synchronized License loadLicenseFromClassPath(String fileName) {
     License license = new License();
+    InputStream fileStream = null;
+    InputStream inputStream = null;
     try {
-      InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(PUBLIC_KEY_FILE);
+      inputStream = this.getClass().getClassLoader().getResourceAsStream(PUBLIC_KEY_FILE);
       license.loadKeyRing(inputStream, digest);
-      IoUtil.closeSilently(inputStream);
-      InputStream fileStream = this.getClass().getClassLoader().getResourceAsStream(fileName);
+      fileStream = this.getClass().getClassLoader().getResourceAsStream(fileName);
+      if (fileStream == null) {
+        return null;
+      }
       license.setLicenseEncoded(fileStream);
-      IoUtil.closeSilently(fileStream);
     } catch (Exception e) {
       throw new LicenseException("Error loading license file " + fileName, e);
+    } finally {
+        IoUtil.closeSilently(inputStream);
+        IoUtil.closeSilently(fileStream);
     }
     return license;
   }
@@ -242,18 +255,23 @@ public final class LicenseHolder {
   }
   
   public final boolean isEnterprise() {
-    String productKey = getLicense().getFeature(PRODUCT_KEY);
-    return productKey.endsWith("ent");
+      return productKeyEndsWith("ent");
   }
   
   public final boolean isDepartemental() {
-    String productKey = getLicense().getFeature(PRODUCT_KEY);
-    return productKey.endsWith("dep");
+      return productKeyEndsWith("dep");
   }
   
   public final boolean isEvaluation() {
-    String productKey = getLicense().getFeature(PRODUCT_KEY);
-    return productKey.endsWith("ev");
+    return productKeyEndsWith("ev");
+  }
+
+  private boolean productKeyEndsWith(String suffix) {
+      String productKey = getLicense().getFeature(PRODUCT_KEY);
+      if (productKey == null) {
+          throw new LicenseException("The product key could not be inspected, is the license corrupt?");
+      }
+      return productKey.endsWith(suffix);
   }
   
   public final String getLicenseInformation() {
