@@ -35,6 +35,7 @@ import com.activiti.addon.cluster.json.ProcessEngineMasterConfigurationRepresent
 import com.activiti.addon.cluster.lifecycle.ClusterEnabledProcessEngineLifeCycleListener;
 import com.activiti.addon.cluster.metrics.JvmMetricsManager;
 import com.activiti.addon.cluster.state.MasterConfigurationState;
+import com.activiti.license.LicenseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -92,13 +93,18 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 	/*
 	 * The logic 
 	 */
-	
+
 	public void beforeInit(ProcessEngineConfigurationImpl processEngineConfiguration) {
-	  
-	  if (processEngineConfiguration.getLicenseHolder().isDepartemental()) {
-	    logger.info("Departemental license found: cluster configuration disabled");
-	    return;
-	  }
+        try {
+            if (processEngineConfiguration.getLicenseHolder().isDepartemental()) {
+                logger.info("Departemental license found: cluster configuration disabled");
+                return;
+            }
+        } catch(LicenseException le) {
+            logger.error("It was not possible to inspect the license before init to decide if the license is departemental or not. " +
+                    "It will be treated as if it was and thus the cluster configuration will be disabled.", le);
+            return;
+        }
 
 		
 		// Let this be tweakable? Send ip info?
@@ -113,7 +119,7 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 					ipAddress = inetAddress.getHostAddress();
 				}
 			}
-    } catch (Exception e) { }
+        } catch (Exception e) { }
 		
 		initAdminAppService();
 		
@@ -142,12 +148,18 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 	
 	public void configure(ProcessEngineConfigurationImpl processEngineConfiguration) {
 	  
-	  if (processEngineConfiguration.getLicenseHolder().isDepartemental()) {
-      logger.info("Departemental license found: cluster configuration disabled");
-      return;
-    }
-		
-		// Process definitions cache
+        try {
+            if (processEngineConfiguration.getLicenseHolder().isDepartemental()) {
+                logger.info("Departemental license found: cluster configuration disabled");
+                return;
+            }
+        } catch(LicenseException le) {
+            logger.error("It was not possible to inspect the license during conguration to decide if the license is departemental or not. " +
+                    "It will be treated as if it was and thus the cluster configuration will be disabled.", le);
+            return;
+        }
+
+        // Process definitions cache
 		initProcessDefinitionCache(processEngineConfiguration);
 		
 		// Job rejection and failed
