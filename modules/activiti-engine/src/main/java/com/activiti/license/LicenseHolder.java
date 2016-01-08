@@ -66,11 +66,9 @@ public final class LicenseHolder {
       return true;
     } catch (LicenseException e) {
       // Empty license cache if license was invalid
-      setCachedLicense(null, null);
       log.error("License file could not be validated:", e);
     } catch (Throwable t) {
       // Empty license cache if license was invalid
-      setCachedLicense(null, null);
       log.error("Unexpected exception while validating license", t);
     }
     return false;
