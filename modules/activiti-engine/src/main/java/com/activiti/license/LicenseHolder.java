@@ -57,7 +57,7 @@ public final class LicenseHolder {
   private static final long CACHE_TIME = 60 * 60 * 1000L; // 1 hour
   private License cachedLicense;
   private Date lastLicenseReadDate; // The license is cached for a certain time before it is re-read from the classpath
-
+  private CustomLicenseLoader customLicenseLoader;
 
   public final boolean isLicenseValid() {
     try {
@@ -73,7 +73,10 @@ public final class LicenseHolder {
     }
     return false;
   }
-  
+
+  public void setCustomLicenseLoader(CustomLicenseLoader customLicenseLoader) {
+    this.customLicenseLoader = customLicenseLoader;
+  }
 
   public final void validateLicense(License license) {
 
@@ -134,7 +137,29 @@ public final class LicenseHolder {
   public final License getLicense() {
     Date now = getClock().getCurrentTime();
     if (cachedLicense == null || lastLicenseReadDate == null || (now.getTime() - lastLicenseReadDate.getTime() > CACHE_TIME) ) {
-      
+
+      if (customLicenseLoader != null) {
+          log.info("Using custom license loader to load license");
+          License license = new License();
+          InputStream customLicenseStream = null;
+          InputStream inputStream = null;
+          try {
+              inputStream = this.getClass().getClassLoader().getResourceAsStream(PUBLIC_KEY_FILE);
+              license.loadKeyRing(inputStream, digest);
+              customLicenseStream = customLicenseLoader.loadLicense();
+              if (customLicenseStream != null) {
+                  license.setLicenseEncoded(customLicenseStream);
+                  setCachedLicense(now, license);
+                  return license;
+              }
+          } catch (Exception e) {
+              throw new LicenseException("Error loading license file using custom license loader", e);
+          } finally {
+              IoUtil.closeSilently(inputStream);
+              IoUtil.closeSilently(customLicenseStream);
+          }
+      }
+
       // Check if there is a system property set
       String locationAsSystemVariable = System.getProperty(SYSTEM_VAR_LICENSE_LOCATION);
       if (locationAsSystemVariable != null) {
@@ -167,7 +192,7 @@ public final class LicenseHolder {
       // Try local user home
       License userHomeLicense = loadLicenseFromUserHome(LICENSE_FILE);
       if (userHomeLicense != null) {
-        setCachedLicense(now, userHomeLicense);
+          setCachedLicense(now, userHomeLicense);
         return userHomeLicense;
       } else {
         // Otherwise look for the license on the classpath
@@ -188,6 +213,10 @@ public final class LicenseHolder {
   private final void setCachedLicense(Date now, License userHomeLicense) {
     cachedLicense = userHomeLicense;
     lastLicenseReadDate = now;
+  }
+
+  public final void clearCachedLicense() {
+      setCachedLicense(null, null);
   }
 
   private final synchronized License loadLicenseFromClassPath(String fileName) {
