@@ -45,8 +45,8 @@ public class WrappedAsyncExecutor extends DefaultAsyncJobExecutor {
 	}
 
 	@Override
-  public void executeAsyncJob(JobEntity job) {
-	  originalAsyncExecutor.executeAsyncJob(job);
+  public boolean executeAsyncJob(JobEntity job) {
+	  return originalAsyncExecutor.executeAsyncJob(job);
   }
 
   @Override
