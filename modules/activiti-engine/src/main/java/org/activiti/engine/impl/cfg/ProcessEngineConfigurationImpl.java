@@ -422,7 +422,7 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
    * 
    * (This property is only applicable when using the {@link DefaultAsyncJobExecutor}).
    */
-  protected int asyncExecutorTimerJobAcquireWaitTime = 10 * 1000;
+  protected int asyncExecutorDefaultTimerJobAcquireWaitTime = 10 * 1000;
   
   /**
    * The time (in milliseconds) the async job acquisition thread will wait to execute the next acquirement query.
@@ -1467,7 +1467,7 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
         defaultAsyncExecutor.setQueueSize(asyncExecutorThreadPoolQueueSize);
         
         // Acquisition wait time
-        defaultAsyncExecutor.setDefaultTimerJobAcquireWaitTimeInMillis(asyncExecutorTimerJobAcquireWaitTime);
+        defaultAsyncExecutor.setDefaultTimerJobAcquireWaitTimeInMillis(asyncExecutorDefaultTimerJobAcquireWaitTime);
         defaultAsyncExecutor.setDefaultAsyncJobAcquireWaitTimeInMillis(asyncExecutorDefaultAsyncJobAcquireWaitTime);
         
         // Queue full wait time
@@ -2139,11 +2139,11 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
 	}
 
 	public int getAsyncExecutorTimerJobAcquireWaitTime() {
-		return asyncExecutorTimerJobAcquireWaitTime;
+		return asyncExecutorDefaultTimerJobAcquireWaitTime;
 	}
 
-	public ProcessEngineConfigurationImpl setAsyncExecutorTimerJobAcquireWaitTime(int asyncExecutorTimerJobAcquireWaitTime) {
-		this.asyncExecutorTimerJobAcquireWaitTime = asyncExecutorTimerJobAcquireWaitTime;
+	public ProcessEngineConfigurationImpl setAsyncExecutorDefaultTimerJobAcquireWaitTime(int asyncExecutorDefaultTimerJobAcquireWaitTime) {
+		this.asyncExecutorDefaultTimerJobAcquireWaitTime = asyncExecutorDefaultTimerJobAcquireWaitTime;
 		return this;
 	}
 

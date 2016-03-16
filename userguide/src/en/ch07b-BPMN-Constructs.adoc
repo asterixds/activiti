@@ -90,7 +90,7 @@ It accepts as value either static values link:$$http://en.wikipedia.org/wiki/ISO
 
 If both are specified then the endDate specified as attribute will be used by the system.
 
- Currently only the _BoundaryTimerEvents_ and _CatchTimerEvent_ supports _EndDate_ functionality.
+Currently only the _BoundaryTimerEvents_ and _CatchTimerEvent_ supports _EndDate_ functionality.
 
 Additionally, you can specify time cycle using cron expressions, example below shows trigger firing every 5 minutes, starting at full hour:
 
@@ -488,7 +488,7 @@ _Note:_ when a new version of a process with a start timer event is deployed, th
 
 ===== Graphical notation
 
-A none start event is visualized as a circle with clock inner icon.
+A timer start event is visualized as a circle with clock inner icon.
 
 image::images/bpmn.clock.start.event.png[align="center"]
 
