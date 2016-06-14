@@ -10,7 +10,11 @@
 		<groupId>com.activiti</groupId>
 		<artifactId>activiti-root</artifactId>
 		<relativePath>../..</relativePath>
+<<<<<<< HEAD
     <version>5.19.0.7-SNAPSHOT</version>
+=======
+		<version>5.22.0-SNAPSHOT</version>
+>>>>>>> a6e39532b7d36656306a45e4fa0fb10a396869f0
 	</parent>
 
 	<dependencies>
