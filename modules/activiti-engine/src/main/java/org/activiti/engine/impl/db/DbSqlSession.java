@@ -929,7 +929,7 @@ public class DbSqlSession implements Session {
       delete.execute();
 
       //  fire event for variable delete operation. (BulkDeleteOperation is not taken into account)
-      if (dispatchEvent) {
+      /*if (dispatchEvent) {
         //  prepare delete event to fire for variable delete operation. (BulkDeleteOperation is not taken into account)
         if (delete instanceof CheckedDeleteOperation) {
           CheckedDeleteOperation checkedDeleteOperation = (CheckedDeleteOperation) delete;
@@ -951,7 +951,7 @@ public class DbSqlSession implements Session {
         		}
         	}
         }
-      }
+      }*/
     }
   }
 
