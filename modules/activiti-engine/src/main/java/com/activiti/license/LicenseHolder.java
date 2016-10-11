@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -20,9 +21,9 @@ import com.verhas.licensor.License;
 public final class LicenseHolder {
 
   private final Logger log = LoggerFactory.getLogger(LicenseHolder.class);
-  
+
   private static final String LICENSE_FILE = "activiti.lic";
-  
+
   private static final String PUBLIC_KEY_FILE = "pubring.gpg";
 
   public static final String HOLDER = "holder";
@@ -38,22 +39,22 @@ public final class LicenseHolder {
   public static final String DEFAULT_TENANT = "defaultTenant";
 
   private static List<String> validVersionsList = Arrays.asList("1.0ev", "1.0ent", "1.0dep");
-  
+
   private static final FastDateFormat dateFormat = FastDateFormat.getInstance("yyyyMMdd");
-  
+
   private static final byte[] digest = new byte[] { (byte) 0x6D, (byte) 0x15, (byte) 0xE2, (byte) 0x0B, (byte) 0xA1, (byte) 0x68, (byte) 0x5D, (byte) 0x91, (byte) 0x55,
       (byte) 0x0C, (byte) 0x8E, (byte) 0xCA, (byte) 0x3A, (byte) 0x55, (byte) 0x2C, (byte) 0x44, (byte) 0x15, (byte) 0x72, (byte) 0x75, (byte) 0xED,
       (byte) 0xB6, (byte) 0x6D, (byte) 0xFF, (byte) 0xE7, (byte) 0x8F, (byte) 0xC0, (byte) 0xCF, (byte) 0xA0, (byte) 0x53, (byte) 0x37, (byte) 0xB5,
       (byte) 0xBF, (byte) 0x05, (byte) 0x3E, (byte) 0x16, (byte) 0x6E, (byte) 0xD0, (byte) 0x68, (byte) 0xA1, (byte) 0x81, (byte) 0x6D, (byte) 0xAA,
       (byte) 0x4E, (byte) 0x8E, (byte) 0x1F, (byte) 0x05, (byte) 0x9D, (byte) 0x99, (byte) 0x4F, (byte) 0x98, (byte) 0x21, (byte) 0x8B, (byte) 0xAD,
       (byte) 0xDB, (byte) 0x15, (byte) 0x07, (byte) 0x21, (byte) 0xF1, (byte) 0x23, (byte) 0x8F, (byte) 0x0E, (byte) 0x2B, (byte) 0xF4, (byte) 0x2E, };
-  
+
   private Clock clock;
-  
+
   public static final String SYSTEM_VAR_LICENSE_LOCATION = "activitiLicenseLocation";
   private String customLocationPath;
   private String customLocationClassPath;
-  
+
   private static final long CACHE_TIME = 60 * 60 * 1000L; // 1 hour
   private License cachedLicense;
   private Date lastLicenseReadDate; // The license is cached for a certain time before it is re-read from the classpath
@@ -102,8 +103,8 @@ public final class LicenseHolder {
     } catch (Exception e) {
       throw new LicenseException("Error parsing good after date '" + goodAfterDate + "'", e);
     }
-    
-    Date todayDate = clock.getCurrentTime();
+
+    Date todayDate = Calendar.getInstance().getTime();
     if (todayDate.before(goodAfterDate)) {
       throw new LicenseException("License is not valid yet, license is valid starting from " + goodAfterDateString);
     }
@@ -119,9 +120,9 @@ public final class LicenseHolder {
     if (todayDate.after(goodBeforeDate)) {
       throw new LicenseException("License is not valid anymore, license was valid until " + goodBeforeDateString);
     }
-    
+
   }
-  
+
   public final FeatureInfo getLicenseFeatureInfo() {
     License license = getLicense();
     FeatureInfo featureInfo = new FeatureInfo();
@@ -133,7 +134,7 @@ public final class LicenseHolder {
     featureInfo.setDefaultTenant(license.getFeature(DEFAULT_TENANT));
     return featureInfo;
   }
-  
+
   public final License getLicense() {
     Date now = getClock().getCurrentTime();
     if (cachedLicense == null || lastLicenseReadDate == null || (now.getTime() - lastLicenseReadDate.getTime() > CACHE_TIME) ) {
@@ -170,7 +171,7 @@ public final class LicenseHolder {
           return licenseFromCustomPath;
         }
       }
-      
+
       // Check if there is a custom location set (eg special unit tests)
       if (customLocationPath != null) {
         License licenseFromCustomPath = loadLicenseFromFileLocation(customLocationPath, LICENSE_FILE);
@@ -179,7 +180,7 @@ public final class LicenseHolder {
           return licenseFromCustomPath;
         }
       }
-      
+
       // Check if there is a custom classpath location set (eg special unit tests)
       if (customLocationClassPath != null) {
         License licenseFromCustomClassPath = loadLicenseFromClassPath(customLocationClassPath);
@@ -188,7 +189,7 @@ public final class LicenseHolder {
           return licenseFromCustomClassPath;
         }
       }
-      
+
       // Try local user home
       License userHomeLicense = loadLicenseFromUserHome(LICENSE_FILE);
       if (userHomeLicense != null) {
@@ -204,7 +205,7 @@ public final class LicenseHolder {
         }
         throw new LicenseNotFoundException("No license could be found");
       }
-      
+
     }
     return cachedLicense;
   }
@@ -239,12 +240,12 @@ public final class LicenseHolder {
     }
     return license;
   }
-  
+
   /**
-   * NOTE: contrary to the {@link #loadLicenseFromClassPath(String)} this will return NULL if 
+   * NOTE: contrary to the {@link #loadLicenseFromClassPath(String)} this will return NULL if
    * the files were not found!
-   * 
-   *  The reason for this is because the user home approach is only ment for 
+   *
+   *  The reason for this is because the user home approach is only ment for
    *  local development and users should use the classpath approach only.
    */
   private final License loadLicenseFromUserHome(String fileName) {
@@ -252,22 +253,22 @@ public final class LicenseHolder {
     log.info("Trying to load license from user home " + System.getProperty("user.home") +  fileSeparator + ".activiti" + fileSeparator + "enterprise-license" + fileSeparator + fileName);
     return loadLicenseFromFileLocation(System.getProperty("user.home") +  fileSeparator + ".activiti" + fileSeparator + "enterprise-license" + fileSeparator, fileName);
   }
-  
+
   /**
-   * NOTE: contrary to the {@link #loadLicenseFromClassPath(String)} this will return NULL if 
+   * NOTE: contrary to the {@link #loadLicenseFromClassPath(String)} this will return NULL if
    * the files were not found!
-   * 
-   *  The reason for this is because the user home approach is only ment for 
+   *
+   *  The reason for this is because the user home approach is only ment for
    *  local development and users should use the classpath approach only.
    */
   private final synchronized License loadLicenseFromFileLocation(String location, String licenseFileName) {
     License license = new License();
     try {
-      
+
       InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(PUBLIC_KEY_FILE);
       license.loadKeyRing(inputStream, digest);
       IoUtil.closeSilently(inputStream);
-      
+
       File licenseFile = new File(location + licenseFileName);
       if (!licenseFile.exists()) {
         return null;
@@ -280,15 +281,15 @@ public final class LicenseHolder {
     }
     return license;
   }
-  
+
   public final boolean isEnterprise() {
       return productKeyEndsWith("ent");
   }
-  
+
   public final boolean isDepartemental() {
       return productKeyEndsWith("dep");
   }
-  
+
   public final boolean isEvaluation() {
     return productKeyEndsWith("ev");
   }
@@ -300,7 +301,7 @@ public final class LicenseHolder {
       }
       return productKey.endsWith(suffix);
   }
-  
+
   public final String getLicenseInformation() {
     String separator = System.getProperty("line.separator");
     StringBuilder strb = new StringBuilder();
@@ -310,32 +311,32 @@ public final class LicenseHolder {
     strb.append("Product Key:" + license.getFeature(PRODUCT_KEY) + separator);
     strb.append("Good After date:" + license.getFeature(GOOD_AFTER_DATE) + separator);
     strb.append("Good Before date:" + license.getFeature(GOOD_BEFORE_DATE) + separator);
-    
+
     FeatureInfo featureInfo = getLicenseFeatureInfo();
     if (isDepartemental()) {
       strb.append("Max number of process instances:" + featureInfo.getNumberOfProcesses() + separator);
     }
-    
+
     strb.append("Multi tenant?:" + featureInfo.isMultiTenant() + separator);
     strb.append("Default tenant name:" + featureInfo.getDefaultTenant() + separator);
-    
+
     strb.append("------------------------------------------" + separator);
-    
+
     return strb.toString();
   }
-  
+
   public final String getCustomLocationPath() {
     return customLocationPath;
   }
-  
+
   public final void setCustomLocationPath(String customLocationPath) {
     this.customLocationPath = customLocationPath;
   }
-  
+
   public final String getCustomLocationClassPath() {
     return customLocationClassPath;
   }
-  
+
   public final void setCustomLocationClassPath(String customLocationClassPath) {
     this.customLocationClassPath = customLocationClassPath;
   }
@@ -350,5 +351,5 @@ public final class LicenseHolder {
   public final void setClock(Clock clock) {
     this.clock = clock;
   }
-  
+
 }
