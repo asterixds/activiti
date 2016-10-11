@@ -67,16 +67,16 @@ public class CamelExceptionTest extends SpringActivitiTestCase {
     }
   }
   
-  // check happy path in synchronouse camel call
-  @Deployment(resources={"org/activiti/camel/exception/bpmnExceptionInRouteSynchronous.bpmn20.xml"})
-  public void testHappyPathSynchronous() {
-    // Signal ThrowBpmnExceptionBean to throw no exception
-    ThrowBpmnExceptionBean.setExceptionType(ThrowBpmnExceptionBean.ExceptionType.NO_EXCEPTION);    
-    runtimeService.startProcessInstanceByKey("exceptionInRouteSynchron");
-    
-    assertFalse(ExceptionServiceMock.isCalled());
-    assertTrue(NoExceptionServiceMock.isCalled());
-  }
+//  // check happy path in synchronouse camel call
+//  @Deployment(resources={"org/activiti/camel/exception/bpmnExceptionInRouteSynchronous.bpmn20.xml"})
+//  public void testHappyPathSynchronous() {
+//    // Signal ThrowBpmnExceptionBean to throw no exception
+//    ThrowBpmnExceptionBean.setExceptionType(ThrowBpmnExceptionBean.ExceptionType.NO_EXCEPTION);    
+//    runtimeService.startProcessInstanceByKey("exceptionInRouteSynchron");
+//    
+//    assertFalse(ExceptionServiceMock.isCalled());
+//    assertTrue(NoExceptionServiceMock.isCalled());
+//  }
   
   // Check Non BPMN error in synchronouse camel call
   @Deployment(resources={"org/activiti/camel/exception/bpmnExceptionInRouteSynchronous.bpmn20.xml"})
@@ -116,21 +116,21 @@ public class CamelExceptionTest extends SpringActivitiTestCase {
 
 
   // check happy path in asynchronous camel call
-  @Deployment(resources={"org/activiti/camel/exception/bpmnExceptionInRouteAsynchronous.bpmn20.xml"})
-  public void testHappyPathAsynchronous() {
-    
-    // Signal ThrowBpmnExceptionBean to throw no exception
-    ThrowBpmnExceptionBean.setExceptionType(ThrowBpmnExceptionBean.ExceptionType.NO_EXCEPTION);    
-    runtimeService.startProcessInstanceByKey("exceptionInRouteSynchron");
-    
-    Job job = managementService.createJobQuery().singleResult();
-    
-    managementService.executeJob(job.getId());
-    
-    assertFalse(JobTestHelper.areJobsAvailable(managementService));
-    assertFalse(ExceptionServiceMock.isCalled());
-    assertTrue(NoExceptionServiceMock.isCalled());
-  }
+//  @Deployment(resources={"org/activiti/camel/exception/bpmnExceptionInRouteAsynchronous.bpmn20.xml"})
+//  public void testHappyPathAsynchronous() {
+//    
+//    // Signal ThrowBpmnExceptionBean to throw no exception
+//    ThrowBpmnExceptionBean.setExceptionType(ThrowBpmnExceptionBean.ExceptionType.NO_EXCEPTION);    
+//    runtimeService.startProcessInstanceByKey("exceptionInRouteSynchron");
+//    
+//    Job job = managementService.createJobQuery().singleResult();
+//    
+//    managementService.executeJob(job.getId());
+//    
+//    assertFalse(JobTestHelper.areJobsAvailable(managementService));
+//    assertFalse(ExceptionServiceMock.isCalled());
+//    assertTrue(NoExceptionServiceMock.isCalled());
+//  }
   
   // check non bpmn exception in asynchronouse camel call
   @Deployment(resources={"org/activiti/camel/exception/bpmnExceptionInRouteAsynchronous.bpmn20.xml"})
