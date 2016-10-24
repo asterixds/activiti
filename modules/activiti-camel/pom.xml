@@ -71,7 +71,7 @@
   <properties>
     <activiti.osgi.import.pkg>*</activiti.osgi.import.pkg>
     <activiti.artifact>
-      com.activiti.camel
+      org.activiti.camel
     </activiti.artifact>
   </properties>
 
