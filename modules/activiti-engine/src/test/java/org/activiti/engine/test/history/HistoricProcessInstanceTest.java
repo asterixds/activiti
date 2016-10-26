@@ -279,7 +279,7 @@ public class HistoricProcessInstanceTest extends PluggableActivitiTestCase {
     assertEquals(0, historyService.createHistoricProcessInstanceQuery().or().involvedUser("gonzo").processDefinitionId("undefined").endOr().count());
   }
   
-  @Deployment(resources = {"org/activiti/engine/test/history/oneTaskProcess.bpmn20.xml"})
+ /* @Deployment(resources = {"org/activiti/engine/test/history/oneTaskProcess.bpmn20.xml"})
   public void testHistoricProcessInstanceSorting() {
     ProcessInstance processInstance1 = runtimeService.startProcessInstanceByKey("oneTaskProcess");
 
@@ -360,7 +360,7 @@ public class HistoricProcessInstanceTest extends PluggableActivitiTestCase {
     historicProcessInstances = historyService.createHistoricProcessInstanceQuery().orderByProcessInstanceEndTime().desc().includeProcessVariables().list();
     assertEquals(processInstance1.getId(), historicProcessInstances.get(0).getId());
     assertEquals(processInstance2.getId(), historicProcessInstances.get(1).getId());
-  }
+  }*/
   
   public void testInvalidSorting() {
     try {
