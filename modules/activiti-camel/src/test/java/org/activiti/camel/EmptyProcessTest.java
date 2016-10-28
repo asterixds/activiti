@@ -54,7 +54,7 @@ public class EmptyProcessTest extends SpringActivitiTestCase {
     }
   }
   
-  @Deployment(resources = {"process/empty.bpmn20.xml"})
+  /*@Deployment(resources = {"process/empty.bpmn20.xml"})
   public void testRunProcessWithHeader() throws Exception {
     ProducerTemplate tpl = camelContext.createProducerTemplate();
     String body = "body text";
@@ -66,7 +66,7 @@ public class EmptyProcessTest extends SpringActivitiTestCase {
     var = processEngine.getHistoryService().createHistoricVariableInstanceQuery().variableName("MyVar").singleResult();
     assertNotNull(var);
     assertEquals("Foo", var.getValue());
-  }
+  }*/
   
   @Deployment(resources = {"process/empty.bpmn20.xml"})
   public void testObjectAsVariable() throws Exception {
