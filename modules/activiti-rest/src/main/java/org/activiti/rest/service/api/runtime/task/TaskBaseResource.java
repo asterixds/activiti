@@ -182,6 +182,9 @@ public class TaskBaseResource {
     if (request.getProcessInstanceId() != null) {
       taskQuery.processInstanceId(request.getProcessInstanceId());
     }
+    if (request.getProcessInstanceIdIn() != null) {
+      taskQuery.processInstanceIdIn(request.getProcessInstanceIdIn());
+    }
     if (request.getProcessInstanceBusinessKey() != null) {
       taskQuery.processInstanceBusinessKey(request.getProcessInstanceBusinessKey());
     }
@@ -246,6 +249,10 @@ public class TaskBaseResource {
     	taskQuery.processInstanceBusinessKeyLike(request.getProcessInstanceBusinessKeyLike());
     }
     
+    if (request.getProcessDefinitionId() != null) {
+      taskQuery.processDefinitionId(request.getProcessDefinitionId());
+    }
+    
     if (request.getProcessDefinitionKey() != null) {
     	taskQuery.processDefinitionKey(request.getProcessDefinitionKey());
     }
@@ -284,6 +291,10 @@ public class TaskBaseResource {
 
     if (request.getCandidateOrAssigned() != null) {
       taskQuery.taskCandidateOrAssigned(request.getCandidateOrAssigned());
+    }
+
+    if (request.getCategory() != null) {
+      taskQuery.taskCategory(request.getCategory());
     }
     
     return new TaskPaginateList(restResponseFactory).paginateList(
@@ -354,7 +365,15 @@ public class TaskBaseResource {
       case LESS_THAN_OR_EQUALS:
       	taskQuery.taskVariableValueLessThanOrEqual(variable.getName(), actualValue);
       	break;
-      	
+
+      case LIKE_IGNORE_CASE:
+        if (actualValue instanceof String) {
+          taskQuery.taskVariableValueLikeIgnoreCase(variable.getName(), (String) actualValue);
+        } else {
+          throw new ActivitiIllegalArgumentException("Only string variable values are supported using likeIgnoreCase, but was: " + actualValue.getClass().getName());
+        }
+        break;
+
       case LIKE:
       	if (actualValue instanceof String) {
       		taskQuery.taskVariableValueLike(variable.getName(), (String) actualValue);
@@ -439,7 +458,15 @@ public class TaskBaseResource {
         		throw new ActivitiIllegalArgumentException("Only string variable values are supported using like, but was: " + actualValue.getClass().getName());
         	}
         	break;
-        	
+
+        case LIKE_IGNORE_CASE:
+          if (actualValue instanceof String) {
+            taskQuery.processVariableValueLikeIgnoreCase(variable.getName(), (String) actualValue);
+          } else {
+            throw new ActivitiIllegalArgumentException("Only string variable values are supported using likeIgnoreCase, but was: " + actualValue.getClass().getName());
+          }
+          break;
+
         default:
           throw new ActivitiIllegalArgumentException("Unsupported variable query operation: " + variable.getVariableOperation());
       }

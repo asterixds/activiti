@@ -555,6 +555,7 @@ public class RestResponseFactory {
     result.setName(processInstance.getName());
     result.setProcessDefinitionId(processInstance.getProcessDefinitionId());
     result.setProcessDefinitionUrl(urlBuilder.buildUrl(RestUrls.URL_PROCESS_DEFINITION, processInstance.getProcessDefinitionId()));
+    result.setProcessDefinitionKey(processInstance.getProcessDefinitionKey());
     result.setEnded(processInstance.isEnded());
     result.setSuspended(processInstance.isSuspended());
     result.setUrl(urlBuilder.buildUrl(RestUrls.URL_PROCESS_INSTANCE, processInstance.getId()));
@@ -592,6 +593,7 @@ public class RestResponseFactory {
     result.setName(processInstance.getName());
     result.setProcessDefinitionId(processInstance.getProcessDefinitionId());
     result.setProcessDefinitionUrl(urlBuilder.buildUrl(RestUrls.URL_PROCESS_DEFINITION, processInstance.getProcessDefinitionId()));
+    result.setProcessDefinitionKey(processInstance.getProcessDefinitionKey());
     result.setEnded(processInstance.isEnded());
     result.setSuspended(processInstance.isSuspended());
     result.setUrl(urlBuilder.buildUrl(RestUrls.URL_PROCESS_INSTANCE, processInstance.getId()));
@@ -652,8 +654,13 @@ public class RestResponseFactory {
     result.setTenantId(execution.getTenantId());
     
     result.setParentId(execution.getParentId());
-    if(execution.getParentId() != null) {
+    if (execution.getParentId() != null) {
       result.setParentUrl(urlBuilder.buildUrl(RestUrls.URL_EXECUTION, execution.getParentId()));
+    }
+    
+    result.setSuperExecutionId(execution.getSuperExecutionId());
+    if (execution.getSuperExecutionId() != null) {
+      result.setSuperExecutionUrl(urlBuilder.buildUrl(RestUrls.URL_EXECUTION, execution.getSuperExecutionId()));
     }
     
     result.setProcessInstanceId(execution.getProcessInstanceId());

@@ -7,7 +7,7 @@
   <groupId>com.activiti</groupId>
   <artifactId>activiti-root</artifactId>
   <packaging>pom</packaging>
-  <version>5.21.0.3</version>
+  <version>5.22.0.0</version>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <spring.framework.version>4.1.5.RELEASE</spring.framework.version>
@@ -123,12 +123,17 @@
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-impl</artifactId>
-        <version>2.1.7</version>
+        <version>2.2.11</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.xml.bind</groupId>
+        <artifactId>jaxb-core</artifactId>
+        <version>2.2.11</version>
       </dependency>
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-xjc</artifactId>
-        <version>2.1.7</version>
+        <version>2.2.11</version>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
@@ -155,7 +160,7 @@
       <dependency>
         <groupId>javax.xml.bind</groupId>
         <artifactId>jaxb-api</artifactId>
-        <version>2.2.1</version>
+        <version>2.2.11</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
@@ -349,19 +354,19 @@
       <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.core</artifactId>
-        <version>4.2.0</version>
+        <version>6.0.0</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.compendium</artifactId>
-        <version>4.2.0</version>
+        <version>5.0.0</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.felix</groupId>
         <artifactId>org.apache.felix.fileinstall</artifactId>
-        <version>3.0.2</version>
+        <version>3.5.4</version>
         <optional>true</optional>
       </dependency>
       <dependency>
@@ -577,7 +582,7 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring</artifactId>
-        <version>2.11.0</version>
+        <version>2.17.1</version>
       </dependency>
       <!-- Mule integration -->
       <dependency>
@@ -962,6 +967,16 @@
     <url>http://www.alfresco.com</url>
   </organization>
   <developers>
+  	<developer>
+      <name>Bassam Al-Sarori</name>
+      <organization>Alfresco</organization>
+      <url>http://www.alfresco.com</url>
+    </developer>
+    <developer>
+      <name>Vasile Dirla</name>
+      <organization>Alfresco</organization>
+      <url>http://www.alfresco.com</url>
+    </developer>
     <developer>
       <name>Tijs Rademakers</name>
       <organization>Alfresco</organization>
