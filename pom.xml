@@ -946,7 +946,7 @@
   	  <repository>
 	      <id>alfresco-internal</id>
   	      <name>Alfresco INTERNAL release</name>
-  	  	  <url>https://artifacts.alfresco.com/nexus/content/repositories/internal-releases</url>
+  	  	  <url>https://artifacts.alfresco.com/nexus/content/repositories/internal-staging</url>
   	  </repository>
       <snapshotRepository>
 	      <id>alfresco-internal-snapshots</id>
