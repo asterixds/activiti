@@ -944,14 +944,14 @@
   <!-- Enterprise deployment -->
   <distributionManagement>
   	  <repository>
-  	      <id>alfresco.release.repo</id>
+	      <id>alfresco-internal</id>
   	      <name>Alfresco INTERNAL release</name>
-  	  	  <url>https://artifacts.alfresco.com/nexus/content/repositories/activiti-enterprise-releases/</url>
+  	  	  <url>https://artifacts.alfresco.com/nexus/content/repositories/internal-releases</url>
   	  </repository>
       <snapshotRepository>
 	      <id>alfresco-internal-snapshots</id>
 	      <name>Alfresco INTERNAL snapshot</name>
-	      <url>https://artifacts.alfresco.com/nexus/content/repositories/activiti-enterprise-snapshots/</url>
+	      <url>https://artifacts.alfresco.com/nexus/content/repositories/internal-snapshots/</url>
       </snapshotRepository>
   </distributionManagement>
   <!-- Various information, not used by the build -->
