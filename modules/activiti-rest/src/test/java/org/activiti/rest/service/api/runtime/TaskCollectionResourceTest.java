@@ -143,6 +143,7 @@ public class TaskCollectionResourceTest extends BaseSpringRestTestCase {
       adhocTask.setName("Name one");
       adhocTask.setDueDate(adhocTaskCreate.getTime());
       adhocTask.setPriority(100);
+      adhocTask.setCategory("some-category");
       taskService.saveTask(adhocTask);
       taskService.addUserIdentityLink(adhocTask.getId(), "misspiggy", IdentityLinkType.PARTICIPANT);
 
@@ -241,7 +242,11 @@ public class TaskCollectionResourceTest extends BaseSpringRestTestCase {
       // Process instance filtering
       url = RestUrls.createRelativeResourceUrl(RestUrls.URL_TASK_COLLECTION) + "?processInstanceId=" + processInstance.getId();
       assertResultsPresentInDataResponse(url, processTask.getId());
-      
+
+      // Process instance id in list filtering
+      url = RestUrls.createRelativeResourceUrl(RestUrls.URL_TASK_COLLECTION) + "?processInstanceIdIn=" + adhocTask.getId() + "," + processInstance.getId();
+      assertResultsPresentInDataResponse(url, processTask.getId());
+
       // Execution filtering
       url = RestUrls.createRelativeResourceUrl(RestUrls.URL_TASK_COLLECTION) + "?executionId=" + processInstance.getId();
       assertResultsPresentInDataResponse(url, processTask.getId());
@@ -289,6 +294,13 @@ public class TaskCollectionResourceTest extends BaseSpringRestTestCase {
       // Without tenantId filtering before tenant set
       url = RestUrls.createRelativeResourceUrl(RestUrls.URL_TASK_COLLECTION) + "?withoutTenantId=true";
       assertResultsPresentInDataResponse(url, adhocTask.getId(), processTask.getId());
+      
+      // Process definition
+      url  = RestUrls.createRelativeResourceUrl(RestUrls.URL_TASK_COLLECTION) + "?processDefinitionKey=" + processInstance.getProcessDefinitionKey();
+      assertResultsPresentInDataResponse(url, processTask.getId());
+      
+      url  = RestUrls.createRelativeResourceUrl(RestUrls.URL_TASK_COLLECTION) + "?processDefinitionId=" + processInstance.getProcessDefinitionId();
+      assertResultsPresentInDataResponse(url, processTask.getId());
 
       // Set tenant on deployment
       managementService.executeCommand(new ChangeDeploymentTenantIdCmd(deploymentId, "myTenant"));
@@ -305,6 +317,10 @@ public class TaskCollectionResourceTest extends BaseSpringRestTestCase {
       url = RestUrls.createRelativeResourceUrl(RestUrls.URL_TASK_COLLECTION) + "?tenantIdLike=" + encode("%enant");
       assertResultsPresentInDataResponse(url, processTask.getId());
       
+      // Category filtering
+      url = RestUrls.createRelativeResourceUrl(RestUrls.URL_TASK_COLLECTION) + "?category=" + encode("some-category");
+      assertResultsPresentInDataResponse(url, adhocTask.getId());
+
       // Suspend process-instance to have a supended task
       runtimeService.suspendProcessInstanceById(processInstance.getId());
       

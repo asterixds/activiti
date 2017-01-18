@@ -50,10 +50,10 @@ public class AsyncProcessRevisitedTest extends SpringActivitiTestCase {
 
   @Deployment(resources = {"process/revisited/async-revisited.bpmn20.xml"})
   public void testRunProcess() throws Exception {
-    /*ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("asyncCamelProcessRevisited");
+    ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("asyncCamelProcessRevisited");
     List<Execution> executionList = runtimeService.createExecutionQuery().list();
     assertEquals(3, executionList.size());
-    waitForJobExecutorToProcessAllJobs(3000, 500);
-    assertEquals(0, runtimeService.createProcessInstanceQuery().processInstanceId(processInstance.getId()).count());*/
+    waitForJobExecutorToProcessAllJobs(10000, 500);
+    assertEquals(0, runtimeService.createProcessInstanceQuery().processInstanceId(processInstance.getId()).count());
   }
 }
