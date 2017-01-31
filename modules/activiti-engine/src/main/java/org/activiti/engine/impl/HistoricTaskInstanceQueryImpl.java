@@ -79,6 +79,7 @@ public class HistoricTaskInstanceQueryImpl extends AbstractVariableQueryImpl<His
   protected String candidateGroup;
   private List<String> candidateGroups;
   protected String involvedUser;
+  protected List<String> involvedGroups;
   protected Integer taskPriority;
   protected Integer taskMinPriority;
   protected Integer taskMaxPriority;
@@ -1043,6 +1044,20 @@ public class HistoricTaskInstanceQueryImpl extends AbstractVariableQueryImpl<His
       this.currentOrQueryObject.involvedUser = involvedUser;
     } else {
       this.involvedUser = involvedUser;
+    }
+    return this;
+  }
+
+  @Override
+  public HistoricTaskInstanceQuery taskInvolvedGroups(List<String> involvedGroups) {
+    if (involvedGroups == null || involvedGroups.isEmpty()) {
+      throw new ActivitiIllegalArgumentException("Involved groups list is null or empty.");
+    }
+
+    if (inOrStatement) {
+      this.currentOrQueryObject.involvedGroups = involvedGroups;
+    } else {
+      this.involvedGroups = involvedGroups;
     }
     return this;
   }
