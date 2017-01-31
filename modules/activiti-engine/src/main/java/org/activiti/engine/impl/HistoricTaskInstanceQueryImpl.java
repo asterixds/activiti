@@ -1477,6 +1477,9 @@ public class HistoricTaskInstanceQueryImpl extends AbstractVariableQueryImpl<His
   public String getInvolvedUser() {
     return involvedUser;
   }
+  public List<String> getInvolvedGroups() {
+    return involvedGroups;
+  }
 	public String getProcessDefinitionKeyLikeIgnoreCase() {
 		return processDefinitionKeyLikeIgnoreCase;
 	}

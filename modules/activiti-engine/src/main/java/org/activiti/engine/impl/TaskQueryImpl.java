@@ -1447,6 +1447,10 @@ public class TaskQueryImpl extends AbstractVariableQueryImpl<TaskQuery, Task> im
     return involvedUser;
   }
 
+  public List<String> getInvolvedGroups() {
+    return involvedGroups;
+  }
+
   public String getOwner() {
     return owner;
   }
