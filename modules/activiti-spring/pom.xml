@@ -205,14 +205,14 @@
                                 <id>delete-test-sources</id>
                                 <phase>generate-sources</phase>
                                 <configuration>
-                                    <tasks>
+                                    <target>
                                         <delete dir="src/test/java/org/activiti/engine/test" />
                                         <delete dir="src/test/resources/org/activiti/engine/test" />
                                         <delete dir="src/test/java/org/activiti/examples" />
                                         <delete dir="src/test/resources/org/activiti/examples" />
                                         <delete dir="src/test/java/org/activiti/standalone" />
                                         <delete dir="src/test/resources/org/activiti/standalone" />
-                                    </tasks>
+                                    </target>
                                 </configuration>
                                 <goals>
                                     <goal>run</goal>
@@ -237,7 +237,7 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <tasks>
+                                    <target>
                                         <delete dir="src/test/java/org/activiti/engine/test" />
                                         <delete dir="src/test/resources/org/activiti/engine/test" />
                                         <delete dir="src/test/java/org/activiti/examples" />
@@ -250,7 +250,7 @@
                                         <copy todir="src/test/resources" overwrite="true">
                                             <fileset dir="../activiti-engine/src/test/resources" />
                                         </copy>
-                                    </tasks>
+                                    </target>
                                 </configuration>
                             </execution>
                             <execution>
@@ -260,14 +260,14 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <tasks>
+                                    <target>
                                         <delete dir="src/test/java/org/activiti/engine/test" />
                                         <delete dir="src/test/resources/org/activiti/engine/test" />
                                         <delete dir="src/test/java/org/activiti/examples" />
                                         <delete dir="src/test/resources/org/activiti/examples" />
                                         <delete dir="src/test/java/org/activiti/standalone" />
                                         <delete dir="src/test/resources/org/activiti/standalone" />
-                                    </tasks>
+                                    </target>
                                 </configuration>
                             </execution>
                         </executions>
@@ -304,7 +304,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>2.1.1</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
