@@ -55,6 +55,16 @@
          <forkMode>always</forkMode>
         </configuration>
       </plugin>
+      <plugin>
+        <!-- BDE-945 JaCoCo causes a failure in WSDLImporterTest. Disabling it. -->
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>org/activiti/**</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
