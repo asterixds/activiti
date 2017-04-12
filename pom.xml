@@ -180,6 +180,13 @@
         <artifactId>activiti-engine</artifactId>
         <version>${project.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>org.activiti</groupId>
+        <artifactId>activiti-secure-tasks</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>com.activiti</groupId>
         <artifactId>activiti-spring</artifactId>
@@ -602,7 +609,7 @@
             <version>1.2.0</version>
             <scope>test</scope>
         </dependency>
-        
+
       <!-- ENTERPRISE depdencies -->
 	  <dependency>
 	  	<groupId>org.apache.httpcomponents</groupId>
@@ -746,7 +753,9 @@
         <module>modules/activiti-image-generator</module>
         <module>modules/activiti-bpmn-converter</module>
         <module>modules/activiti-engine</module>
+        <module>modules/activiti-secure-tasks</module>
         <module>modules/activiti-secure-javascript</module>
+        <module>modules/activiti-secure-service-tasks</module>
         <module>modules/activiti-bpmn-layout</module>
         <module>modules/activiti-json-converter</module>
         <module>modules/activiti-simple-workflow</module>
@@ -809,11 +818,13 @@
         <module>modules/activiti-simple-workflow</module>
         <module>modules/activiti-rest</module>
         <module>modules/activiti-cxf</module>
-        <module>modules/activiti-cdi</module>
-        <module>modules/activiti-ldap</module>
-        <module>modules/activiti-jmx</module>
-        <module>tooling/archetypes/activiti-archetype-unittest</module>
+          <module>modules/activiti-secure-tasks</module>
+          <module>modules/activiti-secure-javascript</module>
+          <module>modules/activiti-secure-service-tasks</module>
+          <module>tooling/archetypes/activiti-archetype-unittest</module>
       </modules>
+    </profile>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -856,7 +867,9 @@
         <module>modules/activiti-json-converter</module>
         <module>modules/activiti-bpmn-converter</module>
         <module>modules/activiti-engine</module>
+        <module>modules/activiti-secure-tasks</module>
         <module>modules/activiti-secure-javascript</module>
+        <module>modules/activiti-secure-service-tasks</module>
         <module>modules/activiti-spring</module>
         <module>modules/activiti-explorer</module>
         <module>modules/activiti-common-rest</module>
@@ -913,7 +926,9 @@
         <module>modules/activiti-json-converter</module>
         <module>modules/activiti-bpmn-converter</module>
         <module>modules/activiti-engine</module>
+        <module>modules/activiti-secure-tasks</module>
         <module>modules/activiti-secure-javascript</module>
+        <module>modules/activiti-secure-service-tasks</module>
         <module>modules/activiti-spring</module>
         <module>modules/activiti-common-rest</module>
         <module>modules/activiti-rest</module>
