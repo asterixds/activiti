@@ -12,7 +12,6 @@
  */
 package org.activiti.serviceTasks.secure;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.activiti.engine.cfg.AbstractProcessEngineConfigurator;
