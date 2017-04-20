@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -10,7 +9,7 @@
     <groupId>com.activiti</groupId>
     <artifactId>activiti-root</artifactId>
     <relativePath>../..</relativePath>
-    <version>5.22.0.3-SNAPSHOT</version>
+    <version>5.22.0.3</version>
   </parent>
 
   <dependencies>
@@ -264,7 +263,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore></ignore>
+                    <ignore />
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -617,7 +616,7 @@
                     <copy file="${basedir}/../../qa/db/historyfull.activiti.cfg.xml" todir="target/test-classes" overwrite="true">
                       <filterset filtersfile="${user.home}/.activiti/jdbc/build.${database}.properties" />
                     </copy>
-                    <rename src="target/test-classes/historyfull.activiti.cfg.xml" dest="target/test-classes/activiti.cfg.xml"/>
+                    <rename src="target/test-classes/historyfull.activiti.cfg.xml" dest="target/test-classes/activiti.cfg.xml" />
                   </target>
                 </configuration>
               </execution>
@@ -771,8 +770,7 @@
                 <configuration>
                   <target>
                     <echo message="dropping schema in ${metadatabase}" />
-                    <ant antfile="${basedir}/../../qa/db/build.xml" target="drop.db.schema"
-                         inheritAll="false">
+                    <ant antfile="${basedir}/../../qa/db/build.xml" target="drop.db.schema" inheritAll="false">
                       <property name="test_classpath" refid="maven.test.classpath" />
                       <property name="database" value="${metadatabase}" />
                     </ant>
