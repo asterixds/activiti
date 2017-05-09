@@ -80,11 +80,11 @@ public class BlueprintBasicTest {
   @Configuration
   public Option[] createConfiguration() {
     Option[] coreBundles = options(
-            mavenBundle().groupId("com.activiti").artifactId("activiti-bpmn-model").version("5.22.0.1"),
-            mavenBundle().groupId("com.activiti").artifactId("activiti-bpmn-converter").version("5.22.0.1"),
-            mavenBundle().groupId("com.activiti").artifactId("activiti-process-validation").version("5.22.0.1"),
-            mavenBundle().groupId("com.activiti").artifactId("activiti-image-generator").version("5.22.0.1"),
-            mavenBundle().groupId("com.activiti").artifactId("activiti-engine").version("5.22.0.1"),
+            mavenBundle().groupId("com.activiti").artifactId("activiti-bpmn-model").version("5.22.0.4"),
+            mavenBundle().groupId("com.activiti").artifactId("activiti-bpmn-converter").version("5.22.0.4"),
+            mavenBundle().groupId("com.activiti").artifactId("activiti-process-validation").version("5.22.0.4"),
+            mavenBundle().groupId("com.activiti").artifactId("activiti-image-generator").version("5.22.0.4"),
+            mavenBundle().groupId("com.activiti").artifactId("activiti-engine").version("5.22.0.4"),
 
             mavenBundle().groupId("org.apache.commons").artifactId("commons-lang3").version("3.3.2"),
             mavenBundle().groupId("com.fasterxml.jackson.core").artifactId("jackson-core").version("2.7.5"),
