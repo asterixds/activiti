@@ -10,7 +10,7 @@
 		<groupId>com.activiti</groupId>
 		<artifactId>activiti-root</artifactId>
 		<relativePath>../..</relativePath>
-		<version>5.22.0.2</version>
+		<version>5.22.0.3</version>
 	</parent>
 
 	<dependencies>
@@ -46,40 +46,8 @@
 		</dependency>
 	</dependencies>
 
-	<profiles>
-		<profile>
-			<id>distro</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-source-plugin</artifactId>
-						<version>2.1.1</version>
-						<executions>
-							<execution>
-								<id>attach-sources</id>
-								<phase>package</phase>
-								<goals>
-									<goal>jar-no-fork</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
+  <build>
+    <plugins>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
@@ -107,7 +75,7 @@
           </execution>
         </executions>
       </plugin>
-		</plugins>
+    </plugins>
     <pluginManagement>
       <plugins>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
@@ -142,6 +110,6 @@
         </plugin>
       </plugins>
     </pluginManagement>
-	</build>
+  </build>
 
 </project>

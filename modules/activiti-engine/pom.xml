@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -10,7 +9,7 @@
     <groupId>com.activiti</groupId>
     <artifactId>activiti-root</artifactId>
     <relativePath>../..</relativePath>
-    <version>5.22.0.2</version>
+    <version>5.22.0.3-SNAPSHOT</version>
   </parent>
 
   <dependencies>
@@ -264,7 +263,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore></ignore>
+                    <ignore />
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -291,7 +290,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
-            <version>2.2</version>
             <executions>
               <execution>
                 <goals>
@@ -314,28 +312,7 @@
         <skipTests>true</skipTests>
       </properties>
     </profile>
-    <profile>
-      <id>distro</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <version>2.1.1</version>
-            <executions>
-              <execution>
-                <id>attach-sources</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>jar-no-fork</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    
+
     <!--  database qa profile -->
     <profile>
       <id>database</id>
@@ -348,11 +325,6 @@
         <plugins>
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
-            <!--
-              only worked with this version, there might be a bug with antrun
-              see http://jira.codehaus.org/browse/MANTRUN-109
-            -->
-            <version>1.4</version>
             <executions>
               <execution>
                 <id>database-test-create-schema</id>
@@ -361,12 +333,12 @@
                   <goal>run</goal>
                 </goals>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo message="updating activiti configuration to db ${database}" />
                     <copy file="${basedir}/../../qa/db/activiti.cfg.xml" todir="target/test-classes" overwrite="true">
                       <filterset filtersfile="${user.home}/.activiti/jdbc/build.${database}.properties" />
                     </copy>
-                  </tasks>
+                  </target>
                 </configuration>
               </execution>
               <execution>
@@ -376,10 +348,10 @@
                   <goal>run</goal>
                 </goals>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo message="dropping schema in ${database}" />
                     <java classname="org.activiti.engine.impl.db.DbSchemaDrop" classpathref="maven.test.classpath" />
-                  </tasks>
+                  </target>
                 </configuration>
               </execution>
             </executions>
@@ -399,11 +371,6 @@
         <plugins>
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
-            <!--
-              only worked with this version, there might be a bug with antrun
-              see http://jira.codehaus.org/browse/MANTRUN-109
-            -->
-            <version>1.4</version>
             <executions>
               <execution>
                 <id>database-test-create-schema</id>
@@ -412,12 +379,12 @@
                   <goal>run</goal>
                 </goals>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo message="updating activiti configuration to db ${databasewithschema}" />
                     <copy file="${basedir}/../../qa/db/schema/activiti.cfg.xml" todir="target/test-classes" overwrite="true">
                       <filterset filtersfile="${user.home}/.activiti/jdbc/build.${databasewithschema}.properties" />
                     </copy>
-                  </tasks>
+                  </target>
                 </configuration>
               </execution>
               <execution>
@@ -427,10 +394,10 @@
                   <goal>run</goal>
                 </goals>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo message="dropping schema in ${databasewithschema}" />
                     <java classname="org.activiti.engine.impl.db.DbSchemaDrop" classpathref="maven.test.classpath" />
-                  </tasks>
+                  </target>
                 </configuration>
               </execution>
             </executions>
@@ -450,11 +417,6 @@
         <plugins>
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
-            <!--
-              only worked with this version, there might be a bug with antrun
-              see http://jira.codehaus.org/browse/MANTRUN-109
-            -->
-            <version>1.4</version>
             <executions>
               <execution>
                 <id>database-test-create-schema</id>
@@ -463,12 +425,12 @@
                   <goal>run</goal>
                 </goals>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo message="updating activiti configuration to db ${databasemssql}" />
                     <copy file="${basedir}/../../qa/db/mssql/activiti.cfg.xml" todir="target/test-classes" overwrite="true">
                       <filterset filtersfile="${user.home}/.activiti/jdbc/build.${databasemssql}.properties" />
                     </copy>
-                  </tasks>
+                  </target>
                 </configuration>
               </execution>
             </executions>
@@ -484,11 +446,6 @@
         <plugins>
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
-            <!--
-              only worked with this version, there might be a bug with antrun
-              see http://jira.codehaus.org/browse/MANTRUN-109
-            -->
-            <version>1.4</version>
             <executions>
               <execution>
                 <id>configExecution</id>
@@ -497,12 +454,12 @@
                   <goal>run</goal>
                 </goals>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo message="updating activiti configuration config to db ${database}" />
                     <copy file="${basedir}/../../qa/spring/${database}/activiti.cfg.xml" todir="target/test-classes" overwrite="true">
                       <filterset filtersfile="${user.home}/.activiti/jdbc/build.${database}.properties" />
                     </copy>
-                  </tasks>
+                  </target>
                 </configuration>
               </execution>
               <execution>
@@ -512,10 +469,10 @@
                   <goal>run</goal>
                 </goals>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo message="dropping schema in ${database}" />
                     <java classname="org.activiti.engine.impl.db.DbSchemaDrop" classpathref="maven.test.classpath" />
-                  </tasks>
+                  </target>
                 </configuration>
               </execution>
             </executions>
@@ -547,9 +504,6 @@
 			<plugins>
 				<plugin>
 					<artifactId>maven-antrun-plugin</artifactId>
-					<!-- only worked with this version, there might be a bug with antrun 
-						see http://jira.codehaus.org/browse/MANTRUN-109 -->
-					<version>1.4</version>
 					<executions>
 						<execution>
 							<id>configExecution</id>
@@ -558,13 +512,13 @@
 								<goal>run</goal>
 							</goals>
 							<configuration>
-								<tasks>
+								<target>
 								    <echo message="Copying jta enabled Activiti configuration file to target/test-classes" />
 									<echo message="Updating activiti configuration config to db ${database}" />
 									<copy file="${basedir}/../../qa/jta/${database}/activiti.cfg.xml" todir="target/test-classes" overwrite="true">
 									   <filterset filtersfile="${user.home}/.activiti/jdbc/build.${database}.properties" />
 									</copy>
-								</tasks>
+								</target>
 							</configuration>
 						</execution>
 						<execution>
@@ -574,10 +528,10 @@
 								<goal>run</goal>
 							</goals>
 							<configuration>
-								<tasks>
+								<target>
 									<echo message="dropping schema in ${database}" />
 									<java classname="org.activiti.engine.impl.db.DbSchemaDrop" classpathref="maven.test.classpath" />
-								</tasks>
+								</target>
 							</configuration>
 						</execution>
 					</executions>
@@ -611,7 +565,6 @@
         <plugins>
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.4</version>
             <executions>
               <execution>
                 <id>database-test-create-schema</id>
@@ -620,10 +573,10 @@
                   <goal>run</goal>
                 </goals>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo message="updating activiti configuration to qa/cfg/historyfull.activiti.cfg.xml" />
                     <copy file="${basedir}/../../qa/cfg/historyfull.activiti.cfg.xml" tofile="target/test-classes/activiti.cfg.xml" overwrite="true" />
-                  </tasks>
+                  </target>
                 </configuration>
               </execution>
             </executions>
@@ -650,11 +603,6 @@
         <plugins>
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
-            <!--
-              only worked with this version, there might be a bug with antrun
-              see http://jira.codehaus.org/browse/MANTRUN-109
-            -->
-            <version>1.4</version>
             <executions>
               <execution>
                 <id>database-test-create-schema</id>
@@ -663,13 +611,13 @@
                   <goal>run</goal>
                 </goals>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo message="updating activiti configuration to db ${database}, using FULL history" />
                     <copy file="${basedir}/../../qa/db/historyfull.activiti.cfg.xml" todir="target/test-classes" overwrite="true">
                       <filterset filtersfile="${user.home}/.activiti/jdbc/build.${database}.properties" />
                     </copy>
-                    <rename src="target/test-classes/historyfull.activiti.cfg.xml" dest="target/test-classes/activiti.cfg.xml"/>
-                  </tasks>
+                    <rename src="target/test-classes/historyfull.activiti.cfg.xml" dest="target/test-classes/activiti.cfg.xml" />
+                  </target>
                 </configuration>
               </execution>
               <execution>
@@ -679,10 +627,10 @@
                   <goal>run</goal>
                 </goals>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo message="dropping schema in ${database}" />
                     <java classname="org.activiti.engine.impl.db.DbSchemaDrop" classpathref="maven.test.classpath" />
-                  </tasks>
+                  </target>
                 </configuration>
               </execution>
             </executions>
@@ -698,7 +646,6 @@
         <plugins>
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.4</version>
             <executions>
               <execution>
                 <id>database-test-create-schema</id>
@@ -707,10 +654,10 @@
                   <goal>run</goal>
                 </goals>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo message="updating activiti configuration to qa/cfg/historyaudit.activiti.cfg.xml" />
                     <copy file="${basedir}/../../qa/cfg/historyaudit.activiti.cfg.xml" tofile="target/test-classes/activiti.cfg.xml" overwrite="true" />
-                  </tasks>
+                  </target>
                 </configuration>
               </execution>
             </executions>
@@ -738,7 +685,6 @@
         <plugins>
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.4</version>
             <executions>
               <execution>
                 <id>database-test-create-schema</id>
@@ -747,10 +693,10 @@
                   <goal>run</goal>
                 </goals>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo message="updating activiti configuration to qa/cfg/historynone.activiti.cfg.xml" />
                     <copy file="${basedir}/../../qa/cfg/historynone.activiti.cfg.xml" tofile="target/test-classes/activiti.cfg.xml" overwrite="true" />
-                  </tasks>
+                  </target>
                 </configuration>
               </execution>
             </executions>
@@ -794,7 +740,6 @@
           </plugin>
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.4</version>
             <executions>
               <execution>
                 <id>database-test-create-schema</id>
@@ -803,7 +748,7 @@
                   <goal>run</goal>
                 </goals>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo message="creating db schema in ${metadatabase}" />
                     <ant antfile="${basedir}/../../qa/db/build.xml" target="create.db.schema">
                       <property name="test_classpath" refid="maven.test.classpath" />
@@ -813,7 +758,7 @@
                     <ant antfile="${basedir}/../../qa/db/build.xml" target="create.activiti.cfg">
                       <property name="database" value="${metadatabase}" />
                     </ant>
-                  </tasks>
+                  </target>
                 </configuration>
               </execution>
               <execution>
@@ -823,14 +768,13 @@
                   <goal>run</goal>
                 </goals>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo message="dropping schema in ${metadatabase}" />
-                    <ant antfile="${basedir}/../../qa/db/build.xml" target="drop.db.schema"
-                         inheritAll="false">
+                    <ant antfile="${basedir}/../../qa/db/build.xml" target="drop.db.schema" inheritAll="false">
                       <property name="test_classpath" refid="maven.test.classpath" />
                       <property name="database" value="${metadatabase}" />
                     </ant>
-                  </tasks>
+                  </target>
                 </configuration>
               </execution>
             </executions>
