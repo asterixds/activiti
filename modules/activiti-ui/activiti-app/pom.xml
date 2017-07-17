@@ -4,7 +4,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.activiti</groupId>
+        <groupId>com.activiti</groupId>
         <artifactId>activiti-ui-root</artifactId>
         <version>6.0.1-SNAPSHOT</version>
     </parent>
@@ -14,7 +14,7 @@
     <dependencies>
     
     	<dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-app-conf</artifactId>
         </dependency>
 

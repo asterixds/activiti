@@ -8,7 +8,7 @@
 	<artifactId>activiti-form-engine-configurator</artifactId>
 
 	<parent>
-		<groupId>org.activiti</groupId>
+		<groupId>com.activiti</groupId>
 		<artifactId>activiti-root</artifactId>
 		<relativePath>../..</relativePath>
 		<version>6.0.1-SNAPSHOT</version>
@@ -22,11 +22,11 @@
 	
 	<dependencies>
 		<dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-engine</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-form-engine</artifactId>
         </dependency>
 	</dependencies>

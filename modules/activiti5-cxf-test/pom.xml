@@ -7,7 +7,7 @@
   <artifactId>activiti5-cxf-test</artifactId>
 
   <parent>
-    <groupId>org.activiti</groupId>
+    <groupId>com.activiti</groupId>
     <artifactId>activiti-root</artifactId>
     <relativePath>../..</relativePath>
     <version>6.0.1-SNAPSHOT</version>
@@ -97,28 +97,28 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.activiti</groupId>
+      <groupId>com.activiti</groupId>
       <artifactId>activiti-engine</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.activiti</groupId>
+      <groupId>com.activiti</groupId>
       <artifactId>activiti5-engine</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.activiti</groupId>
+      <groupId>com.activiti</groupId>
       <artifactId>activiti5-test</artifactId>
       <version>6.0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.activiti</groupId>
+      <groupId>com.activiti</groupId>
       <artifactId>activiti-cxf</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-	  <groupId>org.activiti</groupId>
+	  <groupId>com.activiti</groupId>
 	  <artifactId>activiti5-spring-compatibility</artifactId>
 	  <scope>provided</scope>
 	</dependency>

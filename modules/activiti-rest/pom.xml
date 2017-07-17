@@ -7,7 +7,7 @@
   <packaging>jar</packaging>
 
   <parent>
-    <groupId>org.activiti</groupId>
+    <groupId>com.activiti</groupId>
     <artifactId>activiti-root</artifactId>
     <relativePath>../..</relativePath>
     <version>6.0.1-SNAPSHOT</version>
@@ -96,7 +96,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.activiti</groupId>
+      <groupId>com.activiti</groupId>
       <artifactId>activiti-common-rest</artifactId>
     </dependency>
 
@@ -127,7 +127,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.activiti</groupId>
+      <groupId>com.activiti</groupId>
       <artifactId>activiti-spring</artifactId>
       <scope>test</scope>
     </dependency>

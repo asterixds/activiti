@@ -7,7 +7,7 @@
   <packaging>pom</packaging>
   
   <parent>
-    <groupId>org.activiti</groupId>
+    <groupId>com.activiti</groupId>
     <artifactId>activiti-root</artifactId>
     <relativePath>../..</relativePath>
     <version>6.0.1-SNAPSHOT</version>
@@ -50,99 +50,99 @@
 	<dependencyManagement>
 	  <dependencies>
 		<dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>content-storage-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>content-storage-fs</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-app-logic</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-app-rest</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-app-conf</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>editor-image-generator</artifactId>
             <version>${project.version}</version>
         </dependency>
 
 		<!-- Activiti Enterprise Engine -->
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-engine</artifactId>
 			<version>${activiti.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-spring</artifactId>
 			<version>${activiti.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-bpmn-model</artifactId>
 			<version>${activiti.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-bpmn-converter</artifactId>
 			<version>${activiti.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-json-converter</artifactId>
 			<version>${activiti.version}</version>
 		</dependency>
 		<dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-process-validation</artifactId>
             <version>${activiti.version}</version>
         </dependency>
         <dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-bpmn-layout</artifactId>
 			<version>${activiti.version}</version>
 		</dependency>
 		<dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-form-engine-configurator</artifactId>
             <version>${activiti.version}</version>
         </dependency>
 		<dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-form-engine</artifactId>
             <version>${activiti.version}</version>
         </dependency>
 		<dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-form-model</artifactId>
             <version>${activiti.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-form-json-converter</artifactId>
             <version>${activiti.version}</version>
         </dependency>
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-image-generator</artifactId>
 			<version>${activiti.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-rest</artifactId>
 			<version>${activiti.version}</version>
 		</dependency>

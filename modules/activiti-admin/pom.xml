@@ -7,13 +7,13 @@
   	  <name>Activiti</name>
     </organization>
     <inceptionYear>2016</inceptionYear>
-    <groupId>org.activiti</groupId>
+    <groupId>com.activiti</groupId>
     <artifactId>activiti-admin</artifactId>
     <version>6.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
     <parent>
-      <groupId>org.activiti</groupId>
+      <groupId>com.activiti</groupId>
       <artifactId>activiti-root</artifactId>
       <relativePath>../..</relativePath>
       <version>6.0.1-SNAPSHOT</version>
@@ -45,13 +45,13 @@
 
 		<!-- Activiti -->
 		<dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-bpmn-model</artifactId>
 			<version>${activiti.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-bpmn-converter</artifactId>
 			<version>${activiti.version}</version>
         </dependency>

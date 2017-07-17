@@ -7,7 +7,7 @@
 	<artifactId>activiti-engine</artifactId>
 
 	<parent>
-		<groupId>org.activiti</groupId>
+		<groupId>com.activiti</groupId>
 		<artifactId>activiti-root</artifactId>
 		<relativePath>../..</relativePath>
 		<version>6.0.1-SNAPSHOT</version>
@@ -15,27 +15,27 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-bpmn-converter</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-process-validation</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-image-generator</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-dmn-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-form-model</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-form-api</artifactId>
 		</dependency>
 		<dependency>
@@ -554,7 +554,7 @@
 			</build>
 			<dependencies>
 				<dependency>
-					<groupId>org.activiti</groupId>
+					<groupId>com.activiti</groupId>
 					<artifactId>activiti-spring</artifactId>
 					<scope>test</scope>
 				</dependency>
