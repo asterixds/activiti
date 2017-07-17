@@ -67,8 +67,7 @@ public class EnterpriseLicenseResource {
         return response;
     } catch (LicenseException le) {
       // Throw 409, indicating enterprise version is running with an invalid license
-    	// TODO ACTIVITI-1217 add ActivitiConflictException with throwable to OSS code
-      throw new ActivitiConflictException("Engine is running with invalid license"/*, le*/);
+      throw new ActivitiConflictException("Engine is running with invalid license", le);
     }
   }
 
