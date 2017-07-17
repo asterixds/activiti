@@ -5,7 +5,6 @@ import org.activiti.bpmn.model.EndEvent;
 import org.activiti.bpmn.model.SequenceFlow;
 import org.activiti.bpmn.model.StartEvent;
 import org.activiti.bpmn.model.UserTask;
-import org.activiti.engine.ActivitiException;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.RuntimeService;
@@ -79,7 +78,7 @@ public class DepartementalProcessInstanceLimitTest {
     try {
       runtimeService.startProcessInstanceByKey("oneTaskProcess");
       Assert.fail("Expected failure due to departemental license limiting number of process instances");
-    } catch (ActivitiException e) {
+    } catch (LicenseException e) {
       Assert.assertEquals(e.getMessage(), "License exception: process instance limit (150) reached");
     }
   }

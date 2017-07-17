@@ -516,7 +516,7 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 	protected void initJobExecutor(ProcessEngineConfigurationImpl processEngineConfiguration) {
 		if (masterConfiguration != null && masterConfiguration.getEnableJobExecutor() != null && masterConfiguration.getEnableJobExecutor()) {
 			processEngineConfiguration.setAsyncExecutorActivate(true);
-			// TODO fix this
+			// TODO ACTIVITI-1217  fix this
 			/*processEngineConfiguration.setAsyncExecutorEnabled(true);
 			processEngineConfiguration.setJobExecutorActivate(false);*/
 		}

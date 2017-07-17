@@ -34,7 +34,7 @@ public class LicenseExpirationTest {
     try {
       processEngine.getRuntimeService().startProcessInstanceByKey("oneTaskProcess");
       fail("expired license should prevent process from being started");
-    } catch (Exception e) {
+    } catch (LicenseException e) {
       // expected exception
     }
     
