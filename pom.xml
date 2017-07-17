@@ -709,6 +709,18 @@
 				<version>1.2.0</version>
 				<scope>test</scope>
 			</dependency>
+		
+			<!-- ENTERPRISE depdencies -->
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>4.3.6</version>
+			</dependency>
+			<dependency>
+				<groupId>com.verhas</groupId>
+				<artifactId>license3j</artifactId>
+				<version>1.0.4</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

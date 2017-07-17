@@ -12,6 +12,7 @@
  */
 package org.activiti.engine.impl.cfg;
 
+import com.activiti.license.LicenseHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.activiti.dmn.api.DmnRepositoryService;
 import org.activiti.dmn.api.DmnRuleService;
@@ -124,6 +125,22 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   public static final int DEFAULT_GENERIC_MAX_LENGTH_STRING= 4000;
   public static final int DEFAULT_ORACLE_MAX_LENGTH_STRING= 2000;
 
+//ENTERPRISE /////////////////////////////////////////////////////////////////  
+ protected LicenseHolder licenseHolder;
+ 
+ protected String enterpriseAdminAppUrl;
+ protected String enterpriseClusterName;
+ protected String enterpriseClusterUserName;
+ protected String enterpriseClusterPassword;
+
+ protected Boolean enterpriseMasterConfigurationRequired;
+ protected Integer enterpriseMetricSendingInterval;
+ 
+ // When engine is used within the Suite, the master configuration will be done
+ // for the Suite, which will be propagated to the engine. This property is set to false in this case.
+ // By default true (which doesn't mean master config is used, simply that it is enabled).
+ protected Boolean enterpriseEnableMasterConfiguration = true;
+ 
   // SERVICES /////////////////////////////////////////////////////////////////
 
   protected RepositoryService repositoryService = new RepositoryServiceImpl();
@@ -679,6 +696,11 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   // /////////////////////////////////////////////////////////////////////
 
   public void init() {
+	initClock(); // init clock first to properly read license
+	// Enterprise only (needs clock!)
+	initLicenseHolder();
+	verifyLicense();
+	// End Enterprise only
     initConfigurators();
     configuratorsBeforeInit();
     initProcessDiagramGenerator();
@@ -696,7 +718,6 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     initFormEngines();
     initFormTypes();
     initScriptingEngines();
-    initClock();
     initBusinessCalendarManager();
     initCommandContextFactory();
     initTransactionContextFactory();
@@ -733,6 +754,19 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     initDatabaseEventLogging();
     initActiviti5CompatibilityHandler();
     configuratorsAfterInit();
+  }
+  
+  protected void initLicenseHolder() {
+	 licenseHolder = new LicenseHolder();
+	 licenseHolder.setClock(clock);
+  }
+
+  private final void verifyLicense() {
+	 if (!licenseHolder.isLicenseValid()) {
+		log.info("Found an invalid license, no new process instances and tasks can be started");
+	  } else {
+		log.info("License found: " + licenseHolder.getLicenseInformation());
+	  }
   }
 
   // failedJobCommandFactory
@@ -2900,6 +2934,67 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     return this;
   }
 
+  
+	// ENTERPRISE /////////////////////////////////////////////////////////////////
+	
+	public LicenseHolder getLicenseHolder() {
+	  return licenseHolder;
+	}
+	
+	public String getEnterpriseAdminAppUrl() {
+		return enterpriseAdminAppUrl;
+	}
+
+	public void setEnterpriseAdminAppUrl(String enterpriseAdminAppUrl) {
+		this.enterpriseAdminAppUrl = enterpriseAdminAppUrl;
+	}
+
+	public String getEnterpriseClusterName() {
+		return enterpriseClusterName;
+	}
+
+	public String getEnterpriseClusterUserName() {
+		return enterpriseClusterUserName;
+	}
+
+	public void setEnterpriseClusterUserName(String enterpriseClusterUserName) {
+		this.enterpriseClusterUserName = enterpriseClusterUserName;
+	}
+
+	public String getEnterpriseClusterPassword() {
+		return enterpriseClusterPassword;
+	}
+
+	public void setEnterpriseClusterPassword(String enterpriseClusterPassword) {
+		this.enterpriseClusterPassword = enterpriseClusterPassword;
+	}
+
+	public Boolean getEnterpriseMasterConfigurationRequired() {
+		return enterpriseMasterConfigurationRequired;
+	}
+
+	public void setEnterpriseMasterConfigurationRequired(
+	    Boolean enterpriseMasterConfigurationRequired) {
+		this.enterpriseMasterConfigurationRequired = enterpriseMasterConfigurationRequired;
+	}
+
+	public Integer getEnterpriseMetricSendingInterval() {
+		return enterpriseMetricSendingInterval;
+	}
+
+	public void setEnterpriseMetricSendingInterval(
+	    Integer enterpriseMetricSendingInterval) {
+		this.enterpriseMetricSendingInterval = enterpriseMetricSendingInterval;
+	}
+
+	public void setEnterpriseClusterName(String enterpriseClusterName) {
+		this.enterpriseClusterName = enterpriseClusterName;
+	}
+
+	public Boolean getEnterpriseEnableMasterConfiguration() {
+		return enterpriseEnableMasterConfiguration;
+	}
+	
   public boolean isEnableEventDispatcher() {
     return enableEventDispatcher;
   }
