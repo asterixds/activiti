@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<name>Activiti editor - Image generator</name>
 	<parent>
-		<groupId>org.activiti</groupId>
+		<groupId>com.activiti</groupId>
 		<artifactId>activiti-ui-root</artifactId>
 		<version>6.0.1-SNAPSHOT</version>
 	</parent>
@@ -68,16 +68,16 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-bpmn-model</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-bpmn-converter</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-image-generator</artifactId>
 		</dependency>
 		<dependency>

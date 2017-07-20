@@ -19,13 +19,18 @@ import org.activiti.engine.compatibility.Activiti5CompatibilityHandler;
 import org.activiti.engine.delegate.event.ActivitiEventDispatcher;
 import org.activiti.engine.delegate.event.ActivitiEventType;
 import org.activiti.engine.delegate.event.impl.ActivitiEventBuilder;
+import org.activiti.engine.impl.ProcessInstanceQueryImpl;
 import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.impl.interceptor.CommandContext;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
+import org.activiti.engine.impl.persistence.entity.ExecutionEntityManager;
 import org.activiti.engine.impl.persistence.entity.MessageEventSubscriptionEntity;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
+
+import com.activiti.license.LicenseException;
+import com.activiti.license.LicenseHolder;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -54,8 +59,27 @@ public class ProcessInstanceHelper {
   protected ProcessInstance createAndStartProcessInstance(ProcessDefinition processDefinition,
       String businessKey, String processInstanceName,
       Map<String, Object> variables, Map<String, Object> transientVariables, boolean startProcessInstance) {
+	  
+	  CommandContext commandContext = Context.getCommandContext(); // Todo: ideally, context should be passed here
+	  
+	  // ENTERPRISE CHECK
+	  LicenseHolder licenseHolder = commandContext.getProcessEngineConfiguration().getLicenseHolder();
+	  if (!licenseHolder.isLicenseValid()) {
+		  throw new LicenseException("Invalid license: no new process instances can be started");
+	  }
 
-    CommandContext commandContext = Context.getCommandContext(); // Todo: ideally, context should be passed here
+	  // Departmental: extra check needed on number of processes
+	  if (licenseHolder.isDepartemental()) {
+		  int maxNrOfProcessInstances = licenseHolder.getLicenseFeatureInfo().getNumberOfProcesses();
+		  ExecutionEntityManager executionEntityManager = commandContext.getExecutionEntityManager();
+		  long count = executionEntityManager.findProcessInstanceCountByQueryCriteria(new ProcessInstanceQueryImpl());
+		  if ((count+1) > maxNrOfProcessInstances) {
+			  throw new LicenseException("License exception: process instance limit (" + maxNrOfProcessInstances + ") reached");
+		  }
+	  }
+
+	  // ENTERPRISE CHECK
+
     if (Activiti5Util.isActiviti5ProcessDefinition(commandContext, processDefinition)) {
       Activiti5CompatibilityHandler activiti5CompatibilityHandler = Activiti5Util.getActiviti5CompatibilityHandler();
       return activiti5CompatibilityHandler.startProcessInstance(processDefinition.getKey(), processDefinition.getId(),

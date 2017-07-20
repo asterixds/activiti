@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>activiti-app-rest</artifactId>
 	<parent>
-		<groupId>org.activiti</groupId>
+		<groupId>com.activiti</groupId>
     	<artifactId>activiti-ui-root</artifactId>
     	<version>6.0.1-SNAPSHOT</version>
 	</parent>
@@ -14,45 +14,45 @@
 	<dependencies>
 	
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>content-storage-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>content-storage-fs</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-app-logic</artifactId>
         </dependency>
 
 		<!-- Activiti -->
 		<dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-engine</artifactId>
         </dependency>
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-bpmn-model</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-bpmn-converter</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.activiti</groupId>
+			<groupId>com.activiti</groupId>
 			<artifactId>activiti-json-converter</artifactId>
 		</dependency>
         <dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-bpmn-layout</artifactId>
         </dependency>        
 		<dependency>
-            <groupId>org.activiti</groupId>
+            <groupId>com.activiti</groupId>
             <artifactId>activiti-process-validation</artifactId>
         </dependency>
         <dependency>
-        	<groupId>org.activiti</groupId>
+        	<groupId>com.activiti</groupId>
         	<artifactId>activiti-spring</artifactId>
         </dependency>
 

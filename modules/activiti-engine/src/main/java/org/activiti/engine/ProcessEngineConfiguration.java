@@ -210,6 +210,9 @@ public abstract class ProcessEngineConfiguration {
 
   protected boolean enableProcessDefinitionInfoCache = false;
   protected ActivitiEngineAgendaFactory engineAgendaFactory;
+  
+  /** ENTERPRISE */
+  protected boolean enableClusterConfig;
 
   /** use one of the static createXxxx methods instead */
   protected ProcessEngineConfiguration() {
@@ -815,6 +818,21 @@ public abstract class ProcessEngineConfiguration {
   
   public ActivitiEngineAgendaFactory getEngineAgendaFactory() {
     return engineAgendaFactory;
+  }
+  
+  // ENTERPRISE
+  public ProcessEngineConfiguration enableClusterConfig() {  
+	setEnableClusterConfig(true);
+	return this;
+  }
+
+  public boolean isEnableClusterConfig() {
+	return enableClusterConfig;
+  }
+
+  public ProcessEngineConfiguration setEnableClusterConfig(boolean enableClusterConfig) {
+	this.enableClusterConfig = enableClusterConfig;
+	return this;
   }
 
 }

@@ -1,0 +1,1 @@
+The code in this package was cloned, copied and adapted from https://github.com/dropwizard/metrics on 12 feb 2014
