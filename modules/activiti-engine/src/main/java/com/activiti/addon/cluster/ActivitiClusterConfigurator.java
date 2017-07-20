@@ -20,7 +20,6 @@ import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.engine.impl.interceptor.CommandInterceptor;
 import org.activiti.engine.impl.persistence.deploy.DeploymentCache;
 import org.activiti.engine.impl.persistence.deploy.ProcessDefinitionCacheEntry;
-import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -516,9 +515,6 @@ public class ActivitiClusterConfigurator implements ProcessEngineConfigurator {
 	protected void initJobExecutor(ProcessEngineConfigurationImpl processEngineConfiguration) {
 		if (masterConfiguration != null && masterConfiguration.getEnableJobExecutor() != null && masterConfiguration.getEnableJobExecutor()) {
 			processEngineConfiguration.setAsyncExecutorActivate(true);
-			// TODO ACTIVITI-1217  fix this
-			/*processEngineConfiguration.setAsyncExecutorEnabled(true);
-			processEngineConfiguration.setJobExecutorActivate(false);*/
 		}
 	}
 	
