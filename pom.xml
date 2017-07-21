@@ -842,6 +842,20 @@
 		</pluginManagement>
 	</build>
 
+  <!-- Enterprise deployment -->
+  <distributionManagement>
+  	  <repository>
+	      <id>alfresco-internal</id>
+  	      <name>Alfresco INTERNAL release</name>
+  	  	  <url>https://artifacts.alfresco.com/nexus/content/repositories/internal-staging</url>
+  	  </repository>
+      <snapshotRepository>
+	      <id>alfresco-internal-snapshots</id>
+	      <name>Alfresco INTERNAL snapshot</name>
+	      <url>https://artifacts.alfresco.com/nexus/content/repositories/internal-snapshots/</url>
+      </snapshotRepository>
+  </distributionManagement>
+  
 	<profiles>
 		<profile>
 			<id>nofail</id>
