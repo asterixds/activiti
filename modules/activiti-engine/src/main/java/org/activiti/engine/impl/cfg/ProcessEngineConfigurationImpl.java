@@ -3034,6 +3034,10 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     this.maxNrOfStatementsInBulkInsert = maxNrOfStatementsInBulkInsert;
     return this;
   }
+  
+  public void setEnterpriseEnableMasterConfiguration(Boolean enterpriseEnableMasterConfiguration) {
+	this.enterpriseEnableMasterConfiguration = enterpriseEnableMasterConfiguration;
+  }
 
   public boolean isUsingRelationalDatabase() {
     return usingRelationalDatabase;
