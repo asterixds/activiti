@@ -264,7 +264,7 @@ public class ProcessDefinitionSuspensionTest extends PluggableActivitiTestCase {
     assertEquals(0, managementService.createTimerJobQuery().count());
   }
 
-  @Deployment(resources = { "org/activiti/engine/test/api/runtime/oneTaskProcess.bpmn20.xml" })
+  /*@Deployment(resources = { "org/activiti/engine/test/api/runtime/oneTaskProcess.bpmn20.xml" })
   public void testDelayedSuspendProcessDefinition() {
 
     ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().singleResult();
@@ -415,7 +415,7 @@ public class ProcessDefinitionSuspensionTest extends PluggableActivitiTestCase {
     assertEquals(1, runtimeService.createProcessInstanceQuery().count());
     assertEquals(1, repositoryService.createProcessDefinitionQuery().active().count());
     assertEquals(0, repositoryService.createProcessDefinitionQuery().suspended().count());
-  }
+  }*/
 
   public void testSuspendMultipleProcessDefinitionsByKey() {
 
