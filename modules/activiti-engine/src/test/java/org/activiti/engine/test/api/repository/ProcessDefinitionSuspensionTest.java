@@ -491,7 +491,7 @@ public class ProcessDefinitionSuspensionTest extends PluggableActivitiTestCase {
 
     // Move time 3 hours and run job executor
     processEngineConfiguration.getClock().setCurrentTime(new Date(startTime.getTime() + (3 * hourInMs)));
-    waitForJobExecutorToProcessAllJobsAndExecutableTimerJobs(30000L, 100L);
+    waitForJobExecutorToProcessAllJobsAndExecutableTimerJobs(50000L, 100L);
     assertEquals(nrOfProcessDefinitions, repositoryService.createProcessDefinitionQuery().count());
     assertEquals(0, repositoryService.createProcessDefinitionQuery().active().count());
     assertEquals(nrOfProcessDefinitions, repositoryService.createProcessDefinitionQuery().suspended().count());
