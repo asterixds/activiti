@@ -168,7 +168,7 @@ public class AsyncExecutorTest {
   @Test
   public void testAsyncScriptExecutionOnTwoEngines() {
 
-    ProcessEngine firstProcessEngine = null;
+    /*ProcessEngine firstProcessEngine = null;
     ProcessEngine secondProcessEngine = null;
 
     try {
@@ -205,7 +205,7 @@ public class AsyncExecutorTest {
       cleanup(firstProcessEngine);
       cleanup(secondProcessEngine);
 
-    }
+    }*/
 
   }
 
