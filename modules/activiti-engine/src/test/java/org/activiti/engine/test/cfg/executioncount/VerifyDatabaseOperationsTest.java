@@ -199,7 +199,7 @@ public class VerifyDatabaseOperationsTest extends PluggableActivitiTestCase {
     Assert.assertEquals(1, historyService.createHistoricProcessInstanceQuery().finished().count());
   }
   
-  public void testOneTaskProcess() {
+  /*public void testOneTaskProcess() {
     deployStartProcessInstanceAndProfile("process-usertask-01.bpmn20.xml", "process-usertask-01", false);
     Task task = taskService.createTaskQuery().singleResult();
     taskService.complete(task.getId());
@@ -247,7 +247,7 @@ public class VerifyDatabaseOperationsTest extends PluggableActivitiTestCase {
         "TaskEntityImpl", 1L,
         "ExecutionEntityImpl", 2L); // execution and processinstance
     
-  }
+  }*/
   
   
   // ---------------------------------
