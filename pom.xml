@@ -852,7 +852,7 @@
       <snapshotRepository>
 	      <id>alfresco-internal-snapshots</id>
 	      <name>Alfresco INTERNAL snapshot</name>
-	      <url>https://artifacts.alfresco.com/nexus/content/repositories/internal-snapshots/</url>
+	      <url>https://artifacts.alfresco.com/nexus/content/repositories/activiti-enterprise-snapshots/</url>
       </snapshotRepository>
   </distributionManagement>
   
@@ -1224,6 +1224,16 @@
 	</organization>
 	<developers>
 		<developer>
+      		<name>Bassam Al-Sarori</name>
+      		<organization>Alfresco</organization>
+      		<url>http://www.alfresco.com</url>
+    	</developer>
+    	<developer>
+      		<name>Vasile Dirla</name>
+      		<organization>Alfresco</organization>
+      		<url>http://www.alfresco.com</url>
+    	</developer>
+		<developer>
 			<name>Tijs Rademakers</name>
 			<organization>Alfresco</organization>
 			<url>http://www.alfresco.com</url>
@@ -1296,8 +1306,8 @@
 		<url>http://bamboo.ci.codehaus.org/browse/ACT</url>
 	</ciManagement>
 	<scm>
-		<url>git@github.com:Activiti/Activiti.git</url>
-		<connection>scm:git:git@github.com:Activiti/Activiti.git</connection>
-		<developerConnection>scm:git:git@github.com:Activiti/Activiti.git</developerConnection>
+		<url>https://github.com/Alfresco/Activiti</url>
+		<connection>scm:git:git@github.com:Alfresco/Activiti.git</connection>
+		<developerConnection>scm:git:git@github.com:Alfresco/Activiti.git</developerConnection>
 	</scm>
 </project>
