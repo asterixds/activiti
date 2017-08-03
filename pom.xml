@@ -942,7 +942,7 @@
       <snapshotRepository>
 	      <id>alfresco-internal-snapshots</id>
 	      <name>Alfresco INTERNAL snapshot</name>
-	      <url>https://artifacts.alfresco.com/nexus/content/repositories/internal-snapshots/</url>
+	      <url>https://artifacts.alfresco.com/nexus/content/repositories/activiti-enterprise-snapshots/</url>
       </snapshotRepository>
   </distributionManagement>
   <!-- Various information, not used by the build -->
