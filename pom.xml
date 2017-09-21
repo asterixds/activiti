@@ -991,6 +991,6 @@
     <url>https://github.com/Alfresco/Activiti</url>
     <connection>scm:git:git@github.com:Alfresco/Activiti.git</connection>
     <developerConnection>scm:git:git@github.com:Alfresco/Activiti.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>activiti-enterprise-5.22.0.5</tag>
   </scm>
 </project>
