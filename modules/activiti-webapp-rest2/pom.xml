@@ -120,7 +120,7 @@
       <artifactId>activiti-rest</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.activiti</groupId>
+      <groupId>com.activiti</groupId>
       <artifactId>activiti-json-converter</artifactId>
     </dependency>
     <dependency>
