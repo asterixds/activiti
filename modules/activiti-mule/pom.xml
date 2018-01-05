@@ -2,18 +2,17 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <name>Activiti - Mule</name>
-  <artifactId>activiti-mule</artifactId>
-
   <parent>
     <groupId>com.activiti</groupId>
     <artifactId>activiti-root</artifactId>
-    <relativePath>../..</relativePath>
     <version>5.22.0.6-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
   </parent>
 
+  <artifactId>activiti-mule</artifactId>
+  <name>Activiti - Mule</name>
+
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <activiti.artifact>
       com.activiti.mule
     </activiti.artifact>
@@ -34,6 +33,7 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
@@ -112,10 +112,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
     </dependency>
@@ -146,7 +142,6 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jms</artifactId>
-      <version>${spring.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -164,31 +159,26 @@
     <dependency>
       <groupId>org.mule.transports</groupId>
       <artifactId>mule-transport-http</artifactId>
-      <version>${mule.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mule.transports</groupId>
       <artifactId>mule-transport-vm</artifactId>
-      <version>${mule.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mule.modules</groupId>
       <artifactId>mule-module-scripting</artifactId>
-      <version>${mule.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mule.modules</groupId>
       <artifactId>mule-module-spring-security</artifactId>
-      <version>${mule.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-ldap</artifactId>
-      <version>${spring-security.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -208,14 +198,14 @@
       </plugin>
     </plugins>
   </reporting>
-  
+
   <repositories>
-      <repository>
-          <id>mulesoft-releases</id>
-          <name>MuleSoft Releases Repository</name>
-          <url>https://repository-master.mulesoft.org/nexus/content/groups/public/</url>
-          <layout>default</layout>
-      </repository>
+    <repository>
+      <id>mulesoft-releases</id>
+      <name>MuleSoft Releases Repository</name>
+      <url>https://repository-master.mulesoft.org/nexus/content/groups/public/</url>
+      <layout>default</layout>
+    </repository>
   </repositories>
 
 </project>
