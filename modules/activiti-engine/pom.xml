@@ -850,7 +850,7 @@
       <id>mssql</id>
       <activation>
         <property>
-          <name>databasemssql</name>
+          <name>database</name>
           <value>mssql</value>
         </property>
       </activation>
