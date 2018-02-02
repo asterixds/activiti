@@ -1,25 +1,13 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>com.activiti</groupId>
+    <artifactId>activiti-spring-boot-samples</artifactId>
+    <version>5.22.0.6</version>
+  </parent>
 
-    <parent>
-        <groupId>com.activiti</groupId>
-        <artifactId>activiti-spring-boot-samples</artifactId>
-        <version>5.22.0.6-SNAPSHOT</version>
-    </parent>
-
-    <artifactId>spring-boot-sample-security</artifactId>
-
-    <build>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <configuration>
-            <skipIfEmpty>false</skipIfEmpty>
-          </configuration>
-        </plugin>
-      </plugins>
-    </build>
+  <artifactId>spring-boot-sample-security</artifactId>
 
 </project>
