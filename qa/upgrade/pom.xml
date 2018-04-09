@@ -3,15 +3,16 @@
 
   <modelVersion>4.0.0</modelVersion>
 
+  <name>Activiti - Upgrade Fetcher</name>
+  <groupId>com.activiti</groupId>
+  <artifactId>activiti-upgrade-fetcher</artifactId>
+
   <parent>
     <groupId>com.activiti</groupId>
     <artifactId>activiti-root</artifactId>
     <version>5.22.0.7-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
-
-  <name>Activiti - Upgrade Fetcher</name>
-  <artifactId>activiti-upgrade-fetcher</artifactId>
 
   <dependencies>
     <dependency>

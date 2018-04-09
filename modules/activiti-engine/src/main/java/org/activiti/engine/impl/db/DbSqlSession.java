@@ -113,6 +113,7 @@ public class DbSqlSession implements Session {
 	  ACTIVITI_VERSIONS.add(new ActivitiVersion("5.20.0.1"));
 	  ACTIVITI_VERSIONS.add(new ActivitiVersion("5.20.0.2"));
 	  ACTIVITI_VERSIONS.add(new ActivitiVersion("5.21.0.0"));
+	  ACTIVITI_VERSIONS.add(new ActivitiVersion("5.22.0.0"));
 	  
 	  /* Current */
 	  ACTIVITI_VERSIONS.add(new ActivitiVersion(ProcessEngine.VERSION));
@@ -178,15 +179,16 @@ public class DbSqlSession implements Session {
     deleteOperations.add(new BulkDeleteOperation(statement, parameter));
   }
   
-  public void delete(PersistentObject persistentObject) {
+  public boolean delete(PersistentObject persistentObject) {
     for (DeleteOperation deleteOperation: deleteOperations) {
         if (deleteOperation.sameIdentity(persistentObject)) {
           log.debug("skipping redundant delete: {}", persistentObject);
-          return; // Skip this delete. It was already added.
+          return false; // Skip this delete. It was already added.
         }
     }
     
     deleteOperations.add(new CheckedDeleteOperation(persistentObject));
+    return true;
   }
 
   public interface DeleteOperation {
@@ -1303,9 +1305,10 @@ public class DbSqlSession implements Session {
             } else {
               sqlStatement = addSqlStatementPiece(sqlStatement, line.substring(0, line.length()-1));
             }
-            
-            Statement jdbcStatement = connection.createStatement();
+
+            Statement jdbcStatement = null;
             try {
+              jdbcStatement = connection.createStatement();
               // no logging needed as the connection will log it
               log.debug("SQL: {}", sqlStatement);
               jdbcStatement.execute(sqlStatement);
@@ -1317,7 +1320,10 @@ public class DbSqlSession implements Session {
               }
               log.error("problem during schema {}, statement {}", operation, sqlStatement, e);
             } finally {
-              sqlStatement = null; 
+              try{
+                jdbcStatement.close();
+              } catch (Exception ex){ /* ignored */ }
+              sqlStatement = null;
             }
           } else {
             sqlStatement = addSqlStatementPiece(sqlStatement, line);

@@ -4,9 +4,9 @@
 
   <parent>
     <groupId>com.activiti</groupId>
-    <artifactId>activiti-root</artifactId>
+    <artifactId>activiti-parent</artifactId>
     <version>5.22.0.7-SNAPSHOT</version>
-    <relativePath>../..</relativePath>
+    <relativePath>../activiti-parent</relativePath>
   </parent>
 
   <artifactId>activiti-cdi</artifactId>
@@ -126,6 +126,11 @@
 
   <build>
     <finalName>activiti-cdi</finalName>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
   </build>
 
 </project>

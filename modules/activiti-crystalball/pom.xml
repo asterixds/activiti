@@ -8,20 +8,15 @@
 
   <parent>
     <groupId>com.activiti</groupId>
-    <artifactId>activiti-root</artifactId>
-    <relativePath>../..</relativePath>
-	<version>5.22.0.7-SNAPSHOT</version>
+    <artifactId>activiti-parent</artifactId>
+    <version>5.22.0.7-SNAPSHOT</version>
+    <relativePath>../activiti-parent</relativePath>
   </parent>
-  
+
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-          </archive>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.felix</groupId>
@@ -31,13 +26,6 @@
             <phase>generate-sources</phase>
             <goals>
               <goal>cleanVersions</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>bundle-manifest</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>manifest</goal>
             </goals>
           </execution>
         </executions>
@@ -84,7 +72,6 @@
       <groupId>com.activiti</groupId>
       <artifactId>activiti-engine</artifactId>
     </dependency>
-
     <!-- logger -->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -95,8 +82,8 @@
       <artifactId>jcl-over-slf4j</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
       <scope>test</scope>
     </dependency>
     <!-- test -->

@@ -49,8 +49,8 @@ public class HistoricTaskQueryEscapeClauseTest extends AbstractEscapeClauseTestC
       .deploy()
       .getId();
 
-    processInstance1 = runtimeService.startProcessInstanceByKeyAndTenantId("oneTaskProcess", "One%", "One%");
-    runtimeService.setProcessInstanceName(processInstance1.getId(), "One%");
+      processInstance1 = runtimeService.startProcessInstanceByKeyAndTenantId("oneTaskProcess", "One%", "One%");
+      runtimeService.setProcessInstanceName(processInstance1.getId(), "One%");
 
 
     deploymentTwoId = repositoryService

@@ -9,10 +9,22 @@
 
   <parent>
     <groupId>com.activiti</groupId>
-    <artifactId>activiti-root</artifactId>
-    <relativePath>../..</relativePath>
+    <artifactId>activiti-parent</artifactId>
     <version>5.22.0.7-SNAPSHOT</version>
+    <relativePath>../activiti-parent</relativePath>
   </parent>
+
+  <properties>
+    <activiti.osgi.activator>
+      org.activiti.osgi.Activator
+    </activiti.osgi.activator>
+    <activiti.osgi.import.pkg>
+      org.apache.felix.fileinstall;resolution:=optional,*
+    </activiti.osgi.import.pkg>
+    <activiti.artifact>
+      org.activiti.osgi
+    </activiti.artifact>
+  </properties>
 
   <build>
     <plugins>
@@ -128,8 +140,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -139,17 +151,5 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <properties>
-    <activiti.osgi.activator>
-      org.activiti.osgi.Activator
-    </activiti.osgi.activator>
-    <activiti.osgi.import.pkg>
-      org.apache.felix.fileinstall;resolution:=optional,*
-    </activiti.osgi.import.pkg>
-    <activiti.artifact>
-      com.activiti.osgi
-    </activiti.artifact>
-  </properties>
 
 </project>

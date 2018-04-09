@@ -22,7 +22,8 @@ import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricVariableInstance;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,7 +39,7 @@ import com.activiti.rest.service.api.ServerProperties;
 @RestController
 public class LogResource extends AbstractDiscoResource {
 
-  private static final Logger log = Logger.getLogger(LogResource.class);
+  private static final Logger log = LoggerFactory.getLogger(LogResource.class);
   
   private static final String SCOPE_SUMMARY = "summary";
   private static final String SCOPE_TRACES = "traces";

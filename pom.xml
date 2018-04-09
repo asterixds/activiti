@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -27,9 +28,33 @@
     <bouncycastle.version>1.59</bouncycastle.version>
     <jetty.version>9.2.24.v20180105</jetty.version>
 
+    <!-- Dependency versions -->
+    <batik.version>1.9.1</batik.version>
+    <bouncycastle.version>1.59</bouncycastle.version>
+    <camel.version>2.17.6</camel.version>
+    <cxf.version>3.1.14</cxf.version>
+    <drools.version>6.5.0.Final</drools.version>
+    <gwt.version>2.5.1</gwt.version>
+    <hibernate.version>4.2.16.Final</hibernate.version>
+    <jackson.version>2.9.5</jackson.version>
+    <jetty.version>9.2.24.v20180105</jetty.version>
+    <log4j2.version>2.8.2</log4j2.version>
+    <logback.version>1.2.3</logback.version>
+    <mule.version>3.7.0</mule.version>
+    <spring.version>4.3.14.RELEASE</spring.version>
+    <spring-boot.version>1.5.10.RELEASE</spring-boot.version>
+    <!-- Plugin versions -->
+    <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
+    <maven-assembly-plugin.version>2.6</maven-assembly-plugin.version>
+    <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+    <maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
+    <maven-jar-plugin.version>2.6</maven-jar-plugin.version>
+    <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
+    <maven-source-plugin.version>2.4</maven-source-plugin.version>
+    <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
+    <maven-war-plugin.version>2.6</maven-war-plugin.version>
     <!-- JVM params for test execution -->
     <argLine>-Duser.language=en</argLine>
-
     <!-- OSGi bundles properties -->
     <activiti.artifact/>
     <activiti.osgi.import.activiti.version>version="[$(version;==;${activiti.osgi.version.clean}),$(version;=+;${activiti.osgi.version.clean}))"</activiti.osgi.import.activiti.version>
@@ -49,8 +74,6 @@
     <activiti.osgi.activator/>
     <activiti.osgi.failok>false</activiti.osgi.failok>
     <activiti.osgi.export>${activiti.osgi.export.pkg};${activiti.osgi.version};-noimport:=true</activiti.osgi.export>
-    <!-- <activiti.osgi.export.pkg>!*.impl;${activiti.artifact}*</activiti.osgi.export.pkg>
-      <activiti.osgi.private.pkg>${activiti.artifact}*.impl</activiti.osgi.private.pkg> -->
     <activiti.osgi.export.pkg>
       ${activiti.artifact}*,
       ${activiti.osgi.export.additional}
@@ -94,6 +117,40 @@
         <groupId>org.springframework</groupId>
         <artifactId>spring-core</artifactId>
         <version>4.3.13.RELEASE</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>${jackson.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-bom</artifactId>
+        <version>${log4j2.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-access</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>${spring.version}</version>
         <exclusions>
           <exclusion>
             <groupId>commons-logging</groupId>
@@ -178,6 +235,12 @@
         <scope>test</scope>
       </dependency>
       <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>2.6.0</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>javax.enterprise.concurrent</groupId>
         <artifactId>javax.enterprise.concurrent-api</artifactId>
         <version>1.0</version>
@@ -203,6 +266,11 @@
       <dependency>
         <groupId>com.activiti</groupId>
         <artifactId>activiti-engine</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.activiti</groupId>
+        <artifactId>activiti-secure-tasks</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -291,6 +359,16 @@
         <artifactId>activiti-jmx</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.activiti</groupId>
+        <artifactId>activiti-crystalball</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.activiti</groupId>
+        <artifactId>activiti-modeler</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <!-- EMAIL -->
       <dependency>
         <groupId>org.apache.commons</groupId>
@@ -367,6 +445,24 @@
         <groupId>org.mule</groupId>
         <artifactId>mule-core</artifactId>
         <version>${mule.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-jcl</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.mule</groupId>
+        <artifactId>mule-core</artifactId>
+        <version>${mule.version}</version>
+        <classifier>tests</classifier>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-jcl</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.mule.tests</groupId>
@@ -545,14 +641,14 @@
       <dependency>
         <groupId>com.fasterxml.uuid</groupId>
         <artifactId>java-uuid-generator</artifactId>
-        <version>3.1.3</version>
+        <version>3.1.4</version>
       </dependency>
 
       <!-- ENTERPRISE dependencies -->
       <dependency>
-        <groupId>net.sourceforge.jtds</groupId>
-        <artifactId>jtds</artifactId>
-        <version>1.3.0</version>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcprov-jdk15on</artifactId>
+        <version>${bouncycastle.version}</version>
       </dependency>
       <dependency>
         <groupId>org.bouncycastle</groupId>
@@ -564,9 +660,18 @@
         <artifactId>license3j</artifactId>
         <version>1.0.7</version>
       </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <modules>
+    <module>modules/activiti-dependency-check</module>
+    <module>modules/activiti-parent</module>
     <module>modules/activiti-bpmn-model</module>
     <module>modules/activiti-process-validation</module>
     <module>modules/activiti-bpmn-layout</module>
@@ -647,6 +752,36 @@
           <version>2.10.4</version>
         </plugin>
         <plugin>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>${maven-antrun-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>${maven-assembly-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+          <configuration>
+            <source>${java.version}</source>
+            <target>${java.version}</target>
+            <showDeprecation>true</showDeprecation>
+            <showWarnings>true</showWarnings>
+            <optimize>true</optimize>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-eclipse-plugin</artifactId>
+          <version>${maven-eclipse-plugin.version}</version>
+          <configuration>
+            <downloadSources>true</downloadSources>
+            <downloadJavadocs>true</downloadJavadocs>
+          </configuration>
+        </plugin>
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
           <version>2.3.2</version>
@@ -664,7 +799,49 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-antrun-plugin</artifactId>
-          <version>1.4</version>
+          <version>${maven-antrun-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${maven-javadoc-plugin.version}</version>
+          <configuration>
+            <quiet>true</quiet>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.4.2</version>
+          <configuration>
+            <mavenExecutorId>forked-path</mavenExecutorId>
+            <useReleaseProfile>false</useReleaseProfile>
+            <arguments>${arguments} -Psonatype-oss-release</arguments>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${maven-source-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
+          <configuration>
+            <failIfNoTests>false</failIfNoTests>
+            <trimStackTrace>false</trimStackTrace>
+            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+            <excludes>
+              <exclude>**/*TestCase.java</exclude>
+            </excludes>
+            <runOrder>alphabetical</runOrder>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>${maven-war-plugin.version}</version>
         </plugin>
         <!--This plugin's configuration is used to store Eclipse m2e settings
           only. It has no influence on the Maven build itself. -->
@@ -719,6 +896,16 @@
             <downloadJavadocs>true</downloadJavadocs>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.zeroturnaround</groupId>
+          <artifactId>jrebel-maven-plugin</artifactId>
+          <version>1.1.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.tomcat.maven</groupId>
+          <artifactId>tomcat7-maven-plugin</artifactId>
+          <version>2.2</version>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -731,31 +918,124 @@
     </profile>
 
     <profile>
+      <id>check</id>
+      <modules>
+        <module>modules/activiti-bpmn-model</module>
+        <module>modules/activiti-process-validation</module>
+        <module>modules/activiti-image-generator</module>
+        <module>modules/activiti-bpmn-converter</module>
+        <module>modules/activiti-bpmn-layout</module>
+        <module>modules/activiti-json-converter</module>
+        <module>modules/activiti-spring</module>
+        <module>modules/activiti-spring-boot</module>
+        <module>modules/activiti-common-rest</module>
+        <module>modules/activiti-simple-workflow</module>
+        <module>modules/activiti-rest</module>
+        <module>modules/activiti-cxf</module>
+        <module>modules/activiti-secure-tasks</module>
+        <module>modules/activiti-secure-javascript</module>
+        <module>modules/activiti-secure-service-tasks</module>
+      </modules>
+    </profile>
+    <profile>
+      <!-- 
+           A profile dedicated to JDK 6.
+           SpringBoot module is disabled as it needs JDK7+.
+      -->
+      <id>checkJdk6</id>
+      <modules>
+        <module>modules/activiti-bpmn-model</module>
+        <module>modules/activiti-process-validation</module>
+        <module>modules/activiti-image-generator</module>
+        <module>modules/activiti-bpmn-converter</module>
+        <module>modules/activiti-bpmn-layout</module>
+        <module>modules/activiti-json-converter</module>
+        <module>modules/activiti-spring</module>
+        <module>modules/activiti-common-rest</module>
+        <module>modules/activiti-simple-workflow</module>
+        <module>modules/activiti-rest</module>
+        <module>modules/activiti-webapp-rest2</module>
+        <module>modules/activiti-cxf</module>
+        <module>modules/activiti-secure-tasks</module>
+        <module>modules/activiti-secure-javascript</module>
+        <module>modules/activiti-secure-service-tasks</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>checkmule</id>
+      <modules>
+        <module>modules/activiti-cxf</module>
+        <module>modules/activiti-mule</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>checkspring</id> <!-- [Joram] Is this still used?? -->
+      <modules>
+        <module>modules/activiti-spring</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>checkcdi</id>
+      <modules>
+        <module>modules/activiti-cdi</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>checksimpleworkflow</id>
+      <modules>
+        <module>modules/activiti-simple-workflow</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>checkosgi</id>
+      <modules>
+        <module>modules/activiti-osgi</module>
+      </modules>
+    </profile>
+    <profile>
+      <!-- this profile prevents that tests are executed while running the
+        qa/build.xml test.demo.setup target -->
+      <id>nodocs</id>
+      <activation>
+        <property>
+          <name>nodocs</name>
+        </property>
+      </activation>
+      <properties>
+        <skipTests>true</skipTests>
+      </properties>
+    </profile>
+    <profile>
       <id>distro</id>
       <modules>
         <module>modules/activiti-bpmn-model</module>
         <module>modules/activiti-process-validation</module>
         <module>modules/activiti-image-generator</module>
         <module>modules/activiti-bpmn-converter</module>
-        <module>modules/activiti-engine</module>
+        <module>modules/activiti-bpmn-layout</module>
+        <module>modules/activiti-json-converter</module>
         <module>modules/activiti-secure-tasks</module>
         <module>modules/activiti-secure-javascript</module>
         <module>modules/activiti-secure-service-tasks</module>
-        <module>modules/activiti-bpmn-layout</module>
-        <module>modules/activiti-json-converter</module>
         <module>modules/activiti-simple-workflow</module>
-        <module>modules/activiti-common-rest</module>
-        <module>modules/activiti-diagram-rest</module>
-        <module>modules/activiti-rest</module>
         <module>modules/activiti-spring</module>
         <module>modules/activiti-spring-boot</module>
+        <module>modules/activiti-common-rest</module>
+        <module>modules/activiti-modeler</module>
+        <module>modules/activiti-diagram-rest</module>
+        <module>modules/activiti-crystalball</module>
+        <module>modules/activiti-explorer</module>
+        <module>modules/activiti-rest</module>
+        <module>modules/activiti-webapp-rest2</module>
+        <module>modules/activiti-webapp-explorer2</module>
         <module>modules/activiti-cxf</module>
-        <module>modules/activiti-mule</module>
+        <module>modules/activiti-osgi</module>
         <module>modules/activiti-camel</module>
+        <module>modules/activiti-mule</module>
         <module>modules/activiti-cdi</module>
-        <!-- <module>modules/activiti-osgi</module> -->
         <module>modules/activiti-ldap</module>
         <module>modules/activiti-jmx</module>
+        <module>tooling/archetypes/activiti-archetype-unittest</module>
       </modules>
       <build>
         <plugins>
@@ -765,6 +1045,7 @@
             <executions>
               <execution>
                 <id>attach-sources</id>
+                <phase>package</phase>
                 <goals>
                   <goal>jar-no-fork</goal>
                 </goals>
@@ -783,72 +1064,8 @@
               </execution>
             </executions>
           </plugin>
-          <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>1.6.8</version>
-            <extensions>true</extensions>
-            <configuration>
-              <serverId>alfresco-internal-staging</serverId>
-              <nexusUrl>https://artifacts.alfresco.com/nexus</nexusUrl>
-              <stagingProfileId>${activitirelease.staging.profile}</stagingProfileId>
-              <stagingDescription>Staging Activiti Engine ${project.version} (${bamboo_buildResultKey} ${bamboo_planRepository_revision})</stagingDescription>
-              <tags>
-                <build.number>${bamboo_buildNumber}</build.number>
-                <build.key>${bamboo_buildKey}</build.key>
-                <build.revision>${bamboo_planRepository_revision}</build.revision>
-              </tags>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <inherited>false</inherited>
-            <configuration>
-              <formats>
-                <format>zip</format>
-              </formats>
-              <descriptorRefs>
-                <descriptorRef>project</descriptorRef>
-              </descriptorRefs>
-            </configuration>
-            <executions>
-              <execution>
-                <id>make-assembly</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
         </plugins>
       </build>
-    </profile>
-
-    <profile>
-      <id>check</id>
-      <modules>
-        <module>modules/activiti-bpmn-model</module>
-        <module>modules/activiti-process-validation</module>
-        <module>modules/activiti-image-generator</module>
-        <module>modules/activiti-bpmn-converter</module>
-        <module>modules/activiti-bpmn-layout</module>
-        <module>modules/activiti-json-converter</module>
-        <module>modules/activiti-spring</module>
-        <module>modules/activiti-spring-boot</module>
-        <module>modules/activiti-common-rest</module>
-        <module>modules/activiti-simple-workflow</module>
-        <module>modules/activiti-rest</module>
-        <module>modules/activiti-cxf</module>
-        <module>modules/activiti-cdi</module>
-        <module>modules/activiti-ldap</module>
-        <module>modules/activiti-jmx</module>
-        <module>modules/activiti-secure-tasks</module>
-        <module>modules/activiti-secure-javascript</module>
-        <module>modules/activiti-secure-service-tasks</module>
-        <module>tooling/archetypes/activiti-archetype-unittest</module>
-      </modules>
     </profile>
 
     <profile>
@@ -909,7 +1126,7 @@
     </profile>
 
     <profile>
-      <!-- Profile used by the start-rest.sh script to build the Explorer
+      <!-- Profile used by the start-rest.sh script to build the ReST
         webapp and all its dependencies -->
       <id>buildRestappDependencies</id>
       <modules>
@@ -924,6 +1141,7 @@
         <module>modules/activiti-secure-service-tasks</module>
         <module>modules/activiti-spring</module>
         <module>modules/activiti-common-rest</module>
+        <module>modules/activiti-simple-workflow</module>
         <module>modules/activiti-rest</module>
       </modules>
       <properties>
@@ -986,7 +1204,6 @@
         </plugins>
       </build>
     </profile>
-
   </profiles>
 
   <!-- Enterprise deployment -->

@@ -1,18 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>com.activiti</groupId>
     <artifactId>activiti-spring-boot-starters</artifactId>
     <version>5.22.0.7-SNAPSHOT</version>
   </parent>
-
   <artifactId>activiti-spring-boot-starter-rest-api</artifactId>
-
-  <properties>
-    <suppressionFile>${basedir}/../../../../dependency-check-suppression.xml</suppressionFile>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>com.h2database</groupId>
@@ -29,8 +23,8 @@
           <artifactId>slf4j-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

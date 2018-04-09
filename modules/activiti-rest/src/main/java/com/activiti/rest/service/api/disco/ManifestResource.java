@@ -4,7 +4,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.activiti.engine.ActivitiException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,7 +18,7 @@ import com.activiti.rest.service.api.ServerProperties;
 @RestController
 public class ManifestResource extends AbstractDiscoResource {
 
-  private static final Logger log = Logger.getLogger(ManifestResource.class);
+  private static final Logger log = LoggerFactory.getLogger(ManifestResource.class);
   
   @RequestMapping(value="/disco/manifest.xml", method = RequestMethod.GET, produces="application/xml")
   public @ResponseBody String getManifest() {

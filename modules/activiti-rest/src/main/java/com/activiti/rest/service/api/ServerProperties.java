@@ -2,11 +2,12 @@ package com.activiti.rest.service.api;
 
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServerProperties {
 
-  private static final Logger log = Logger.getLogger(ServerProperties.class);
+  private static final Logger log = LoggerFactory.getLogger(ServerProperties.class);
   
   protected static Properties properties;
 

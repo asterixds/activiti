@@ -7,10 +7,9 @@
 
   <parent>
     <groupId>com.activiti</groupId>
-    <artifactId>activiti-root</artifactId>
-    <relativePath>../..</relativePath>
+    <artifactId>activiti-parent</artifactId>
     <version>5.22.0.7-SNAPSHOT</version>
-
+    <relativePath>../activiti-parent</relativePath>
   </parent>
   
   <properties>
@@ -102,4 +101,5 @@
       <artifactId>jackson-databind</artifactId>
     </dependency>
   </dependencies>
+
 </project>

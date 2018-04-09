@@ -116,7 +116,7 @@ public class ExpressionManager {
     if (variableScope != null) {
       elResolver.add(new VariableScopeElResolver(variableScope));
     }
-
+    
     if(beans != null) {
       // ACT-1102: Also expose all beans in configuration when using standalone activiti, not
       // in spring-context
