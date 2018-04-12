@@ -45,6 +45,7 @@ import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ExecutionQuery;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.test.Deployment;
+import org.junit.Ignore;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -356,6 +357,7 @@ public class ExecutionQueryTest extends PluggableActivitiTestCase {
     runtimeService.deleteProcessInstance(processInstance3.getId(), "test");
   }
   
+  @Ignore
   @Deployment(resources={
     "org/activiti/engine/test/api/oneTaskProcess.bpmn20.xml"})
   public void testQueryEqualsIgnoreCase() {
@@ -1395,6 +1397,7 @@ public class ExecutionQueryTest extends PluggableActivitiTestCase {
     assertEquals(1, runtimeService.createNativeExecutionQuery().sql("SELECT * FROM " + managementService.getTableName(Execution.class)).listPage(2, 1).size());
   }
 
+  @Ignore
   @Deployment(resources={"org/activiti/engine/test/api/runtime/concurrentExecution.bpmn20.xml"})
   public void testExecutionQueryWithProcessVariable() {
     Map<String, Object> variables = new HashMap<String, Object>();

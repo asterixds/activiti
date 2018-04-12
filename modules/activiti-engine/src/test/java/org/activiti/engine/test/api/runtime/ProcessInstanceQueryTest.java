@@ -33,6 +33,7 @@ import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.test.Deployment;
+import org.junit.Ignore;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -1529,6 +1530,7 @@ public class ProcessInstanceQueryTest extends PluggableActivitiTestCase {
     assertEquals(0, runtimeService.createProcessInstanceQuery().variableValueEquals(null).count());
   }
   
+  @Ignore
   @Deployment(resources={
     "org/activiti/engine/test/api/oneTaskProcess.bpmn20.xml"})
   public void testQueryEqualsIgnoreCase() {
