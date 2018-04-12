@@ -1531,8 +1531,8 @@ public class ProcessInstanceQueryTest extends PluggableActivitiTestCase {
   }
   
   @Ignore
-  @Deployment(resources={
-    "org/activiti/engine/test/api/oneTaskProcess.bpmn20.xml"})
+  //@Deployment(resources={
+  //  "org/activiti/engine/test/api/oneTaskProcess.bpmn20.xml"})
   public void testQueryEqualsIgnoreCase() {
     Map<String, Object> vars = new HashMap<String, Object>();
     vars.put("mixed", "AbCdEfG");

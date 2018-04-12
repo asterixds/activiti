@@ -358,8 +358,8 @@ public class ExecutionQueryTest extends PluggableActivitiTestCase {
   }
   
   @Ignore
-  @Deployment(resources={
-    "org/activiti/engine/test/api/oneTaskProcess.bpmn20.xml"})
+  //@Deployment(resources={
+  //  "org/activiti/engine/test/api/oneTaskProcess.bpmn20.xml"})
   public void testQueryEqualsIgnoreCase() {
     Map<String, Object> vars = new HashMap<String, Object>();
     vars.put("mixed", "AbCdEfG");
@@ -1398,7 +1398,7 @@ public class ExecutionQueryTest extends PluggableActivitiTestCase {
   }
 
   @Ignore
-  @Deployment(resources={"org/activiti/engine/test/api/runtime/concurrentExecution.bpmn20.xml"})
+  //@Deployment(resources={"org/activiti/engine/test/api/runtime/concurrentExecution.bpmn20.xml"})
   public void testExecutionQueryWithProcessVariable() {
     Map<String, Object> variables = new HashMap<String, Object>();
     variables.put("x", "parent");

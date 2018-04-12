@@ -224,7 +224,6 @@ public class TaskQueryTest extends PluggableActivitiTestCase {
     }
   }
 
-  @Ignore
   public void testQueryByNameInIgnoreCase() {
     final List<String> taskNameList = new ArrayList<String>(2);
     taskNameList.add("testtask");
@@ -1446,7 +1445,7 @@ public class TaskQueryTest extends PluggableActivitiTestCase {
   }
   
   @Ignore
-  @Deployment
+  //@Deployment
   public void testTaskVariableValueEquals() throws Exception {
     ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("oneTaskProcess");
     Task task = taskService.createTaskQuery().processInstanceId(processInstance.getId()).singleResult();
@@ -1532,7 +1531,7 @@ public class TaskQueryTest extends PluggableActivitiTestCase {
   }
   
   @Ignore
-  @Deployment(resources= {"org/activiti/engine/test/api/task/TaskQueryTest.testTaskVariableValueEquals.bpmn20.xml"})
+  //@Deployment(resources= {"org/activiti/engine/test/api/task/TaskQueryTest.testTaskVariableValueEquals.bpmn20.xml"})
   public void testTaskVariableValueEqualsOr() throws Exception {
     ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("oneTaskProcess");
     Task task = taskService.createTaskQuery().processInstanceId(processInstance.getId()).singleResult();
@@ -1848,7 +1847,7 @@ public class TaskQueryTest extends PluggableActivitiTestCase {
   }
   
   @Ignore
-  @Deployment(resources="org/activiti/engine/test/api/task/TaskQueryTest.testProcessDefinition.bpmn20.xml")
+  //@Deployment(resources="org/activiti/engine/test/api/task/TaskQueryTest.testProcessDefinition.bpmn20.xml")
   public void testProcessVariableValueLike() throws Exception {
     Map<String, Object> variables = new HashMap<String, Object>();
     variables.put("mixed", "AzerTY");
