@@ -17,6 +17,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.delegate.event.ActivitiEventType;
+import org.activiti.engine.delegate.event.impl.ActivitiEventBuilder;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.impl.HistoricProcessInstanceQueryImpl;
 import org.activiti.engine.impl.context.Context;
@@ -79,7 +81,16 @@ public class HistoricProcessInstanceEntityManager extends AbstractManager {
         .getCommentEntityManager()
         .deleteCommentsByProcessInstanceId(historicProcessInstanceId);
       
-      getDbSqlSession().delete(historicProcessInstance);
+      commandContext
+      .getAttachmentEntityManager()
+      .deleteAttachmentsByProcessInstanceId(historicProcessInstanceId);
+      
+      boolean deleted = getDbSqlSession().delete(historicProcessInstance);
+      
+      if (deleted && commandContext.getEventDispatcher().isEnabled()) {
+        commandContext.getEventDispatcher().dispatchEvent(
+              ActivitiEventBuilder.createEntityEvent(ActivitiEventType.ENTITY_DELETED, historicProcessInstance));
+      }
       
       // Also delete any sub-processes that may be active (ACT-821)
       HistoricProcessInstanceQueryImpl subProcessesQueryImpl = new HistoricProcessInstanceQueryImpl();

@@ -58,6 +58,7 @@
             </goals>
             <configuration>
               <target>
+              <tasks>
                 <echo message="loading properties from ${user.home}/.activiti/${cfgdir}/build.${database}.properties"/>
                 <property file="${user.home}/.activiti/${cfgdir}/build.${database}.properties"/>
                 <echo message="cleaning db ${jdbc.url}"/>
@@ -69,6 +70,8 @@
                      autocommit="true"
                      classpathref="maven.test.classpath"
                      src="scripts/drop.activiti.${database}.sql" />
+                     src="scripts/drop.activiti.${database}.sql"/>
+              </tasks>
               </target>
             </configuration>
           </execution>

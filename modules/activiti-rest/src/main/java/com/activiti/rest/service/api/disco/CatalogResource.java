@@ -14,7 +14,8 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,7 +29,7 @@ import com.activiti.rest.service.api.ServerProperties;
 @RestController
 public class CatalogResource extends AbstractDiscoResource{
 
-  private static final Logger log = Logger.getLogger(CatalogResource.class);
+  private static final Logger log = LoggerFactory.getLogger(CatalogResource.class);
   
   @Autowired
   protected RepositoryService repositoryService;

@@ -1,23 +1,24 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-	<name>Activiti - JMX</name>
-	<artifactId>activiti-jmx</artifactId>
+  <name>Activiti - JMX</name>
+  <artifactId>activiti-jmx</artifactId>
+	
+  <parent>
+    <groupId>com.activiti</groupId>
+    <artifactId>activiti-parent</artifactId>
+    <version>5.22.0.7-SNAPSHOT</version>
+    <relativePath>../activiti-parent</relativePath>
+  </parent>
 
-	<parent>
-	    <groupId>com.activiti</groupId>
-	    <artifactId>activiti-root</artifactId>
-	    <relativePath>../..</relativePath>
-		<version>5.22.0.7-SNAPSHOT</version>
-	</parent>
-  
-	<properties>
+   <properties>
 	  <activiti.artifact>
 	    org.activiti.jmx
 	  </activiti.artifact>
 	</properties>
-
+	
 	<dependencies>
 	    <dependency>
 	      <groupId>org.mockito</groupId>
@@ -29,29 +30,30 @@
 			<groupId>com.activiti</groupId>
 			<artifactId>activiti-engine</artifactId>
 		</dependency>
-		<!-- Testing -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-	    <dependency>
-	      <groupId>org.slf4j</groupId>
-	      <artifactId>slf4j-log4j12</artifactId>
-	      <scope>test</scope>
-	    </dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>test</scope>
-		</dependency>
 
-	</dependencies>
+    <!-- Testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>

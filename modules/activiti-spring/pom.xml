@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <name>Activiti - Spring</name>
@@ -6,9 +7,9 @@
 
   <parent>
     <groupId>com.activiti</groupId>
-    <artifactId>activiti-root</artifactId>
-    <relativePath>../..</relativePath>
+    <artifactId>activiti-parent</artifactId>
     <version>5.22.0.7-SNAPSHOT</version>
+    <relativePath>../activiti-parent</relativePath>
   </parent>
 
   <properties>
@@ -170,8 +171,8 @@
       <artifactId>jcl-over-slf4j</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -195,6 +196,12 @@
                     <delete dir="src/test/resources/org/activiti/examples" />
                     <delete dir="src/test/java/org/activiti/standalone" />
                     <delete dir="src/test/resources/org/activiti/standalone" />
+                    <delete dir="src/test/java/org/activiti/engine/test"/>
+                    <delete dir="src/test/resources/org/activiti/engine/test"/>
+                    <delete dir="src/test/java/org/activiti/examples"/>
+                    <delete dir="src/test/resources/org/activiti/examples"/>
+                    <delete dir="src/test/java/org/activiti/standalone"/>
+                    <delete dir="src/test/resources/org/activiti/standalone"/>
                   </tasks>
                 </configuration>
                 <goals>
@@ -250,6 +257,18 @@
                     <delete dir="src/test/resources/org/activiti/examples" />
                     <delete dir="src/test/java/org/activiti/standalone" />
                     <delete dir="src/test/resources/org/activiti/standalone" />
+                    <delete dir="src/test/java/org/activiti/engine/test"/>
+                    <delete dir="src/test/resources/org/activiti/engine/test"/>
+                    <delete dir="src/test/java/org/activiti/examples"/>
+                    <delete dir="src/test/resources/org/activiti/examples"/>
+                    <delete dir="src/test/java/org/activiti/standalone"/>
+                    <delete dir="src/test/resources/org/activiti/standalone"/>
+                    <copy todir="src/test/java" overwrite="true">
+                      <fileset dir="../activiti-engine/src/test/java"/>
+                    </copy>
+                    <copy todir="src/test/resources" overwrite="true">
+                      <fileset dir="../activiti-engine/src/test/resources"/>
+                    </copy>
                   </tasks>
                 </configuration>
               </execution>

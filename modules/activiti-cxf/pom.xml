@@ -3,14 +3,12 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.activiti</groupId>
-    <artifactId>activiti-root</artifactId>
+    <artifactId>activiti-parent</artifactId>
     <version>5.22.0.7-SNAPSHOT</version>
-    <relativePath>../..</relativePath>
+    <relativePath>../activiti-parent</relativePath>
   </parent>
-
   <name>Activiti - Cxf</name>
   <artifactId>activiti-cxf</artifactId>
-
   <properties>
     <activiti.artifact>
       com.activiti.cxf
@@ -153,8 +151,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

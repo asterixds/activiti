@@ -3,18 +3,17 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.activiti</groupId>
-    <artifactId>activiti-root</artifactId>
+    <artifactId>activiti-parent</artifactId>
     <version>5.22.0.7-SNAPSHOT</version>
-    <relativePath>../..</relativePath>
+    <relativePath>../activiti-parent</relativePath>
   </parent>
   <artifactId>activiti-mule</artifactId>
   <name>Activiti - Mule</name>
-
   <properties>
-    <log4j.version>2.8.2</log4j.version>
     <activiti.artifact>
       com.activiti.mule
     </activiti.artifact>
+    <activiti.artifact>org.activiti.mule</activiti.artifact>
   </properties>
   <build>
     <plugins>
@@ -94,58 +93,6 @@
       </plugins>
     </pluginManagement>
   </build>
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-api</artifactId>
-        <version>${log4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-core</artifactId>
-        <version>${log4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-slf4j-impl</artifactId>
-        <version>${log4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-1.2-api</artifactId>
-        <version>${log4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-jul</artifactId>
-        <version>${log4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.mule</groupId>
-        <artifactId>mule-core</artifactId>
-        <version>${mule.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-jcl</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.mule</groupId>
-        <artifactId>mule-core</artifactId>
-        <version>${mule.version}</version>
-        <classifier>tests</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-jcl</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>com.activiti</groupId>
@@ -224,12 +171,6 @@
       <groupId>org.mule</groupId>
       <artifactId>mule-core</artifactId>
       <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-jcl</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.mule.modules</groupId>

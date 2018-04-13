@@ -4,9 +4,9 @@
 
   <parent>
     <groupId>com.activiti</groupId>
-    <artifactId>activiti-root</artifactId>
-	<version>5.22.0.7-SNAPSHOT</version>
-    <relativePath>../..</relativePath>
+    <artifactId>activiti-parent</artifactId>
+    <version>5.22.0.7-SNAPSHOT</version>
+    <relativePath>../activiti-parent</relativePath>
   </parent>
 
   <artifactId>activiti-webapp-rest2</artifactId>
