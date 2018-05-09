@@ -5,7 +5,7 @@
     <groupId>com.activiti</groupId>
     <artifactId>activiti-spring-boot</artifactId>
     <relativePath>../</relativePath>
-    <version>5.22.0.7-SNAPSHOT</version>
+    <version>5.22.0.7</version>
   </parent>
   <artifactId>activiti-spring-boot-samples</artifactId>
   <packaging>pom</packaging>
