@@ -10,11 +10,17 @@
   <name>Activiti - Cxf</name>
   <artifactId>activiti-cxf</artifactId>
   <properties>
-    <activiti.artifact>
-      com.activiti.cxf
-    </activiti.artifact>
+    <activiti.artifact>com.activiti.cxf</activiti.artifact>
   </properties>
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/*.*</include>
+        </includes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -49,16 +55,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>always</forkMode>
-        </configuration>
-      </plugin>
-      <plugin>
-        <!-- BDE-945 JaCoCo causes a failure in WSDLImporterTest. Disabling it. -->
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>org/activiti/**</exclude>
-          </excludes>
         </configuration>
       </plugin>
     </plugins>

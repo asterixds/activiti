@@ -17,6 +17,22 @@
       com.activiti.rest.service
     </activiti.artifact>
   </properties>
+  
+  <profiles>
+    <profile>
+      <id>java-11</id>
+      <activation>
+        <jdk>[11,)</jdk>
+      </activation>
+      
+      <dependencies>
+          <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>javax.activation-api</artifactId>
+          </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 
   <build>
     <plugins>
@@ -115,8 +131,7 @@
     </dependency>
     <dependency>
       <groupId>javax.annotation</groupId>
-      <artifactId>jsr250-api</artifactId>
-      <version>1.0</version>
+      <artifactId>javax.annotation-api</artifactId>
     </dependency>
 
     <!-- Test dependencies -->

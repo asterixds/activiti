@@ -24,19 +24,6 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.zeroturnaround</groupId>
-        <artifactId>jrebel-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>generate-rebel-xml</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
@@ -58,42 +45,6 @@
         </configuration>
       </plugin>
     </plugins>
-    <pluginManagement>
-      <plugins>
-        <!--This plugin's configuration is used to store Eclipse m2e settings 
-          only. It has no influence on the Maven build itself. -->
-        <plugin>
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>1.0.0</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>
-                      org.zeroturnaround
-                    </groupId>
-                    <artifactId>
-                      jrebel-maven-plugin
-                    </artifactId>
-                    <versionRange>
-                      [1.0.7,)
-                    </versionRange>
-                    <goals>
-                      <goal>generate</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore></ignore>
-                  </action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
   </build>
 
   <profiles>
@@ -137,6 +88,21 @@
         </plugins>
       </build>
     </profile>
+    
+    <profile>
+      <id>java-11</id>
+      <activation>
+        <jdk>[11,)</jdk>
+      </activation>
+      
+      <dependencies>
+          <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>javax.activation-api</artifactId>
+          </dependency>
+      </dependencies>
+    </profile>
+    
   </profiles>
 
 
@@ -179,7 +145,7 @@
       <artifactId>javax.servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
-
+    
     <!-- Database -->
     <dependency>
       <groupId>commons-dbcp</groupId>

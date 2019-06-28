@@ -10,9 +10,6 @@
   <artifactId>activiti-mule</artifactId>
   <name>Activiti - Mule</name>
   <properties>
-    <activiti.artifact>
-      com.activiti.mule
-    </activiti.artifact>
     <activiti.artifact>org.activiti.mule</activiti.artifact>
   </properties>
   <build>
@@ -95,57 +92,9 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>com.activiti</groupId>
-      <artifactId>activiti-engine</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.activiti</groupId>
-      <artifactId>activiti-spring</artifactId>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-aop</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-jdbc</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context-support</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-jms</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-tx</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-web</artifactId>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
@@ -197,13 +146,24 @@
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15on</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.activiti</groupId>
+      <artifactId>activiti-engine</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.activiti</groupId>
+      <artifactId>activiti-spring</artifactId>
+    </dependency>
   </dependencies>
   <repositories>
     <repository>
       <id>mulesoft-releases</id>
       <name>MuleSoft Releases Repository</name>
       <url>https://repository-master.mulesoft.org/nexus/content/groups/public/</url>
-      <layout>default</layout>
     </repository>
   </repositories>
 </project>

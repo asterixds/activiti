@@ -17,7 +17,7 @@
 			com.activiti.image
 		</activiti.artifact>
 		<activiti.osgi.export.additional>
-			org.activiti.icons
+			com.activiti.icons
 		</activiti.osgi.export.additional>
 	</properties>
 

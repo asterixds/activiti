@@ -76,7 +76,7 @@ public class UserTaskJsonConverter extends BaseBpmnJsonConverter {
                     candidateNode.put("value", candidateUser);
                     candidateArrayNode.add(candidateNode);
                 }
-                assignmentValuesNode.put(PROPERTY_USERTASK_CANDIDATE_USERS, candidateArrayNode);
+                assignmentValuesNode.set(PROPERTY_USERTASK_CANDIDATE_USERS, candidateArrayNode);
             }
           
             if (CollectionUtils.isNotEmpty(userTask.getCandidateGroups())) {
@@ -86,11 +86,11 @@ public class UserTaskJsonConverter extends BaseBpmnJsonConverter {
                     candidateNode.put("value", candidateGroup);
                     candidateArrayNode.add(candidateNode);
                 }
-                assignmentValuesNode.put(PROPERTY_USERTASK_CANDIDATE_GROUPS, candidateArrayNode);
+                assignmentValuesNode.set(PROPERTY_USERTASK_CANDIDATE_GROUPS, candidateArrayNode);
             }
           
-            assignmentNode.put("assignment", assignmentValuesNode);
-            propertiesNode.put(PROPERTY_USERTASK_ASSIGNMENT, assignmentNode);
+            assignmentNode.set("assignment", assignmentValuesNode);
+            propertiesNode.set(PROPERTY_USERTASK_ASSIGNMENT, assignmentNode);
         }
         
         if (userTask.getPriority() != null) {

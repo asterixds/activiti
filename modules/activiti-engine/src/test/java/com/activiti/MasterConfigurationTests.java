@@ -1,6 +1,5 @@
 package com.activiti;
 
-import static org.mockserver.integration.ClientAndProxy.startClientAndProxy;
 import static org.mockserver.integration.ClientAndServer.startClientAndServer;
 import static org.mockserver.matchers.Times.exactly;
 import static org.mockserver.model.HttpRequest.request;
@@ -13,13 +12,11 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockserver.client.server.MockServerClient;
-import org.mockserver.integration.ClientAndProxy;
+import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.Header;
 
 import com.activiti.addon.cluster.json.ProcessEngineMasterConfigurationRepresentation;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -27,13 +24,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class MasterConfigurationTests {
 	
-	private ClientAndProxy proxy;
+	private ClientAndServer proxy;
 	private ClientAndServer mockServer;
 	
 	@Before
 	public void startProxy() {
 	    mockServer = startClientAndServer(8976);
-	    proxy = startClientAndProxy(8986);
+	    proxy = startClientAndServer(8986);
 	}	
 	
 	@After
@@ -121,7 +118,7 @@ public class MasterConfigurationTests {
 	}
 	
 	@Test
-	public void testClusterDisabledMasterConfigEnabled() throws Exception {
+	public void testClusterDisabledMasterConfigEnabled() {
 		
 		ProcessEngineConfigurationImpl processEngineConfiguration = new StandaloneInMemProcessEngineConfiguration();
 		processEngineConfiguration.setEnableClusterConfig(false);
@@ -133,7 +130,7 @@ public class MasterConfigurationTests {
 	}
 	
 	@Test
-	public void testClusterEnabledMasterConfigEnabledButNoAdminApp() throws Exception {
+	public void testClusterEnabledMasterConfigEnabledButNoAdminApp() {
 		
 		ProcessEngineConfigurationImpl processEngineConfiguration = new StandaloneInMemProcessEngineConfiguration();
 		processEngineConfiguration.setEnableClusterConfig(true);
@@ -154,7 +151,7 @@ public class MasterConfigurationTests {
 	}
 	
 	@Test
-	public void testClusterEnabledMasterConfigDisabled() throws Exception {
+	public void testClusterEnabledMasterConfigDisabled() {
 		
 		ProcessEngineConfigurationImpl processEngineConfiguration = new StandaloneInMemProcessEngineConfiguration();
 		processEngineConfiguration.setEnableClusterConfig(true);

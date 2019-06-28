@@ -13,7 +13,7 @@ else
 	echo ""
 	
 	ORIGINAL_FOLDER=$(pwd)
-	export CATALINA_OPTS="-Xms521M -Xmx1024M -noverify -javaagent:/Applications/ZeroTurnaround/JRebel/jrebel.jar -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=n"
+	export CATALINA_OPTS="-Xms521M -Xmx1024M -noverify -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=n"
     cd $TOMCAT_HOME
     rm -rf conf/tomcat-users.xml
     cp $ORIGINAL_FOLDER/tomcat-users.xml conf/

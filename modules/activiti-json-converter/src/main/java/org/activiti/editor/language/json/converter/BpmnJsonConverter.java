@@ -205,7 +205,7 @@ public class BpmnJsonConverter implements EditorJsonConstants, StencilConstants,
           maxY = 700;
         }
         
-        modelNode.put("bounds", BpmnJsonConverterUtil.createBoundsNode(maxX, maxY, 0, 0));
+        modelNode.set("bounds", BpmnJsonConverterUtil.createBoundsNode(maxX, maxY, 0, 0));
         modelNode.put("resourceId", "canvas");
 
         ObjectNode stencilNode = objectMapper.createObjectNode();

@@ -60,7 +60,7 @@ public class SubProcessJsonConverter extends BaseBpmnJsonConverter {
       GraphicInfo graphicInfo = model.getGraphicInfo(subProcess.getId());
       processor.processFlowElements(subProcess, model, subProcessShapesArrayNode,
               graphicInfo.getX(), graphicInfo.getY());
-      flowElementNode.put("childShapes", subProcessShapesArrayNode);
+      flowElementNode.set("childShapes", subProcessShapesArrayNode);
       
       if (subProcess instanceof Transaction) {
         propertiesNode.put("istransaction", true);
